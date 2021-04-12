@@ -1,0 +1,72 @@
+ErrorDocument 404 http://localhost/thisframework/404
+ErrorDocument 403 http://localhost/thisframework/404
+ErrorDocument 500 http://localhost/thisframework/500
+
+<IfModule mod_rewrite.c>
+
+	Options -Multiviews
+
+	RewriteEngine On
+
+	RewriteCond %{HTTP_USER_AGENT} ^BlackWidow [OR]
+	RewriteCond %{HTTP_USER_AGENT} ^Zeus
+	RewriteRule .* - [F]
+
+	RewriteRule ^404?$ app/http/404.php
+	RewriteRule ^403?$ app/http/403.php
+	RewriteRule ^500?$ app/http/500.php
+	RewriteRule ^db_err?$ app/http/db_err.php
+	RewriteRule ^err?$ app/config/errordocument.php
+	RewriteRule ^external_data?$ zombies/externalvals.php
+	RewriteRule ^internal_data?$ zombies/internalvals.php
+	RewriteRule ^automate?$ zombies/tasks.php
+
+#### In config
+
+	RewriteRule ^app/?$ app/config/errordocument.php
+	RewriteRule ^app/config/?$ app/http/404.php
+	RewriteRule ^app/config/data?$ app/http/404.php
+	RewriteRule ^app/cronos/?$ app/config/errordocument.php
+	RewriteRule ^app/cronos/config/?$ app/config/errordocument.php
+	RewriteRule ^app/cronos/controllers/?$ app/config/errordocument.php
+	RewriteRule ^app/cronos/models/?$ app/config/errordocument.php
+	RewriteRule ^app/cronos/cron/?$ app/config/errordocument.php
+
+#### In controllers
+
+	RewriteRule ^app/controllers/?$ app/http/404.php
+
+#### In http
+
+	RewriteRule ^app/http/?$ app/config/errordocument.php
+
+#### In models
+
+	RewriteRule ^app/models/?$ app/http/404.php
+
+#### In views
+
+	RewriteRule ^app/views/?$ app/config/errordocument.php
+	RewriteRule ^app/views/sudo/?$ app/config/errordocument.php
+	RewriteRule ^app/views/administrator/?$ app/config/errordocument.php
+	RewriteRule ^app/views/employee/?$ app/config/errordocument.php
+	RewriteRule ^app/views/master/?$ app/config/errordocument.php
+	RewriteRule ^app/views/starter/?$ app/config/errordocument.php
+
+#### In files
+
+	RewriteRule ^files/?$ app/config/errordocument.php
+
+#### In zombies
+
+	RewriteRule ^zombies/?$ app/config/errordocument.php
+
+#### In dist
+
+	RewriteRule ^dist/?$ app/config/errordocument.php
+	RewriteRule ^dist/img/?$ app/config/errordocument.php
+	RewriteRule ^dist/css/?$ app/config/errordocument.php
+	RewriteRule ^dist/js/?$ app/config/errordocument.php
+	RewriteRule ^plugins/?$ app/config/errordocument.php
+
+</IfModule>

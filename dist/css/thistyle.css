@@ -1,0 +1,51 @@
+.btn-twitter {
+  color: #ffffff;
+  background-color: #1DA1F2;
+  border-color: #1DA1F2;
+  box-shadow: none;
+}
+
+.btn-twitter:hover {
+  color: #ffffff;
+  background-color: #1B91D9;
+  border-color: #1B91D9;
+}
+
+.btn-facebook {
+  color: #ffffff;
+  background-color: #4267B2;
+  border-color: #4267B2;
+  box-shadow: none;
+}
+
+.btn-facebook:hover {
+  color: #ffffff;
+  background-color: #3b5998;
+  border-color: #3b5998;
+}
+
+.btn-google {
+  color: #ffffff;
+  background-color: #DB4437;
+  border-color: #DB4437;
+  box-shadow: none;
+}
+
+.btn-google:hover {
+  color: #ffffff;
+  background-color: #C93629;
+  border-color: #C93629;
+}
+
+.btn-microsoft {
+  color: #363535;
+  background-color: #FFB900;
+  border-color: #FFB900;
+  box-shadow: none;
+}
+
+.btn-microsoft:hover {
+  color: #F25022;
+  background-color: #fff;
+  border-color: #F25022;
+}
