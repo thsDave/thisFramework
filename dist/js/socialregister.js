@@ -1,26 +1,29 @@
-import {data, url, sweet} from './socialconfig.js';
+import {social_data, register} from './config.js';
 
-firebase.initializeApp(data);
+firebase.initializeApp(social_data);
 firebase.analytics();
 
 const auth = firebase.auth();
+
+var Toast = Swal.mixin({
+	toast: false,
+	position: 'center',
+	showConfirmButton: true
+});
 
 if (document.getElementById('fb')) {
 	document.getElementById('fb').addEventListener('click', () => {
 	    let provider = new firebase.auth.FacebookAuthProvider();
 	    auth.signInWithPopup(provider)
 	    .then((result) => {
-	        let user = result.user;
-		    let route = "fireregister=&name="+user.providerData[0].displayName+"&email="+user.providerData[0].email;
-			$.ajax({
-				type: 'post',
-				url: 'external_data',
-				data: route
-			}).done((res) => {
-				sweet(res);
-			});
+	        register(result);
 	    }).catch(function (error) {
-	        console.log(error);
+	        Toast.fire({
+				icon: 'error',
+				title: '😦 Usuario no registrado!! 😞',
+				text: 'Lo sentimos, por el momento intenta usar nuestro formulario de registro.',
+				confirmButtonText: `Ok! 👍`
+			});
 	    });
 	});
 }
@@ -30,18 +33,15 @@ if (document.getElementById('gl')) {
 		let provider = new firebase.auth.GoogleAuthProvider();
 		auth.signInWithPopup(provider)
 		.then((result) => {
-		    let user = result.user;
-		    let route = "fireregister=&name="+user.providerData[0].displayName+"&email="+user.providerData[0].email;
-			$.ajax({
-				type: 'post',
-				url: 'external_data',
-				data: route
-			}).done((res) => {
-				sweet(res);
-			});
+		    register(result);
 		}).catch((error)=>{
-		  	console.log(error);
-		  });
+			Toast.fire({
+				icon: 'error',
+				title: '😦 Usuario no registrado!! 😞',
+				text: 'Lo sentimos, por el momento intenta usar nuestro formulario de registro.',
+				confirmButtonText: `Ok! 👍`
+			});
+		});
 	});
 }
 
@@ -50,18 +50,15 @@ if (document.getElementById('tw')) {
 		let provider = new firebase.auth.TwitterAuthProvider();
 		auth.signInWithPopup(provider)
 		.then((result) => {
-		    let user = result.user;
-		    let route = "fireregister=&name="+user.providerData[0].displayName+"&email="+user.providerData[0].email;
-			$.ajax({
-				type: 'post',
-				url: 'external_data',
-				data: route
-			}).done((res) => {
-				sweet(res);
-			});
+		    register(result);
 		}).catch((error)=>{
-		  	console.log(error);
-		  });
+			Toast.fire({
+				icon: 'error',
+				title: '😦 Usuario no registrado!! 😞',
+				text: 'Lo sentimos, por el momento intenta usar nuestro formulario de registro.',
+				confirmButtonText: `Ok! 👍`
+			});
+		});
 	});
 }
 
@@ -70,18 +67,14 @@ if (document.getElementById('ms')) {
 	    let provider = new firebase.auth.OAuthProvider('microsoft.com');
 	    auth.signInWithPopup(provider)
 	    .then((result) => {
-	        let user = result.user;
-	        console.log(user);
-		    let route = "fireregister=&name="+user.providerData[0].displayName+"&email="+user.providerData[0].email;
-			$.ajax({
-				type: 'post',
-				url: 'external_data',
-				data: route
-			}).done((res) => {
-				sweet(res);
-			});
+	        register(result);
 	    }).catch(function (error) {
-	        console.log(error);
+	        Toast.fire({
+				icon: 'error',
+				title: '😦 Usuario no registrado!! 😞',
+				text: 'Lo sentimos, por el momento intenta usar nuestro formulario de registro.',
+				confirmButtonText: `Ok! 👍`
+			});
 	    });
 	});
 }
@@ -91,17 +84,14 @@ if (document.getElementById('gh')) {
 	    let provider = new firebase.auth.GithubAuthProvider();
 	    auth.signInWithPopup(provider)
 	    .then((result) => {
-	        let user = result.user;
-		    let route = "fireregister=&name="+user.providerData[0].displayName+"&email="+user.providerData[0].email;
-			$.ajax({
-				type: 'post',
-				url: 'external_data',
-				data: route
-			}).done((res) => {
-				sweet(res);
-			});
+	        register(result);
 	    }).catch(function (error) {
-	        console.log(error);
+	        Toast.fire({
+				icon: 'error',
+				title: '😦 Usuario no registrado!! 😞',
+				text: 'Lo sentimos, por el momento intenta usar nuestro formulario de registro.',
+				confirmButtonText: `Ok! 👍`
+			});
 	    });
 	});
 }

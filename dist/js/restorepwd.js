@@ -1,21 +1,22 @@
-import {url} from './socialconfig.js';
-
 $('#btn_pass').click(() => {
-	var pass1 = $('#pass1').val();
-	var pass2 = $('#pass2').val();
-	var route = 'restorepwd=&pass1='+pass1+'&pass2='+pass2;
-	$.ajax({
-		type: 'post',
-		url: 'external_data',
-		data: route
+	const arr_data = new FormData();
+
+	arr_data.append('restorepwd', true);
+	arr_data.append('pass1', $('#pass1').val());
+	arr_data.append('pass2', $('#pass2').val());
+
+	fetch('external_data', {
+		method: 'POST',
+		body: arr_data
 	})
-	.done((res) => {
+	.then(res => res.json())
+	.then(data => {
 		var Toast = Swal.mixin({
 			toast: false,
 			position: 'center',
 			showConfirmButton: true
 		});
-		if (res) {
+		if (data) {
 			$('#restore-card').hide();
 			Toast.fire({
 				icon: 'success',
@@ -23,6 +24,7 @@ $('#btn_pass').click(() => {
 				text: 'Contraseña restablecida con éxito!',
 				confirmButtonText: `Iniciar sesión 👍`
 			}).then(()=>{
+				let url = window.location;
 				window.open(url+'?action=login','_self');
 			});
 		}else {

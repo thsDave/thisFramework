@@ -1,13 +1,16 @@
 function getmssg(id) {
-	var idreq = id;
-	var route = 'getsupportreq=&id='+idreq;
-	$.ajax({
-		type: 'post',
-		url: 'internal_data',
-		data: route
+
+	let arr_data = new FormData();
+
+	arr_data.append('id', id);
+	arr_data.append('getsupportreq', true);
+
+	fetch('internal_data', {
+		method: 'POST',
+		body: arr_data
 	})
-	.done((res) => {
-		let data =  JSON.parse(res);
+	.then(res => res.json())
+	.then(data => {
 		$('#modal-request').modal('show');
 		$('#name').html(data.name);
 		$('#subject').html('<strong>Asunto: </strong>'+data.subject);
@@ -18,22 +21,27 @@ function getmssg(id) {
 }
 
 $('#sendres').click(() => {
-	var id = $('#sendres').val();
-	var response = $('#response').val();
-	var route = 'savesupportres=&id='+id+'&response='+response;
-	$.ajax({
-		type: 'post',
-		url: 'internal_data',
-		data: route
+
+	let arr_dato = new FormData();
+
+	arr_dato.append('id', $('#sendres').val());
+	arr_dato.append('response', $('#response').val());
+	arr_dato.append('savesupportres', true);
+
+	var Toast = Swal.mixin({
+		toast: false,
+		position: 'center',
+		showConfirmButton: true
+	});
+
+	fetch('internal_data', {
+		method: 'POST',
+		body: arr_dato
 	})
-	.done((res) => {
+	.then(res => res.json())
+	.then(data => {
 		$('#modal-request').modal('hide');
-		var Toast = Swal.mixin({
-			toast: false,
-			position: 'center',
-			showConfirmButton: true
-		});
-		if (res) {
+		if (data) {
 			Toast.fire({
 				icon: 'success',
 				title: '😃 Success!! 🥳',

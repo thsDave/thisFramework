@@ -1,5 +1,5 @@
 $(document).ready(function () {
-	$('table.datable').DataTable({
+	$('.datable_es').DataTable({
 		"responsive": true,
 		"paging": true,
 		"lengthChange": true,
@@ -34,5 +34,42 @@ $(document).ready(function () {
 			}
 		},
 		"lengthMenu": [[5, 10, 20, 25, 50, -1], [5, 10, 20, 25, 50, "Todos"]]
+	});
+
+	$('.datable_en').DataTable({
+		"responsive": true,
+		"paging": true,
+		"lengthChange": true,
+		"searching": true,
+		"ordering": true,
+		"info": true,
+		"autoWidth": false,
+		"language":
+		{
+			"emptyTable":			"No data available in table.",
+			"info":		   			"From _START_ to _END_ of _TOTAL_ ",
+			"infoEmpty":			"Showing 0 records out of a total of 0.",
+			"infoFiltered":			"(filtered from a total of _MAX_ records)",
+			"infoPostFix":			" ",
+			"lengthMenu":			"Show &nbsp; _MENU_",
+			"loadingRecords":		"Charging...",
+			"processing":			"Processing...",
+			"search":				"Search:",
+			"searchPlaceholder":	"Data to search",
+			"zeroRecords":			"No matches found.",
+			"paginate":
+			{
+				"first":			"First",
+				"last":				"Last",
+				"next":				"Next",
+				"previous":			"Previous"
+			},
+			"aria":
+			{
+				"sortAscending":	"Ascending sort",
+				"sortDescending":	"Descending sort"
+			}
+		},
+		"lengthMenu": [[5, 10, 20, 25, 50, -1], [5, 10, 20, 25, 50, "All"]]
 	});
 });

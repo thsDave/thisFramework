@@ -1,12 +1,19 @@
-ErrorDocument 404 http://localhost/thisframework/404
-ErrorDocument 403 http://localhost/thisframework/404
-ErrorDocument 500 http://localhost/thisframework/500
+ErrorDocument 404 http://localhost/skeleton/404
+ErrorDocument 403 http://localhost/skeleton/404
+ErrorDocument 500 http://localhost/skeleton/500
 
 <IfModule mod_rewrite.c>
 
 	Options -Multiviews
 
 	RewriteEngine On
+
+#### start https redirect
+
+#	RewriteCond %{HTTPS} off
+#	RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+#### end https redirect
 
 	RewriteCond %{HTTP_USER_AGENT} ^BlackWidow [OR]
 	RewriteCond %{HTTP_USER_AGENT} ^Zeus
@@ -19,7 +26,19 @@ ErrorDocument 500 http://localhost/thisframework/500
 	RewriteRule ^err?$ app/config/errordocument.php
 	RewriteRule ^external_data?$ zombies/externalvals.php
 	RewriteRule ^internal_data?$ zombies/internalvals.php
-	RewriteRule ^automate?$ zombies/tasks.php
+
+#### For reports
+
+	RewriteRule ^print_report?$ reports/router.php
+
+	RewriteRule ^users_list?$ reports/pdf/users_list.php
+	RewriteRule ^support_list?$ reports/pdf/support_list.php
+
+	RewriteRule ^xls_report?$ reports/xls/print_xls.php
+
+#### For AutoTasks
+
+	RewriteRule ^cronos?$ app/tools/cronos/tasks.php
 
 #### In config
 
@@ -53,13 +72,16 @@ ErrorDocument 500 http://localhost/thisframework/500
 	RewriteRule ^app/views/master/?$ app/config/errordocument.php
 	RewriteRule ^app/views/starter/?$ app/config/errordocument.php
 
-#### In files
+#### In reports
 
-	RewriteRule ^files/?$ app/config/errordocument.php
+	RewriteRule ^reports/?$ app/config/errordocument.php
 
 #### In zombies
 
 	RewriteRule ^zombies/?$ app/config/errordocument.php
+	RewriteRule ^zombies/pdfiles/?$ app/config/errordocument.php
+	RewriteRule ^zombies/files/?$ app/config/errordocument.php
+	RewriteRule ^zombies/files/undefined/?$ app/config/errordocument.php
 
 #### In dist
 

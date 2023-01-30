@@ -1,187 +1,224 @@
 <?php require_once APP . "/views/master/header.php"; ?>
 
-<?php require_once APP."/views/master/{$_SESSION['log']['level']}-nav.php"; ?>
+<?php require_once APP."/views/master/{$_SESSION['session_appname']['level']}_nav.php"; ?>
 
 <?php $disabled = (isset($_SESSION['updateInfoUser'])) ? '' : 'disabled'; ?>
+<?php $fotos = $model->thumbnail_profile(); ?>
+<?php $lvl = $model->level_list(); ?>
+<?php $countries = $model->countries_list(); ?>
+<?php $langs = $model->language_list(); ?>
 
-<!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
-  <!-- Content Header (Page header) -->
   <section class="content-header">
     <div class="container-fluid">
       <div class="row mb-2">
         <div class="col-sm-6">
-          <h1>Mi usuario</h1>
+          <h1><i class="fa-solid fa-child-reaching fa-xs"></i> <?= LANG['profile_myuser'] ?></h1>
         </div>
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-right">
-            <li class="breadcrumb-item"><a href="<?= URL ?>?req=home">Inicio</a></li>
-            <li class="breadcrumb-item active">Mi usuario</li>
+            <li class="breadcrumb-item"><a href="<?= URL ?>?req=home"><?= LANG['home'] ?></a></li>
+            <li class="breadcrumb-item active"><?= LANG['profile_myuser'] ?></li>
           </ol>
         </div>
       </div>
-    </div><!-- /.container-fluid -->
+    </div>
   </section>
 
-  <!-- Main content -->
   <section class="content">
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-3">
 
-          <!-- Profile Image -->
           <div class="card card-dark card-outline">
             <div class="card-body box-profile">
               <div class="text-center">
-                <img class="profile-user-img img-fluid img-circle" src="data:image/png;base64,<?= $_SESSION['log']['pic'] ?>" alt="User profile picture">
+                <img class="profile-user-img img-fluid img-circle" src="data:image/png;base64,<?= $_SESSION['session_appname']['pic'] ?>" alt="User profile picture" data-toggle="modal" data-target="#picProfile" style="cursor: pointer;">
               </div>
 
-              <h3 class="profile-username text-center"><?= $_SESSION['log']['name'] ?></h3>
+              <h3 class="profile-username text-center"><?= $_SESSION['session_appname']['name'] ?></h3>
 
               <ul class="list-group list-group-unbordered mb-3">
                 <li class="list-group-item">
-                  <b>Cargo</b> <br>
-                  <a class="float-left"><?= $_SESSION['log']['position'] ?></a>
+                  <b><?= LANG['profile_email'] ?></b><br>
+                  <a class="float-left"><?= $_SESSION['session_appname']['email'] ?></a>
                 </li>
                 <li class="list-group-item">
-                  <b>Tipo de acceso</b> <br>
-                  <a class="float-left"><?= $_SESSION['log']['level'] ?></a>
+                  <b><?= LANG['profile_level'] ?></b><br>
+                  <a class="float-left"><?= $_SESSION['session_appname']['alias'] ?></a>
                 </li>
               </ul>
-              <?php if (!isset($_SESSION['updateInfoUser'])) : ?>
-                <a href="<?= URL ?>?event=upInfo&val=on" class="btn btn-dark btn-block">Actualizar información</a>
-              <?php else : ?>
-                <a href="<?= URL ?>?event=upInfo&val=off" class="btn btn-danger btn-block">Finalizar edición</a>
-              <?php endif ?>
             </div>
-            <!-- /.card-body -->
           </div>
-          <!-- /.card -->
         </div>
-        <!-- /.col -->
         <div class="col-md-9">
-          <div class="card">
+          <div class="card card-dark card-outline">
             <div class="card-header p-2">
               <ul class="nav nav-pills">
-                <li class="nav-item"><a class="nav-link active" href="#settings" data-toggle="tab">Información</a></li>
-                <li class="nav-item"><a class="nav-link" href="#access" data-toggle="tab">Acceso</a></li>
+                <li class="nav-item"><a class="nav-link" href="#info" id="profile-info-tab" data-toggle="tab"><?= LANG['profile_tab_info'] ?></a></li>
+                <li class="nav-item"><a class="nav-link" href="#access" id="profile-access-tab" data-toggle="tab"><?= LANG['profile_tab_access'] ?></a></li>
               </ul>
-            </div><!-- /.card-header -->
+            </div>
             <div class="card-body">
               <div class="tab-content">
-                <div class="active tab-pane" id="settings">
-                  <form class="form-horizontal">
+                <div class="active tab-pane" id="info">
+
+                  <form id="profile_form">
                     <div class="form-group row">
-                      <label for="name" class="col-sm-2 col-form-label">Nombre</label>
+                      <label for="name" class="col-sm-2 col-form-label"><?= LANG['profile_name'] ?></label>
                       <div class="col-sm-10">
-                        <input type="text" class="form-control" name="name" id="name" value="<?= $_SESSION['log']['name'] ?>" placeholder="Ingresa aquí tu primer nombre" <?= $disabled ?> autofocus>
+                        <input type="text" class="form-control" id="name" name="name" value="<?= $_SESSION['session_appname']['name'] ?>" placeholder="<?= LANG['profile_name'] ?>" <?= $disabled ?> autofocus>
                       </div>
                     </div>
                     <div class="form-group row">
-                      <label for="position" class="col-sm-2 col-form-label">Cargo</label>
+                      <label for="country" class="col-sm-2 col-form-label"><?= LANG['profile_country'] ?></label>
                       <div class="col-sm-10">
-                        <input type="text" class="form-control" name="position" id="position" value="<?= $_SESSION['log']['position'] ?>" placeholder="Cargo" <?= $disabled ?>>
+                        <select name="country" id="region" class="form-control select2" <?= $disabled ?>>
+                          <?php foreach ($countries['idcountry'] as $key => $val): ?>
+                            <?php $selected = ($countries['idcountry'][$key] == $_SESSION['session_appname']['idcountry']) ? 'selected' : ''; ?>
+                            <option value="<?= $val ?>" <?= $selected ?>><?= $countries['country'][$key] ?></option>
+                          <?php endforeach ?>
+                        </select>
                       </div>
                     </div>
                     <div class="form-group row">
-                      <label for="customFile" class="col-sm-2 col-form-label">Imagen de perfil</label>
+                      <label for="language" class="col-sm-2 col-form-label"><?= LANG['profile_lang'] ?></label>
                       <div class="col-sm-10">
-                        <button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#picProfile"> Seleccionar imagen</button>
+                        <select id="language" name="language" class="form-control select2" <?= $disabled ?>>
+                          <?php foreach ($langs['idlang'] as $i => $val): ?>
+                            <?php $selected = ($val == $_SESSION['session_appname']['idlang']) ? 'selected' : ''; ?>
+                            <option value="<?= $val ?>" <?= $selected ?>><?= $langs['language'][$i] ?></option>
+                          <?php endforeach ?>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-group row mt-4">
+                      <div class="col-12">
                         <?php if (isset($_SESSION['updateInfoUser'])) : ?>
-                          <button type="button" id="updtUser" class="btn btn-success float-right">Guardar cambios</button>
+                          <button type="submit" class="btn btn-sm btn-success"><?= LANG['profile_update_button'] ?></button>
+                          <a href="<?= URL ?>?event=upInfo&val=off" class="btn btn-sm btn-danger float-right"><?= LANG['profile_finish_button'] ?></a>
+                        <?php else: ?>
+                          <a href="<?= URL ?>?event=upInfo&val=on" class="btn btn-sm btn-info"><?= LANG['profile_update_button'] ?></a>
                         <?php endif ?>
                       </div>
                     </div>
                   </form>
+
                 </div>
-                <!-- /. Settings -->
 
                 <div class="tab-pane" id="access">
-                  <form class="form-horizontal">
-                    <div class="form-group row">
-                      <label for="inputName" class="col-sm-2 col-form-label">Cuenta</label>
-                      <div class="col-sm-10">
-                        <input type="email" class="form-control" id="inputName" value="<?= $_SESSION['log']['email'] ?>" disabled="true">
-                      </div>
+
+                  <div class="row">
+                    <div class="col-12">
+                      <form class="form-horizontal">
+                        <div class="form-group row">
+                          <label for="inputName" class="col-sm-2 col-form-label"><?= LANG['profile_account'] ?></label>
+                          <div class="col-sm-10">
+                            <input type="email" class="form-control" id="inputName" value="<?= $_SESSION['session_appname']['email'] ?>" disabled="true">
+                          </div>
+                        </div>
+                      </form>
                     </div>
-                    <div class="form-group row">
-                      <div class="offset-sm-2 col-sm-10">
-                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modal_pwd">
-                          <i class="fas fa-key"></i> Actualizar contraseña
-                        </button>
-                      </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12">
+                      <button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#modal_pwd">
+                        <i class="fas fa-key"></i> <?= LANG['profile_update_button'] ?>
+                      </button>
                     </div>
-                  </form>
+                  </div>
+
                 </div>
-                <!-- /.tab-pane -->
               </div>
-              <!-- /.tab-content -->
-            </div><!-- /.card-body -->
+            </div>
           </div>
-          <!-- /.nav-tabs-custom -->
         </div>
-        <!-- /.col -->
       </div>
-      <!-- /.row -->
-    </div><!-- /.container-fluid -->
+    </div>
   </section>
-  <!-- /.content -->
 </div>
-<!-- /.content-wrapper -->
 
 <div class="modal fade" id="modal_pwd">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title"><i class="fas fa-key"></i> Actualizar contraseña</h4>
+        <h4 class="modal-title"><i class="fas fa-key"></i> <?= LANG['profile_pass_title'] ?></h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
         <div class="card-body">
-          <div class="form-group">
-            <label for="currentPass">Contraseña actual</label>
-            <input type="password" class="form-control" id="currentPass" placeholder="Password" required autofocus>
-          </div>
-          <div class="form-group">
-            <label for="pass1">Nueva contraseña</label>
-            <input type="password" class="form-control" id="pass1" placeholder="Password" onkeyup="validapass1()" required>
-            <small id="mnsj" class="form-text text-muted"></small>
-          </div>
-          <div class="form-group">
-            <label for="pass2">Repita su contraseña</label>
-            <input type="password" class="form-control" id="pass2" placeholder="Password" onkeyup="validapass2()" required>
-            <small id="mnsj2" class="form-text text-muted"></small>
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <button type="button" class="btn btn-default float-left" data-dismiss="modal">Cerrar</button>
-              <button type="button" class="btn btn-dark float-right" value="updtpwd" id="btn_pass">Restablecer contraseña</button>
+          <form id="password-form">
+            <div class="form-group">
+              <label for="curpass"><?= LANG['profile_curpass'] ?></label>
+              <input type="password" class="form-control" name="curpass" id="curpass" placeholder="Contraseña actual" required>
+              <small id="mnsj" class="form-text text-muted"><?= LANG['pass_mnsj'] ?></small>
             </div>
-          </div>
+            <div class="form-group">
+              <label for="pass1"><?= LANG['newuser_pass'] ?></label>
+              <input type="password" class="form-control" name="pass1" id="pass1" placeholder="<?= LANG['newuser_pass'] ?>" required>
+              <small id="mnsj1" class="form-text text-muted"></small>
+            </div>
+            <div class="form-group">
+              <label for="pass2"><?= LANG['newuser_pass2'] ?></label>
+              <input type="password" class="form-control" name="pass2" id="pass2" placeholder="<?= LANG['newuser_pass2'] ?>" required>
+              <small id="mnsj2" class="form-text text-muted"></small>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <button type="button" class="btn btn-default float-left" data-dismiss="modal"><?= LANG['close_button'] ?></button>
+                <button type="submit" class="btn btn-dark float-right" id="btn_pass"><?= LANG['profile_uppass_button'] ?></button>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
       <div class="modal-footer bg-dark justify-content-between">
       </div>
     </div>
-    <!-- /.modal-content -->
   </div>
-  <!-- /.modal-dialog -->
 </div>
-<!-- /.modal -->
 
-<?= $objHome->profilepics(); ?>
+<div class="modal fade" id="picProfile">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="fas fa-users"></i> <?= LANG['profile_select_image'] ?></h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-borderless">
+          <tbody>
+            <?php $r = round(count($fotos['id']) / 4); $y = 3; $x = 0; ?>
+            <?php for ($i = 0; $i <= $r; $i++): ?>
+              <tr>
+              <?php for ($j = $x; $j <= $y; $j++): ?>
+                <?php if ($j != count($fotos['id'])): ?>
+                <td>
+                  <img src="data:image/png;base64,<?= $fotos['pic'][$j] ?>" class="w-75 imgProfile" onclick="picprofile(<?= $fotos['id'][$j] ?>);" style="cursor: pointer;">
+                </td>
+                <?php else: ?>
+                <?php break; ?>
+                <?php endif ?>
+              <?php endfor ?>
+              </tr>
+              <?php $x = $j; $y += ($i == $r) ? 3 : 4; ?>
+            <?php endfor ?>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer bg-dark justify-content-between">
+      </div>
+    </div>
+  </div>
+</div>
 
-<!-- REQUIRED SCRIPTS -->
 
 <?php require_once APP . "/views/master/footer_js.php"; ?>
 
-<script src="dist/js/pwdvalidate.js"></script>
-<script src="dist/js/updtpwd.js"></script>
-<script>
-<?php $objController->sweetAlert('updtUser', ['name', 'position'], 'Información actualizada', 'Usuario no actualizado', 'internal'); ?>
-</script>
-
+<script src="dist/js/profile.js" type="module"></script>
 
 <?php require_once APP . "/views/master/footer_end.php"; ?>

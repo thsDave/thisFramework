@@ -1,121 +1,154 @@
-$(document).ready(function () {
+import {str_check, mail_check} from './config.js';
 
-	$("#name").keyup(function() {
-		var name = $("#name").val();
-		var route = "register=&name="+name;
-		$.ajax({
-			type: 'post',
-			url: 'external_data',
-			data: route
-		}).done(function(res){
-			if (res) {
-				$("#name").removeClass('is-invalid');
-				$("#name").addClass('is-valid');
-			}else {
-				$("#name").removeClass('is-valid');
-				$("#name").addClass('is-invalid');
-			}
-		});
-	});
+var form = document.getElementById('register-form');
 
-	$("#position").keyup(function() {
-		var position = $("#position").val();
-		var route = "register=&position="+position;
-		$.ajax({
-			type: 'post',
-			url: 'external_data',
-			data: route
-		}).done(function(res){
-			if (res) {
-				$("#position").removeClass('is-invalid');
-				$("#position").addClass('is-valid');
-			}else {
-				$("#position").removeClass('is-valid');
-				$("#position").addClass('is-invalid');
-			}
-		});
-	});
+var	campos = {
+	nombre: false,
+	email: false,
+	email2: false
+}
 
-	$("#email").keyup(function() {
-		var email = $("#email").val();
-		var route = "register=&email="+email;
-		$.ajax({
-			type: 'post',
-			url: 'external_data',
-			data: route
-		}).done(function(res){
-			if (res) {
-				$("#email").removeClass('is-invalid');
-				$("#email").addClass('is-valid');
-			}else {
-				$("#email").removeClass('is-valid');
-				$("#email").addClass('is-invalid');
-			}
-		});
-	});
+const validateform = () => {
+	let res = true;
+	let btn = document.getElementById('btn_register');
 
-	$("#email2").keyup(function() {
-		var email2 = $("#email2").val();
-		var route = "register=&email2="+email2;
-		$.ajax({
-			type: 'post',
-			url: 'external_data',
-			data: route
-		}).done(function(res){
-			if (res) {
-				$("#email2").removeClass('is-invalid');
-				$("#email2").addClass('is-valid');
-			}else {
-				$("#email2").removeClass('is-valid');
-				$("#email2").addClass('is-invalid');
-			}
-		});
-	});
+	for (var val in campos) {
+	    if (!campos[val]) {
+	    	res = false;
+	    	break;
+	    }
+	}
 
-	$('#newregister').click(() => {
-		var name = $('#name').val();
-		var position = $('#position').val();
-		var email = $('#email').val();
-		var email2 = $('#email2').val();
-		var route = 'newregister=&name='+name+'&position='+position+'&email='+email+'&email2='+email2;
-		$.ajax({
-			type: 'post',
-			url: 'external_data',
-			data: route
+	if (res)
+		btn.disabled = false;
+	else
+		btn.disabled = true;
+}
+
+$("#name").keyup(() => {
+
+	let name = document.getElementById('name').value;
+
+	if (str_check(name.trim()))
+	{
+		$("#name").removeClass('is-invalid');
+		$("#name").addClass('is-valid');
+		campos.nombre = true;
+	}
+	else
+	{
+		$("#name").removeClass('is-valid');
+		$("#name").addClass('is-invalid');
+		campos.nombre = false;
+	}
+
+	validateform();
+});
+
+$("#email").keyup(() => {
+
+	let email = document.getElementById('email').value;
+
+	if (mail_check(email.trim()))
+	{
+		$("#email").removeClass('is-invalid');
+		$("#email").addClass('is-valid');
+		campos.email = true;
+	}
+	else
+	{
+		$("#email").removeClass('is-valid');
+		$("#email").addClass('is-invalid');
+		campos.email = false;
+	}
+
+	validateform();
+});
+
+$("#email2").keyup(() => {
+
+	let email2 = document.getElementById('email2').value;
+
+	if (mail_check(email2.trim()))
+	{
+		let email = document.getElementById('email').value;
+		let email2 = document.getElementById('email2').value;
+
+		if (email === email2)
+		{
+			$("#email2").removeClass('is-invalid');
+			$("#email2").addClass('is-valid');
+			campos.email2 = true;
+		}
+		else
+		{
+			$("#email2").removeClass('is-valid');
+			$("#email2").addClass('is-invalid');
+			campos.email2 = false
+		}
+	}
+	else
+	{
+		$("#email2").removeClass('is-valid');
+		$("#email2").addClass('is-invalid');
+		campos.email2 = false;
+	}
+
+	validateform();
+});
+
+form.addEventListener('submit', async (e) => {
+
+	e.preventDefault();
+
+	let arr_data = new FormData(form);
+
+	arr_data.append('newregister', true);
+
+	Swal.fire({
+        title: '✍️ Iniciando registro 👌',
+        html: 'Estamos registrando tus datos en nuestra base de datos, por favor no cierres la ventana del navegador.',
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    const result = await fetch('external_data', {
+        method: 'POST',
+        body: arr_data
+    })
+    .then(res => res.json())
+    .then(data => {
+        return data;
+    });
+
+	if (result) {
+		Swal.fire({
+			icon: 'success',
+			title: '😃 Usuario registrado!! 🥳',
+			text: 'Te hemos enviado un correo electrónico con los ultimos pasos de registro.',
+			confirmButtonText: `De acuerdo! 👍`
 		})
-		.done((res) => {
-			var Toast = Swal.mixin({
-				toast: false,
-				position: 'center',
-				showConfirmButton: true
-			});
-			if (res) {
-				Toast.fire({
-					icon: 'success',
-					title: '😃 Usuario registrado!! 🥳',
-					text: 'Te hemos enviado un mail para que nos confirmes tu cuenta de correo.',
-					confirmButtonText: `De acuerdo! 👍`
-				});
-			}else {
-				Toast.fire({
-					icon: 'error',
-					title: '😦 Usuario no registrado!! 😞',
-					text: '¿Ya estas registrado con nosotros? intenta restablecer tu contraseña o verifica los datos y vuelve a intentarlo',
-					confirmButtonText: `Ok! 👍`
-				});
-			}
-			$('#name').val('');
-			$('#position').val('');
-			$('#email').val('');
-			$('#email2').val('');
-			$('#name').removeClass('is-valid');
-			$('#position').removeClass('is-valid');
-			$('#email').removeClass('is-valid');
-			$('#email2').removeClass('is-valid');
-			$('#name').removeClass('is-invalid');
-			$('#position').removeClass('is-invalid');
-			$('#email').removeClass('is-invalid');
-			$('#email2').removeClass('is-invalid');
+		.then(() => {
+			let url = window.location;
+			window.open(url+'?action=login','_self');
 		});
-	});
+	}else {
+		Swal.fire({
+			icon: 'error',
+			title: '😦 Usuario no registrado!! 😞',
+			text: '¿Ya estas registrado con nosotros? intenta restablecer tu contraseña o verifica los datos y vuelve a intentarlo',
+			confirmButtonText: `Ok! 👍`
+		});
+	}
+
+	$('#name').val('');
+	$('#email').val('');
+	$('#email2').val('');
+	$('#name').removeClass('is-valid');
+	$('#email').removeClass('is-valid');
+	$('#email2').removeClass('is-valid');
+	$('#name').removeClass('is-invalid');
+	$('#email').removeClass('is-invalid');
+	$('#email2').removeClass('is-invalid');
 });
