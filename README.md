@@ -12,4 +12,4 @@ Si conoces buenas prácticas de desarrollo y encuentras uno o muchos bugs, error
 
 ## License 📑
 
-thisFramework is open source software under the GPL v3.0 license. Please see full terms in the [LICENSE](LICENSE) file.
+Skeleton is open source software under the GPL v3.0 license. Please see full terms in the [LICENSE](LICENSE) file.
