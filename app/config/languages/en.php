@@ -175,6 +175,10 @@ const LANG = [
 
     'support_subject' => 'Subject',
 
+    'support_send' => 'Send message',
+
+    'support_history' => 'Message history',
+
     /*** INFO
 	**************************************************/
 

@@ -35,6 +35,9 @@ class Model extends Connection
     public function new_user($arr_data)
     {
         $arr_data['password'] = password_hash($arr_data['pass'], PASSWORD_DEFAULT, ['cost' => 10]);
+
+        unset($arr_data['pass']);
+
         return $this->pst("CALL sp_newuser(:name, :email, :password, :lang, :level, :country)", $arr_data, false);
     }
 
@@ -530,7 +533,7 @@ class Model extends Connection
             'token' => $token
         ];
 
-		return $this->pst("INSERT INTO tbl_cookies VALUES (:email, :pass, :token)", $arr_data, false);
+		return $this->pst("INSERT INTO tbl_cookies VALUES (:email, :pass, :token, NOW())", $arr_data, false);
 	}
 
 	public function get_cookie_token($token)

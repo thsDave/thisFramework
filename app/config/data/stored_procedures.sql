@@ -39,7 +39,8 @@ BEGIN
         e.status,
         u.idstatus,
         u.idcountry,
-        c.country
+        c.country,
+        u.timestamp
 	FROM
 		tbl_users u
 	INNER JOIN
@@ -103,7 +104,8 @@ BEGIN
         u.registertype,
         s.status,
         c.idcountry,
-        c.country
+        c.country,
+        u.timestamp
 	FROM
 		tbl_users u
 	INNER JOIN
@@ -136,7 +138,7 @@ BEGIN
 	INSERT INTO
 		`tbl_users`
 	VALUES
-		(NULL, _name, _level, _email, _pass, NULL, NULL, _accesstype, _mailregister, 0, _lang, 1, _status, _country);
+		(NULL, _name, _level, _email, _pass, NULL, NULL, _accesstype, _mailregister, 0, _lang, 1, _status, _country, NOW());
 END //
 
 
@@ -154,7 +156,7 @@ BEGIN
 	INSERT INTO
 		`tbl_users`
 	VALUES
-		(NULL, _name, _level, _email, _pass, NULL, NULL, 'form', 1, 0, _lang, 1, 1, _country);
+		(NULL, _name, _level, _email, _pass, NULL, NULL, 'form', 1, 0, _lang, 1, 1, _country, NOW());
 END //
 
 
@@ -166,7 +168,7 @@ CREATE PROCEDURE sp_supportrequest(
     _mssg		VARCHAR(2000)
 )
 BEGIN
-	INSERT INTO tbl_supports VALUES (NULL, _iduser, _subject, _mssg, '', 0, 3);
+	INSERT INTO tbl_supports VALUES (NULL, _iduser, _subject, _mssg, '', 0, 3, NOW());
 END //
 
 
@@ -183,7 +185,8 @@ BEGIN
 		s.mssg,
 		s.response,
 		s.idstatus,
-		e.status
+		e.status,
+		s.timestamp
 	FROM
 		tbl_supports s
 	INNER JOIN

@@ -239,7 +239,7 @@ form.addEventListener('submit', async (e) => {
 		});
 	}
 
-	document.getElementById('register-form').reset();
+	form.reset();
 
 	$('#name').removeClass('is-valid');
 	$('#email').removeClass('is-valid');

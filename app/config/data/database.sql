@@ -20,7 +20,8 @@
 
 CREATE TABLE IF NOT EXISTS tbl_status(
 	idstatus 	INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	status 		VARCHAR(25) NOT NULL
+	status 		VARCHAR(25) NOT NULL,
+	timestamp DATETIME NOT NULL DEFAULT NOW()
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -32,6 +33,7 @@ CREATE TABLE IF NOT EXISTS tbl_countries(
 	badge 		VARCHAR(35) NOT NULL,
 	isocode 	VARCHAR(5) NOT NULL,
 	idstatus  INT NOT NULL,
+	timestamp DATETIME NOT NULL DEFAULT NOW(),
 
 	CONSTRAINT FK_countries_idstatus FOREIGN KEY (idstatus) REFERENCES tbl_status (idstatus)
 
@@ -43,7 +45,8 @@ CREATE TABLE IF NOT EXISTS tbl_countries(
 CREATE TABLE IF NOT EXISTS tbl_levels(
   idlvl 	INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   level 	VARCHAR(10) NULL,
-  alias		VARCHAR(30) NULL
+  alias		VARCHAR(30) NULL,
+  timestamp DATETIME NOT NULL DEFAULT NOW()
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -65,6 +68,7 @@ CREATE TABLE IF NOT EXISTS tbl_languages(
 	lancode		VARCHAR(3) NOT NULL,
 	lanicon 	VARCHAR(15) NOT NULL,
 	idstatus  INT NOT NULL,
+	timestamp DATETIME NOT NULL DEFAULT NOW(),
 
 	CONSTRAINT FK_languages_idstatus FOREIGN KEY (idstatus) REFERENCES tbl_status (idstatus)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -87,6 +91,7 @@ CREATE TABLE IF NOT EXISTS tbl_users(
   idpic					INT NOT NULL DEFAULT 1,
   idstatus			INT NOT NULL,
   idcountry 		INT NOT NULL,
+  timestamp 		DATETIME NOT NULL DEFAULT NOW(),
 
 	CONSTRAINT FK_users_idlvl FOREIGN KEY (idlvl) REFERENCES tbl_levels (idlvl),
 	CONSTRAINT FK_users_idlang FOREIGN KEY (idlang) REFERENCES tbl_languages (idlang),
@@ -100,9 +105,10 @@ CREATE TABLE IF NOT EXISTS tbl_users(
 /*TABLA Cookies*/
 
 CREATE TABLE IF NOT EXISTS tbl_cookies(
-	email			VARCHAR(60) NOT NULL,
-	pass			VARCHAR(60) NOT NULL,
-  sessiontoken	VARCHAR(125) NOT NULL
+	email					VARCHAR(60) NOT NULL,
+	pass					VARCHAR(60) NOT NULL,
+  sessiontoken	VARCHAR(125) NOT NULL,
+  timestamp 		DATETIME NOT NULL DEFAULT NOW()
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -116,6 +122,7 @@ CREATE TABLE IF NOT EXISTS tbl_supports(
   response	VARCHAR(2000) NOT NULL,
   sendmail	BOOLEAN NOT NULL,
   idstatus 	INT NOT NULL,
+  timestamp DATETIME NOT NULL DEFAULT NOW(),
 
   CONSTRAINT FK_supports_iduser FOREIGN KEY (iduser) REFERENCES tbl_users (iduser) ON DELETE CASCADE,
   CONSTRAINT FK_supports_idstatus FOREIGN KEY (idstatus) REFERENCES tbl_status (idstatus)
@@ -150,6 +157,7 @@ CREATE TABLE IF NOT EXISTS tbl_logscron(
 	idlog			INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   idstatus 	INT NOT NULL,
   message		VARCHAR(100) NOT NULL,
+  timestamp DATETIME NOT NULL DEFAULT NOW(),
 
   CONSTRAINT FK_logscron_idstatus FOREIGN KEY (idstatus) REFERENCES tbl_status (idstatus)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
