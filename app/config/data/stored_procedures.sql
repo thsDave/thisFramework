@@ -36,6 +36,7 @@ BEGIN
         i.lancode,
         i.lanicon,
         p.picture,
+        e.btbadge,
         e.status,
         u.idstatus,
         u.idcountry,
@@ -102,6 +103,7 @@ BEGIN
         n.level,
         n.alias,
         u.registertype,
+        s.btbadge,
         s.status,
         c.idcountry,
         c.country,
@@ -185,6 +187,7 @@ BEGIN
 		s.mssg,
 		s.response,
 		s.idstatus,
+		e.btbadge,
 		e.status,
 		s.timestamp
 	FROM

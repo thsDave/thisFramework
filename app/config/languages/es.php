@@ -18,27 +18,39 @@ const LANG = [
 	/*** NAVBARS
 	************************************/
 
-	'nav1' => 'Inicio',
+	'nav_home' => 'Inicio',
 
-	'nav2' => 'Usuarios',
+	'nav_users' => 'Usuarios',
 
-	'nav3' => 'Nuevo usuario',
+	'nav_newuser' => 'Nuevo usuario',
 
-	'nav4' => 'Usuarios',
+    'nav_reports' => 'Reportes',
 
-    'nav5' => 'Reportes',
+	'nav_database' => 'Database',
 
-	'nav6' => 'Otros',
+	'nav_cookies' => 'tbl_cookies',
 
-	'nav7' => 'Paises',
+	'nav_countries' => 'tbl_countries',
 
-	'nav8' => 'Idiomas',
+	'nav_languages' => 'tbl_languages',
 
-	'nav9' => 'Mi usuario',
+	'nav_levels' => 'tbl_levels',
 
-	'nav10' => 'Registro de soportes',
+	'nav_logscron' => 'tbl_logscron',
 
-	'nav11' => 'Información',
+	'nav_records' => 'tbl_records',
+
+	'nav_profilepics' => 'tbl_profilepics',
+
+	'nav_status' => 'tbl_status',
+
+	'nav_myuser' => 'Mi usuario',
+
+	'nav_support' => 'Registro de soportes',
+
+	'nav_info' => 'Información',
+
+	'nav_others' => 'Otros',
 
 
 	/*** STARTER PAGE
@@ -245,11 +257,17 @@ const LANG = [
 
 	'field_email' => 'correo',
 
+	'field_email' => '',
+
 	'field_level' => 'nivel de usuario',
+
+	'field_idcountry' => 'idcountry',
 
 	'field_country' => 'país',
 
 	'field_status' => 'estado',
+
+	'field_timestamp' => 'marca de tiempo',
 
 	'field_actions' => 'acciones',
 

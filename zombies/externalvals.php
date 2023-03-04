@@ -36,13 +36,11 @@ if (isset($_POST['localogin']))
 
 if (isset($_POST['cookielogin']))
 {
-	$info = $model->get_cookie_token($_POST['token_login']);
+	$email = $model->get_cookie_token($_POST['token_login']);
 
-	if ($info) {
-		echo json_encode($objController->login($info['user'], 'cookie', null, null, $_POST['token_login']));
-	}else {
-		echo json_encode($info);
-	}
+	$user = (isset($_POST['user'])) ? preg_replace('([^A-Za-z0-9-_.@])', '', trim($_POST['user'])) : null;
+
+	echo ($email && $user) ? json_encode($objController->login($user, 'cookie', null, null, $_POST['token_login'])) : json_encode(false);
 }
 
 
@@ -168,7 +166,7 @@ if (isset($_POST['getusrinfo']))
 
 if (isset($_POST['restorepwd']))
 {
-	if (strlen($_POST['pass1']) >= 8 && strlen($_POST['pass2']) >= 8) {
+	if ( strlen( trim( $_POST['pass1'] ) ) >= 8 && strlen( trim( $_POST['pass2'] ) ) >= 8 ) {
 		if ($_POST['pass1'] == $_POST['pass2']) {
 			echo json_encode($objController->resetPassword($_POST['pass1']));
 		}else {

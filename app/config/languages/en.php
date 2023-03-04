@@ -18,27 +18,39 @@ const LANG = [
 	/*** NAVBARS
 	************************************/
 
-	'nav1' => 'Home',
+	'nav_home' => 'Home',
 
-	'nav2' => 'Users',
+	'nav_users' => 'Users',
 
-	'nav3' => 'New user',
+	'nav_newuser' => 'New user',
 
-	'nav4' => 'Users',
+    'nav_reports' => 'Reports',
 
-    'nav5' => 'Reports',
+	'nav_database' => 'Database',
 
-	'nav6' => 'Others',
+	'nav_cookies' => 'tbl_cookies',
 
-	'nav7' => 'Countries',
+	'nav_countries' => 'tbl_countries',
 
-	'nav8' => 'Languages',
+	'nav_languages' => 'tbl_languages',
 
-	'nav9' => 'My user',
+	'nav_levels' => 'tbl_levels',
 
-	'nav10' => 'Support registration',
+	'nav_logscron' => 'tbl_logscron',
 
-	'nav11' => 'Information',
+	'nav_records' => 'tbl_records',
+
+	'nav_profilepics' => 'tbl_profilepics',
+
+	'nav_status' => 'tbl_status',
+
+	'nav_myuser' => 'My user',
+
+	'nav_support' => 'Support registration',
+
+	'nav_info' => 'Information',
+
+	'nav_others' => 'Others',
 
 
 	/*** STARTER PAGE
@@ -247,9 +259,13 @@ const LANG = [
 
 	'field_level' => 'user level',
 
+	'field_idcountry' => 'idcountry',
+
 	'field_country' => 'country',
 
 	'field_status' => 'status',
+
+	'field_timestamp' => 'timestamp',
 
 	'field_actions' => 'actions',
 

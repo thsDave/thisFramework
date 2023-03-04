@@ -7,6 +7,8 @@ cookie_form.addEventListener('submit', (e) => {
 
 	arr_data.append('cookielogin', true);
 
+	arr_data.append('user', $('#user').val());
+
 	fetch('external_data',{
 		method: 'POST',
 		body: arr_data

@@ -5,7 +5,7 @@
             <a href="<?= URL ?>?req=home" class="nav-link">
               <i class="nav-icon fas fa-home"></i>
               <p>
-                <?= LANG['nav1'] ?>
+                <?= LANG['nav_home'] ?>
               </p>
             </a>
           </li>
@@ -13,7 +13,7 @@
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-users"></i>
               <p>
-                <?= LANG['nav2'] ?>
+                <?= LANG['nav_users'] ?>
                 <i class="right fas fa-angle-left"></i>
               </p>
             </a>
@@ -21,13 +21,13 @@
               <li class="nav-item">
                 <a href="<?= URL ?>?req=new_user" class="nav-link <?= $objHome->menu_active_class('new_user'); ?>">
                   <i class="fas fa-chevron-right nav-icon"></i>
-                  <p><?= LANG['nav3'] ?></p>
+                  <p><?= LANG['nav_newuser'] ?></p>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="<?= URL ?>?req=users" class="nav-link <?= $objHome->menu_active_class('users'); ?> <?= $objHome->menu_active_class('user_profile'); ?>">
                   <i class="fas fa-chevron-right nav-icon"></i>
-                  <p><?= LANG['nav4'] ?></p>
+                  <p><?= LANG['nav_users'] ?></p>
                 </a>
               </li>
             </ul>
@@ -36,7 +36,7 @@
             <a href="<?= URL ?>?req=reports" class="nav-link <?= $objHome->menu_active_class('reports'); ?>">
               <i class="nav-icon fa-solid fa-file-lines"></i>
               <p>
-                <?= LANG['nav5'] ?>
+                <?= LANG['nav_reports'] ?>
               </p>
             </a>
           </li>
@@ -44,7 +44,7 @@
             <a href="#" class="nav-link">
               <i class="nav-icon fab fa-buffer"></i>
               <p>
-                <?= LANG['nav6'] ?>
+                <?= LANG['nav_others'] ?>
                 <i class="right fas fa-angle-left"></i>
               </p>
             </a>
@@ -52,19 +52,19 @@
               <li class="nav-item">
                 <a href="<?= URL ?>?req=profile" class="nav-link <?= $objHome->menu_active_class('profile'); ?>">
                   <i class="fas fa-chevron-right nav-icon"></i>
-                  <p><?= LANG['nav9'] ?></p>
+                  <p><?= LANG['nav_myuser'] ?></p>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="<?= URL ?>?req=support_request" class="nav-link <?= $objHome->menu_active_class('support_request'); ?>">
                   <i class="fas fa-chevron-right nav-icon"></i>
-                  <p><?= LANG['nav10'] ?></p>
+                  <p><?= LANG['nav_support'] ?></p>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="<?= URL ?>?req=info" class="nav-link">
                   <i class="fas fa-chevron-right nav-icon"></i>
-                  <p><?= LANG['nav11'] ?></p>
+                  <p><?= LANG['nav_info'] ?></p>
                 </a>
               </li>
             </ul>

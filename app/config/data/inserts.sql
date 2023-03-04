@@ -7,16 +7,27 @@
 --
 
 INSERT INTO `tbl_status` (`idstatus`, `status`) VALUES
-(NULL, 'Activo'),
-(NULL, 'Inactivo'),
-(NULL, 'Pendiente'),
-(NULL, 'En proceso'),
-(NULL, 'Finalizado'),
-(NULL, 'Buenas condiciones'),
-(NULL, 'Perdido'),
-(NULL, 'Defectuoso'),
-(NULL, 'Vigente'),
-(NULL, 'Vencido');
+(NULL, 'Activo', '<span class="badge badge-success">Activo</span>'),
+(NULL, 'Inactivo', '<span class="badge badge-dark">Inactivo</span>'),
+(NULL, 'Pendiente', '<span class="badge badge-warning">Pendiente</span>'),
+(NULL, 'En proceso', '<span class="badge badge-primary">En proceso</span>'),
+(NULL, 'Finalizado', '<span class="badge badge-success">Finalizado</span>'),
+(NULL, 'Buenas condiciones', '<span class="badge badge-success">Buenas condiciones</span>'),
+(NULL, 'Perdido', '<span class="badge badge-info">Perdido</span>'),
+(NULL, 'Defectuoso', '<span class="badge badge-dark">Defectuoso</span>'),
+(NULL, 'Vigente', '<span class="badge badge-success">Vigente</span>'),
+(NULL, 'Vencido', '<span class="badge badge-dark">Vencido</span>'),
+(NULL, 'Eliminado', '<span class="badge badge-danger">Eliminado</span>');
+
+
+--
+-- Volcado de datos para la tabla `tbl_levels`
+--
+
+INSERT INTO `tbl_levels` (`idlvl`, `level`, `alias`) VALUES
+(NULL, 'Super', 'Administrador global'),
+(NULL, 'Admin', 'Administrador'),
+(NULL, 'Emp', 'Empleado');
 
 
 --
@@ -221,16 +232,6 @@ INSERT INTO `tbl_countries` (`idcountry`, `country`, `badge`, `isocode`, `idstat
 (NULL, 'Yibuti', 'Franco yibutiano', 'DJF', 1),
 (NULL, 'Zambia', 'Kwacha zambiano', 'ZMW', 1),
 (NULL, 'Zimbabue', 'Dólar estadounidense', 'USD', 1);
-
-
---
--- Volcado de datos para la tabla `tbl_levels`
---
-
-INSERT INTO `tbl_levels` (`idlvl`, `level`, `alias`) VALUES
-(NULL, 'Super', 'Administrador global'),
-(NULL, 'Admin', 'Administrador'),
-(NULL, 'Emp', 'Empleado');
 
 
 --

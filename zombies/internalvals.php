@@ -96,10 +96,8 @@ if (isset($_POST['newuser']))
 	$data['country'] = (isset($_POST['country'])) ? preg_replace('([^0-9])', '', trim($_POST['country'])) : null;
 	$data['lang'] = (isset($_POST['lang'])) ? preg_replace('([^0-9])', '', trim($_POST['lang'])) : null;
 	$data['level'] = (isset($_POST['level'])) ? preg_replace('([^0-9])', '', trim($_POST['level'])) : null;
-	$data['pass'] = (isset($_POST['pass1']) && !empty($_POST['pass1'])) ? $_POST['pass1'] : null;
-	$pass = (isset($_POST['pass2']) && !empty($_POST['pass2'])) ? $_POST['pass2'] : null;
-
-	$_SESSION['posts'] = $data;
+	$data['pass'] = (isset($_POST['pass1']) && !empty($_POST['pass1'])) ? trim($_POST['pass1']) : null;
+	$pass = (isset($_POST['pass2']) && !empty($_POST['pass2'])) ? trim($_POST['pass2']) : null;
 
 	if (!in_array(null, $data)) {
 		if ($data['email'] == $email && $data['pass'] == $pass) {
@@ -301,59 +299,77 @@ if (isset($_POST['savesupportres'])) {
 
 /*
 |--------------------------------------------------------------------------
-| Personalización de reportes
-|--------------------------------------------------------------------------
-|
-| Manejo de campos y presentación de tablas
-|
-|--------------------------------------------------------------------------
-| Para usuarios
+| C R U D -> tbl_users
 |--------------------------------------------------------------------------
 */
 
-if (isset($_POST['custom_table_users']))
+if (isset($_POST['crud_users']))
 {
-	if (!isset($_SESSION['custom_users_fields']))
-		$table = "<div class='alert alert-dismissible alert-dark'>".LANG['no_fields_selected']."</div>";
-	else
-		$table = $objHome->show_table_report('custom_users_fields', $sudo_m->datareport('users'));
+	$option = (isset($_POST['option'])) ? preg_replace('([^a-z])', '', trim( strtolower($_POST['option']) )) : false;
 
-	echo $table;
-}
+	switch ($option)
+	{
+		case 'read':
+			echo json_encode($model->data_table('v_users','iduser', [ '*' ]));
+		break;
 
-if (isset($_POST['add_field_users']))
-{
-	$_SESSION['custom_users_fields'][] = $_POST['add_field_users'];
-
-	echo json_encode(true);
-}
-
-if (isset($_POST['remove_field_users']))
-{
-	$key = array_search($_POST['remove_field_users'], $_SESSION['custom_users_fields']);
-
-	if ($key === 0 || $key) {
-		unset($_SESSION['custom_users_fields'][$key]);
-		echo json_encode(true);
-	}else {
-		echo json_encode(false);
+		default:
+			return false;
+		break;
 	}
-}
-
-if (isset($_POST['print_users']))
-{
-	if (isset($_SESSION['custom_users_fields']) && count($_SESSION['custom_users_fields']) > 0)
-		echo true;
-	else
-		echo false;
 }
 
 
 /*
 |--------------------------------------------------------------------------
-| Acciones para los paises
+| C R U D -> tbl_countries
 |--------------------------------------------------------------------------
 */
+
+if (isset($_POST['crud_country']))
+{
+	$option = (isset($_POST['option'])) ? preg_replace('([^a-z])', '', trim( strtolower($_POST['option']) )) : false;
+
+	switch ($option)
+	{
+		case 'create':
+			$data['country'] = (isset($_POST['country'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['country'])) : null;
+			$data['badge'] = (isset($_POST['badge'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['badge'])) : null;
+			$data['isocode'] = (isset($_POST['isocode'])) ? preg_replace('([^A-Z ])', '', trim( strtoupper( $_POST['isocode'] ))) : null;
+
+			echo (!in_array(null, $data)) ? json_encode($model->new_country($data)) : json_encode(false);
+		break;
+
+		case 'read':
+			echo json_encode($model->data_table('v_countries','idcountry', [ '*' ]));
+		break;
+
+		case 'update':
+			$data['country'] = (isset($_POST['country'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['country'])) : null;
+			$data['badge'] = (isset($_POST['badge'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['badge'])) : null;
+			$data['isocode'] = (isset($_POST['isocode'])) ? trim($_POST['isocode']) : null;
+			$data['id'] = (isset($_POST['idcountry'])) ? preg_replace('([^0-9])', '', trim($_POST['idcountry'])) : null;
+
+			echo (!in_array(null, $data)) ? json_encode($model->edit_country($data)) : json_encode(false);
+		break;
+
+		case 'change':
+			$data['id'] = (isset($_POST['idcountry'])) ? preg_replace('([^0-9])', '', trim($_POST['idcountry'])) : null;
+
+			echo (!is_null($data['id'])) ? json_encode($model->ch_countries_status($data)) : json_encode(false);
+		break;
+
+		case 'delete':
+			$data['id'] = (isset($_POST['idcountry'])) ? preg_replace('([^0-9])', '', trim($_POST['idcountry'])) : null;
+
+			echo (!is_null($data['id'])) ? json_encode($model->delete_country($data)) : json_encode(false);
+		break;
+
+		default:
+			return false;
+		break;
+	}
+}
 
 if (isset($_POST['infocountries']))
 {
@@ -374,66 +390,56 @@ if (isset($_POST['infocountries']))
 }
 
 
-if (isset($_POST['ch_countries_status']))
-{
-	$id = (isset($_POST['id'])) ? preg_replace('([^0-9])', '', trim($_POST['id'])) : null;
-	$status = (isset($_POST['status'])) ? preg_replace('([^0-9])', '', trim($_POST['status'])) : null;
-
-	$status = (!is_null($status)) ? ($status == 1) ? 2 : 1 : null;
-
-	$data = ['id' => $id, 'status' => $status];
-
-	if (!in_array(null, $data)) {
-		echo json_encode($model->ch_countries_status($data));
-	}else {
-		echo json_encode(false);
-	}
-}
-
-
-if (isset($_POST['new_country']))
-{
-	$country = (isset($_POST['country'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['country'])) : null;
-	$badge = (isset($_POST['badge'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['badge'])) : null;
-	$isocode = (isset($_POST['code'])) ? trim($_POST['code']) : null;
-
-	$data = [
-		'country' => $country,
-		'badge' => $badge,
-		'isocode' => $isocode
-	];
-
-	$res = (!in_array(null, $data)) ? $model->new_country($data) : false;
-
-	echo json_encode($res);
-}
-
-
-if (isset($_POST['editcountry']))
-{
-	$country = (isset($_POST['country'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['country'])) : null;
-	$badge = (isset($_POST['badge'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['badge'])) : null;
-	$isocode = (isset($_POST['code'])) ? trim($_POST['code']) : null;
-	$id = (isset($_POST['id'])) ? preg_replace('([^0-9])', '', trim($_POST['id'])) : null;
-
-	$data = [
-		'country' => $country,
-		'badge' => $badge,
-		'isocode' => $isocode,
-		'id' => $id
-	];
-
-	$res = (!in_array(null, $data)) ? $model->edit_country($data) : false;
-
-	echo json_encode($res);
-}
-
-
 /*
 |--------------------------------------------------------------------------
-| Acciones para los paises
+| C R U D -> tbl_languages
 |--------------------------------------------------------------------------
 */
+
+if (isset($_POST['crud_language']))
+{
+	$option = (isset($_POST['option'])) ? preg_replace('([^a-z])', '', trim( strtolower($_POST['option']) )) : false;
+
+	switch ($option)
+	{
+		case 'create':
+			$data['language'] = (isset($_POST['language'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['language'])) : null;
+			$data['lancode'] = (isset($_POST['lancode'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['lancode'])) : null;
+			$data['lanicon'] = (isset($_POST['lanicon'])) ? preg_replace('([^A-Za-z-])', '', trim($_POST['lanicon'])) : null;
+
+			echo (!in_array(null, $data)) ? json_encode($model->new_language($data)) : json_encode(false);
+		break;
+
+		case 'read':
+			echo json_encode($model->data_table('v_languages','idlang', [ '*' ]));
+		break;
+
+		case 'update':
+			$data['language'] = (isset($_POST['language'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['language'])) : null;
+			$data['lancode'] = (isset($_POST['lancode'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['lancode'])) : null;
+			$data['lanicon'] = (isset($_POST['lanicon'])) ? preg_replace('([^A-Za-z-])', '', trim($_POST['lanicon'])) : null;
+			$data['id'] = (isset($_POST['idlang'])) ? preg_replace('([^0-9])', '', trim($_POST['idlang'])) : null;
+
+			echo (!in_array(null, $data)) ? json_encode($model->edit_language($data)) : json_encode(false);
+		break;
+
+		case 'change':
+			$data['id'] = (isset($_POST['idlang'])) ? preg_replace('([^0-9])', '', trim($_POST['idlang'])) : null;
+
+			echo (!is_null($data['id'])) ? json_encode($model->ch_language_status($data)) : json_encode(false);
+		break;
+
+		case 'delete':
+			$data['id'] = (isset($_POST['idlang'])) ? preg_replace('([^0-9])', '', trim($_POST['idlang'])) : null;
+
+			echo (!is_null($data['id'])) ? json_encode($model->delete_language($data)) : json_encode(false);
+		break;
+
+		default:
+			return false;
+		break;
+	}
+}
 
 if (isset($_POST['infolanguage']))
 {
@@ -451,61 +457,6 @@ if (isset($_POST['infolanguage']))
 	];
 
 	echo json_encode($data);
-}
-
-
-if (isset($_POST['ch_language_status']))
-{
-	$id = (isset($_POST['id'])) ? preg_replace('([^0-9])', '', trim($_POST['id'])) : null;
-	$status = (isset($_POST['status'])) ? preg_replace('([^0-9])', '', trim($_POST['status'])) : null;
-
-	$status = (!is_null($status)) ? ($status == 1) ? 2 : 1 : null;
-
-	$data = ['id' => $id, 'status' => $status];
-
-	if (!in_array(null, $data)) {
-		echo json_encode($model->ch_language_status($data));
-	}else {
-		echo json_encode(false);
-	}
-}
-
-
-if (isset($_POST['new_language']))
-{
-	$language = (isset($_POST['language'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['language'])) : null;
-	$lancode = (isset($_POST['lancode'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['lancode'])) : null;
-	$lanicon = (isset($_POST['lanicon'])) ? preg_replace('([^A-Za-z-])', '', trim($_POST['lanicon'])) : null;
-
-	$data = [
-		'language' => $language,
-		'lancode' => $lancode,
-		'lanicon' => $lanicon
-	];
-
-	$res = (!in_array(null, $data)) ? $model->new_language($data) : false;
-
-	echo json_encode($res);
-}
-
-
-if (isset($_POST['editlanguage']))
-{
-	$language = (isset($_POST['language'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['language'])) : null;
-	$lancode = (isset($_POST['lancode'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['lancode'])) : null;
-	$lanicon = (isset($_POST['lanicon'])) ? preg_replace('([^A-Za-z-])', '', trim($_POST['lanicon'])) : null;
-	$id = (isset($_POST['id'])) ? preg_replace('([^0-9])', '', trim($_POST['id'])) : null;
-
-	$data = [
-		'language' => $language,
-		'lancode' => $lancode,
-		'lanicon' => $lanicon,
-		'id' => $id
-	];
-
-	$res = (!in_array(null, $data)) ? $model->edit_language($data) : false;
-
-	echo json_encode($res);
 }
 
 

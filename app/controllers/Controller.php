@@ -76,7 +76,7 @@ class Controller extends Model
 			switch ($accesstype)
 			{
 				case 'local':
-					$info = parent::info_login($email, $pass);
+					$info = parent::info_login($email, trim($pass));
 				break;
 
 				case 'social':
@@ -84,7 +84,7 @@ class Controller extends Model
 				break;
 
 				case 'cookie':
-					$info = parent::info_login($email, null, $cookie_token);
+					$info = parent::info_login($email, null, trim($cookie_token));
 				break;
 
 				default:

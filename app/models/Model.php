@@ -41,58 +41,53 @@ class Model extends Connection
         return $this->pst("CALL sp_newuser(:name, :email, :password, :lang, :level, :country)", $arr_data, false);
     }
 
-    public function info_login($email, $pass = null, $cookie_token = null)
+    public function info_login($email, $pass, $cookie_token = null)
     {
-        $cookie_token = (!is_null($cookie_token)) ? $this->pst("SELECT * FROM tbl_cookies WHERE sessiontoken = :token", ['token' => $cookie_token], false) : true;
+        $cookie_res = (!is_null($cookie_token)) ? $this->pst("SELECT * FROM tbl_cookies WHERE sessiontoken = :token AND email = :email", ['token' => $cookie_token, 'email' => $email]) : false;
 
-        if ($cookie_token)
+        $pass = ($cookie_res) ? null : $pass;
+
+        $res = $this->pst("SELECT * FROM tbl_users WHERE email = :email AND idstatus = 1", [ 'email' => $email ]);
+
+        if (!empty($res))
         {
-            $res = $this->pst("SELECT * FROM tbl_users WHERE email = :email AND idstatus = 1", ['email' => $email]);
+            if (!is_null($pass))
+                $iduser = (password_verify($pass, $res[0]->pass)) ? $res[0]->iduser : false;
+            else
+                $iduser = $res[0]->iduser;
 
-            if (!empty($res))
+            if ($iduser)
             {
-                if (!is_null($pass))
-                    $iduser = (password_verify($pass, $res[0]->pass)) ? $res[0]->iduser : false;
-                else
-                    $iduser = $res[0]->iduser;
+                $res = $this->pst("CALL sp_getlvl(:iduser)", ['iduser' => $iduser]);
 
-                if ($iduser)
+                if (!empty($res))
                 {
-                    $res = $this->pst("CALL sp_getlvl(:iduser)", ['iduser' => $iduser]);
+                    $level = $res[0]->level;
+
+                    $res = $this->pst("SELECT COUNT(*) AS 'total' FROM tbl_inputs WHERE iduser = :iduser", ['iduser' => $iduser]);
 
                     if (!empty($res))
                     {
-                        $level = $res[0]->level;
-
-                        $res = $this->pst("SELECT COUNT(*) AS 'total' FROM tbl_inputs WHERE iduser = :iduser", ['iduser' => $iduser]);
-
-                        if (!empty($res))
+                        if ($res[0]->total > 0)
                         {
-                            if ($res[0]->total > 0)
-                            {
-                                // Habilitar las siguientes lineas en caso se necesite actualizar información del usuario en futuras actualizaciones
+                            // Habilitar las siguientes lineas en caso se necesite actualizar información del usuario en futuras actualizaciones
 
-                                // $res = $this->pst("SELECT COUNT(*) AS 'total' FROM tbl_welcome WHERE iduser = :iduser", ['iduser' => $iduser]);
+                            // $res = $this->pst("SELECT COUNT(*) AS 'total' FROM tbl_welcome WHERE iduser = :iduser", ['iduser' => $iduser]);
 
-                                // if (!empty($res) && $res[0]->total == 0 )
-                                //     $_SESSION['view'] = "updateinfo";
+                            // if (!empty($res) && $res[0]->total == 0 )
+                            //     $_SESSION['view'] = "updateinfo";
 
-                                $_SESSION['session_appname'] = $this->user_info($iduser);
+                            $_SESSION['session_appname'] = $this->user_info($iduser);
 
-                                $_SESSION['lang'] = [ 'lanicon' => $_SESSION['session_appname']['lanicon'], 'lancode' => $_SESSION['session_appname']['lancode'] ];
+                            $_SESSION['lang'] = [ 'lanicon' => $_SESSION['session_appname']['lanicon'], 'lancode' => $_SESSION['session_appname']['lancode'] ];
 
-                                $this->pst("INSERT INTO tbl_inputs(iduser) VALUES (:iduser)", ['iduser' => $iduser], false);
+                            $this->pst("INSERT INTO tbl_inputs(iduser) VALUES (:iduser)", ['iduser' => $iduser], false);
 
-                                return true;
-                            }
-                            else
-                            {
-                                return 'firstIn';
-                            }
+                            return true;
                         }
                         else
                         {
-                            return false;
+                            return 'firstIn';
                         }
                     }
                     else
@@ -114,8 +109,6 @@ class Model extends Connection
         {
             return false;
         }
-
-
     }
 
     public function user_info($iduser)
@@ -267,9 +260,45 @@ class Model extends Connection
     // CRUD tbl_countries
     #--------------------------------------------------
 
+    public function data_table($table, $index_column, $columns)
+    {
+        $sQuery = "SELECT SQL_CALC_FOUND_ROWS `".str_replace(" , ", " ", implode("`, `", $columns))."` FROM `".$table."`";
+
+        $_SESSION['data'] = $sQuery;
+
+        $res = $this->pst($sQuery);
+
+        if (!empty($res))
+        {
+            $data = [];
+
+            $correlativo = 1;
+
+            foreach ($res as $val)
+            {
+                $val->no = $correlativo;
+
+                //personalización de timestamp
+                $date = date('d/m/Y',strtotime($val->timestamp));
+                $hour = date('H:i:s A',strtotime($val->timestamp));
+                $val->timestamp = "🗓️ {$date} ⌚ {$hour}";
+
+                $data[] = (array) $val;
+
+                $correlativo++;
+            }
+
+            return $data;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     public function countries_list()
     {
-        $query = "SELECT c.*, s.status FROM tbl_countries c INNER JOIN tbl_status s ON c.idstatus = s.idstatus";
+        $query = "SELECT c.*, s.status FROM tbl_countries c INNER JOIN tbl_status s ON c.idstatus = s.idstatus WHERE c.idstatus <> 11";
 
         $res = $this->pst($query);
 
@@ -325,21 +354,32 @@ class Model extends Connection
 
     public function ch_countries_status($data)
     {
-        $res = $this->pst("UPDATE tbl_countries SET idstatus = :status WHERE idcountry = :id", $data, false);
+        $res = $this->pst("SELECT idstatus FROM tbl_countries WHERE idcountry = :id", $data);
 
-        return $res;
+        $data['status'] = ($res[0]->idstatus == 2) ? 1 : 2;
+
+        $update = $this->pst("UPDATE tbl_countries SET idstatus = :status, timestamp = NOW() WHERE idcountry = :id", $data, false);
+
+        return $update;
     }
 
     public function new_country($data)
     {
-        $res = $this->pst("INSERT INTO tbl_countries VALUES (NULL, :country, :badge, :isocode, 1)", $data, false);
+        $res = $this->pst("INSERT INTO tbl_countries VALUES (NULL, :country, :badge, :isocode, 1, NOW())", $data, false);
 
         return $res;
     }
 
     public function edit_country($data)
     {
-        $res = $this->pst("UPDATE tbl_countries SET country = :country, badge = :badge, isocode = :isocode WHERE idcountry = :id", $data, false);
+        $res = $this->pst("UPDATE tbl_countries SET country = :country, badge = :badge, isocode = :isocode, timestamp = NOW() WHERE idcountry = :id", $data, false);
+
+        return $res;
+    }
+
+    public function delete_country($data)
+    {
+        $res = $this->pst("UPDATE tbl_countries SET idstatus = 11, timestamp = NOW() WHERE idcountry = :id", $data, false);
 
         return $res;
     }
@@ -378,14 +418,18 @@ class Model extends Connection
 
     public function ch_language_status($data)
     {
-        $res = $this->pst("UPDATE tbl_languages SET idstatus = :status WHERE idlang = :id", $data, false);
+        $res = $this->pst("SELECT idstatus FROM tbl_languages WHERE idlang = :id", $data);
 
-        return $res;
+        $data['status'] = ($res[0]->idstatus == 2) ? 1 : 2;
+
+        $update = $this->pst("UPDATE tbl_languages SET idstatus = :status, timestamp = NOW() WHERE idlang = :id", $data, false);
+
+        return $update;
     }
 
     public function new_language($data)
     {
-        $res = $this->pst("INSERT INTO tbl_languages VALUES (NULL, :language, :lancode, :lanicon, 1)", $data, false);
+        $res = $this->pst("INSERT INTO tbl_languages VALUES (NULL, :language, :lancode, :lanicon, 1, NOW())", $data, false);
 
         return $res;
     }
@@ -393,10 +437,17 @@ class Model extends Connection
     public function edit_language($data)
     {
         try {
-            $res = $this->pst("UPDATE tbl_languages SET language = :language, lancode = :lancode, lanicon = :lanicon WHERE idlang = :id", $data, false);
+            $res = $this->pst("UPDATE tbl_languages SET language = :language, lancode = :lancode, lanicon = :lanicon, timestamp = NOW() WHERE idlang = :id", $data, false);
         } catch (Exception $e) {
             $res = false;
         }
+
+        return $res;
+    }
+
+    public function delete_language($data)
+    {
+        $res = $this->pst("UPDATE tbl_languages SET idstatus = 11, timestamp = NOW() WHERE idlang = :id", $data, false);
 
         return $res;
     }
@@ -538,24 +589,9 @@ class Model extends Connection
 
 	public function get_cookie_token($token)
 	{
-		$res = $this->pst("SELECT email, pass FROM tbl_cookies WHERE sessiontoken = :token", ['token' => $token]);
+		$res = $this->pst("SELECT email FROM tbl_cookies WHERE sessiontoken = :token", ['token' => $token]);
 
-        if (!empty($res))
-        {
-    		$info = [];
-
-    		foreach($res as $val)
-    		{
-    		    $info['user'] = $val->email;
-    		    $info['pass'] = $val->pass;
-    		}
-
-            return $info;
-        }
-        else
-        {
-            return false;
-        }
+        return (!empty($res)) ? $res[0]->email : false;
 	}
 
 	public function set_reset_token($email, $token)

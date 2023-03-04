@@ -1,7 +1,5 @@
 <?php require_once APP."/views/master/header.php"; ?>
 
-<?php $users = $model->user_list(); ?>
-
 <link rel="stylesheet" href="plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
 <link rel="stylesheet" href="plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
 
@@ -27,7 +25,7 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-12">
-            <table class="table table-striped <?= LANG['datable'] ?>">
+            <table class="table table-striped" id="datable">
               <thead class="bg-dark">
                 <tr>
                   <td>No.</td>
@@ -39,55 +37,6 @@
                   <td><?= LANG['field_actions'] ?></td>
                 </tr>
               </thead>
-              <tbody>
-                <?php if ($users): ?>
-                  <?php $no = 1; ?>
-                  <?php foreach ($users['id'] as $i => $val): ?>
-                    <?php if ($users['idcountry'][$i] == $_SESSION['session_appname']['idcountry'] && $_SESSION['session_appname']['idlvl'] != 1): ?>
-                      <tr>
-                        <td><?= $no ?></td>
-                        <td><?= $users['name'][$i] ?></td>
-                        <td><?= $users['email'][$i] ?></td>
-                        <td><?= $users['level'][$i] ?></td>
-                        <td><?= $users['country'][$i] ?></td>
-                        <td>
-                          <?php if ($users['status'][$i] == 'Activo'): ?>
-                            <span class="description-text badge badge-success"><?= LANG['field_active'] ?></span>
-                          <?php else: ?>
-                            <span class="description-text badge badge-danger"><?= LANG['field_inactive'] ?></span>
-                          <?php endif ?>
-                        </td>
-                        <td>
-                          <a href="<?= URL ?>?req=user_profile&val=<?= $val ?>" class="btn btn-sm btn-dark">
-                            <?= LANG['users_profile_button'] ?>
-                          </a>
-                        </td>
-                      </tr>
-                    <?php else: ?>
-                    <tr>
-                      <td><?= $no ?></td>
-                      <td><?= $users['name'][$i] ?></td>
-                      <td><?= $users['email'][$i] ?></td>
-                      <td><?= $users['level'][$i] ?></td>
-                      <td><?= $users['country'][$i] ?></td>
-                      <td>
-                        <?php if ($users['status'][$i] == 'Activo'): ?>
-                          <span class="description-text badge badge-success"><?= LANG['field_active'] ?></span>
-                        <?php else: ?>
-                          <span class="description-text badge badge-danger"><?= LANG['field_inactive'] ?></span>
-                        <?php endif ?>
-                      </td>
-                      <td>
-                        <a href="<?= URL ?>?req=user_profile&val=<?= $val ?>" class="btn btn-sm btn-dark">
-                          <?= LANG['users_profile_button'] ?>
-                        </a>
-                      </td>
-                    </tr>
-                    <?php endif ?>
-                  <?php $no++; ?>
-                  <?php endforeach ?>
-                <?php endif ?>
-              </tbody>
             </table>
           </div>
         </div>
@@ -105,5 +54,7 @@
 <script src="plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
 <script src="plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
 <script src="dist/js/datatable.js"></script>
+
+<script src="dist/js/users.js"></script>
 
 <?php require_once APP."/views/master/footer_end.php"; ?>

@@ -5,28 +5,28 @@
             <a href="<?= URL ?>?req=home" class="nav-link">
               <i class="nav-icon fas fa-home"></i>
               <p>
-                <?= LANG['nav1'] ?>
+                <?= LANG['nav_home'] ?>
               </p>
             </a>
           </li>
           <li class="nav-item">
             <a href="<?= URL ?>?req=profile" class="nav-link <?= $objHome->menu_active_class('profile'); ?>">
               <i class="nav-icon fa-solid fa-user"></i>
-              <p><?= LANG['nav11'] ?></p>
+              <p><?= LANG['nav_myuser'] ?></p>
             </a>
           </li>
           <li class="nav-item">
             <a href="<?= URL ?>?req=support" class="nav-link <?= $objHome->menu_active_class('support'); ?>">
               <i class="nav-icon fa-solid fa-circle-question"></i>
               <p>
-                <?= LANG['nav10'] ?>
+                <?= LANG['nav_support'] ?>
               </p>
             </a>
           </li>
           <li class="nav-item">
             <a href="<?= URL ?>?req=info" class="nav-link">
               <i class="nav-icon fa-solid fa-circle-info"></i>
-              <p><?= LANG['nav11'] ?></p>
+              <p><?= LANG['header2'] ?></p>
             </a>
           </li>
           <li class="nav-item has-treeview">

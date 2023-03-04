@@ -158,8 +158,8 @@ const VIEWS_LIST = [
 			'users',
 			'new_user',
 			'user_profile',
-			'crud_countries',
-			'crud_languages',
+			'tbl_countries',
+			'tbl_languages',
 			'support_request',
 			'reports'
 		],
@@ -167,8 +167,14 @@ const VIEWS_LIST = [
 			'users' => 'usuarios',
 			'new_user' => 'nuevo usuario',
 			'user_profile' => 'perfil de usuario',
-			'crud_countries' => 'Control de países',
-			'crud_languages' => 'Control de idiomas',
+			'tbl_countries' => 'tbl_countries',
+			'tbl_languages' => 'tbl_languages',
+			'tbl_levels' => 'tbl_levels',
+			'tbl_logscron' => 'tbl_logscron',
+			'tbl_records' => 'tbl_records',
+			'tbl_profilepics' => 'tbl_profilepics',
+			'tbl_status' => 'tbl_status',
+			'tbl_welcome' => 'tbl_welcome',
 			'support_request' => 'Solicitudes de soporte',
 			'reports' => 'Reportes'
 		]

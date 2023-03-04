@@ -1,4 +1,4 @@
-<?php $info = (isset($_COOKIE['user_token'])) ? $model->get_cookie_token($_COOKIE['user_token']) : null; ?>
+<?php $email = (isset($_COOKIE['user_token'])) ? $model->get_cookie_token($_COOKIE['user_token']) : null; ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -30,7 +30,7 @@
 <div class="login-box">
 
   <div class="login-logo mb-3">
-    <img src="dist/img/logo.gif" class="w-50"><br>
+    <img src="dist/img/logo.gif" class="w-25"><br>
     <a href="<?= URL ?>"><?= APP_NAME ?></a>
   </div>
 
@@ -44,7 +44,7 @@
 
       <form id="login_form">
         <div class="input-group mb-3">
-          <input type="email" name="user" id="user" class="form-control" placeholder="Email" required autofocus>
+          <input type="email" name="user" id="user" class="form-control" placeholder="email" required autofocus>
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-envelope"></span>
@@ -52,7 +52,7 @@
           </div>
         </div>
         <div class="input-group mb-3">
-          <input type="password" name="pwd" id="pwd" class="form-control" placeholder="Password" required>
+          <input type="password" name="pwd" id="pwd" class="form-control" placeholder="password" required>
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-lock"></span>
@@ -78,7 +78,7 @@
 
       <form id="cookie_form">
         <div class="input-group mb-3">
-          <input type="text" class="form-control" value="<?= $info['user'] ?>" disabled>
+          <input type="text" name="user" id="user" class="form-control" value="<?= $email ?>" disabled>
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-envelope"></span>

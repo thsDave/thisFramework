@@ -5,7 +5,7 @@
             <a href="<?= URL ?>?req=home" class="nav-link">
               <i class="nav-icon fas fa-home"></i>
               <p>
-                <?= LANG['nav1'] ?>
+                <?= LANG['nav_home'] ?>
               </p>
             </a>
           </li>
@@ -13,7 +13,7 @@
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-users"></i>
               <p>
-                <?= LANG['nav2'] ?>
+                <?= LANG['nav_users'] ?>
                 <i class="right fas fa-angle-left"></i>
               </p>
             </a>
@@ -21,13 +21,13 @@
               <li class="nav-item">
                 <a href="<?= URL ?>?req=new_user" class="nav-link <?= $objHome->menu_active_class('new_user'); ?>">
                   <i class="fas fa-chevron-right nav-icon"></i>
-                  <p><?= LANG['nav3'] ?></p>
+                  <p><?= LANG['nav_newuser'] ?></p>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="<?= URL ?>?req=users" class="nav-link <?= $objHome->menu_active_class('users'); ?> <?= $objHome->menu_active_class('user_profile'); ?>">
                   <i class="fas fa-chevron-right nav-icon"></i>
-                  <p><?= LANG['nav4'] ?></p>
+                  <p><?= LANG['nav_users'] ?></p>
                 </a>
               </li>
             </ul>
@@ -36,54 +36,60 @@
             <a href="<?= URL ?>?req=reports" class="nav-link <?= $objHome->menu_active_class('reports'); ?>">
               <i class="nav-icon fa-solid fa-file-lines"></i>
               <p>
-                <?= LANG['nav5'] ?>
+                <?= LANG['nav_reports'] ?>
               </p>
             </a>
           </li>
-          <li class="nav-item has-treeview <?= $objHome->menu_treeview_class('profile', 'support_request', 'crud_countries', 'crud_languages'); ?>">
+          <li class="nav-item has-treeview <?= $objHome->menu_treeview_class('tbl_cookies', 'tbl_countries', 'tbl_languages', 'tbl_levels', 'tbl_logscron', 'tbl_records', 'tbl_profilepics', 'tbl_status'); ?>">
             <a href="#" class="nav-link">
-              <i class="nav-icon fab fa-buffer"></i>
+              <i class="nav-icon fa-solid fa-database"></i>
               <p>
-                <?= LANG['nav6'] ?>
+                <?= LANG['nav_database'] ?>
                 <i class="right fas fa-angle-left"></i>
               </p>
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="<?= URL ?>?req=crud_countries" class="nav-link <?= $objHome->menu_active_class('crud_countries'); ?>">
+                <a href="<?= URL ?>?req=tbl_countries" class="nav-link <?= $objHome->menu_active_class('tbl_countries'); ?>">
                   <i class="fas fa-chevron-right nav-icon"></i>
                   <p>
-                    <?= LANG['nav7'] ?>
+                    <?= LANG['nav_countries'] ?>
                   </p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="<?= URL ?>?req=crud_languages" class="nav-link <?= $objHome->menu_active_class('crud_languages'); ?>">
+                <a href="<?= URL ?>?req=tbl_languages" class="nav-link <?= $objHome->menu_active_class('tbl_languages'); ?>">
                   <i class="fas fa-chevron-right nav-icon"></i>
                   <p>
-                    <?= LANG['nav8'] ?>
+                    <?= LANG['nav_languages'] ?>
                   </p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="<?= URL ?>?req=profile" class="nav-link <?= $objHome->menu_active_class('profile'); ?>">
-                  <i class="fas fa-chevron-right nav-icon"></i>
-                  <p><?= LANG['nav9'] ?></p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="<?= URL ?>?req=support_request" class="nav-link <?= $objHome->menu_active_class('support_request'); ?>">
-                  <i class="fas fa-chevron-right nav-icon"></i>
-                  <p><?= LANG['nav10'] ?></p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="<?= URL ?>?req=info" class="nav-link">
-                  <i class="fas fa-chevron-right nav-icon"></i>
-                  <p><?= LANG['nav11'] ?></p>
                 </a>
               </li>
             </ul>
+          </li>
+          <li class="nav-item">
+            <a href="<?= URL ?>?req=profile" class="nav-link <?= $objHome->menu_active_class('profile'); ?>">
+              <i class="nav-icon fa-solid fa-user"></i>
+              <p>
+                <?= LANG['nav_myuser'] ?>
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="<?= URL ?>?req=support_request" class="nav-link <?= $objHome->menu_active_class('support_request'); ?>">
+              <i class="nav-icon fa-solid fa-headset"></i>
+              <p>
+                <?= LANG['nav_support'] ?>
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="<?= URL ?>?req=info" class="nav-link <?= $objHome->menu_active_class('info'); ?>">
+              <i class="nav-icon fa-solid fa-info"></i>
+              <p>
+                <?= LANG['nav_info'] ?>
+              </p>
+            </a>
           </li>
           <li class="nav-item has-treeview">
             <a href="<?= URL ?>?event=logout" class="nav-link">
