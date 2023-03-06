@@ -12,14 +12,8 @@ class Model extends Connection
     {
         $pdo = parent::connect();
         $pst = $pdo->prepare($query);
-        if ($pst->execute($arr_data)) {
-            if ($expect_values)
-                $res = $pst->fetchAll();
-            else
-                $res = true;
-        }else {
-            $res = false;
-        }
+        $res = ($pst->execute($arr_data)) ? ($expect_values) ? $pst->fetchAll() : true : false;
+        parent::disconnect();
         return $res;
     }
 
