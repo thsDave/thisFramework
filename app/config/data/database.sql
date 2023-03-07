@@ -70,8 +70,8 @@ CREATE TABLE IF NOT EXISTS tbl_profilepics(
 CREATE TABLE IF NOT EXISTS tbl_languages(
 	idlang 		INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	language	VARCHAR(15) NOT NULL,
-	lancode		VARCHAR(3) NOT NULL,
-	lanicon 	VARCHAR(15) NOT NULL,
+	lancode		VARCHAR(5) NOT NULL,
+	lanicon 	VARCHAR(60) NOT NULL,
 	idstatus  INT NOT NULL,
 	timestamp DATETIME NOT NULL DEFAULT NOW(),
 

@@ -405,7 +405,6 @@ if (isset($_POST['crud_language']))
 		case 'create':
 			$data['language'] = (isset($_POST['language'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['language'])) : null;
 			$data['lancode'] = (isset($_POST['lancode'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['lancode'])) : null;
-			$data['lanicon'] = (isset($_POST['lanicon'])) ? preg_replace('([^A-Za-z-])', '', trim($_POST['lanicon'])) : null;
 
 			echo (!in_array(null, $data)) ? json_encode($model->new_language($data)) : json_encode(false);
 		break;
@@ -417,7 +416,6 @@ if (isset($_POST['crud_language']))
 		case 'update':
 			$data['language'] = (isset($_POST['language'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['language'])) : null;
 			$data['lancode'] = (isset($_POST['lancode'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['lancode'])) : null;
-			$data['lanicon'] = (isset($_POST['lanicon'])) ? preg_replace('([^A-Za-z-])', '', trim($_POST['lanicon'])) : null;
 			$data['id'] = (isset($_POST['idlang'])) ? preg_replace('([^0-9])', '', trim($_POST['idlang'])) : null;
 
 			echo (!in_array(null, $data)) ? json_encode($model->edit_language($data)) : json_encode(false);

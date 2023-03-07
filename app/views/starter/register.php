@@ -29,7 +29,7 @@
 <body class="hold-transition register-page">
 <div class="register-box">
   <div class="login-logo mb-3">
-    <img src="dist/img/logo.gif" class="w-25"><br>
+    <img src="dist/img/logo.png" class="w-50"><br>
     <a href="<?= URL ?>"><?= APP_NAME ?></a>
   </div>
 

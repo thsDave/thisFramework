@@ -26,7 +26,7 @@
 					<div class="card-body">
 						<div class="row">
 							<div class="col-12 col-md-12 col-lg-4 order-1 order-md-1">
-								<h3 class="text-dark"><i class="fa-solid fa-car-rear"></i> <?= APP_NAME ?> <?= VERSION ?></h3>
+								<h3 class="text-dark"><i class="fa-solid fa-skull"></i> <?= APP_NAME ?> <?= VERSION ?></h3>
 								<br>
 								<div class="text-muted">
 									<p class="text-sm"><?= LANG['info_year'] ?>

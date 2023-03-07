@@ -384,7 +384,7 @@ class Model extends Connection
 
     public function language_list()
     {
-        $query = "SELECT c.*, s.status FROM tbl_languages c INNER JOIN tbl_status s ON c.idstatus = s.idstatus";
+        $query = "SELECT c.*, s.status FROM tbl_languages c INNER JOIN tbl_status s ON c.idstatus = s.idstatus WHERE c.idstatus = 1";
 
         $res = $this->pst($query);
 
@@ -423,16 +423,91 @@ class Model extends Connection
 
     public function new_language($data)
     {
+        $data['lanicon'] = "<i class='flag-icon flag-icon-{$data['lancode']}'></i>";
+
+        $lang = $this->pst("SELECT lancode FROM tbl_languages WHERE idstatus = 1 ORDER BY idlang DESC LIMIT 1");
+
+        $last_lancode = (!empty($lang)) ? $lang[0]->lancode : false;
+
         $res = $this->pst("INSERT INTO tbl_languages VALUES (NULL, :language, :lancode, :lanicon, 1, NOW())", $data, false);
+
+        if ($res)
+        {
+            if ($last_lancode)
+            {
+                $last_lang_file = APP.'/config/languages/'.$last_lancode.'.php';
+
+                $new_lang_file = APP.'/config/languages/'.$data['lancode'].'.php';
+
+                if (!copy($last_lang_file, $new_lang_file))
+                {
+                    $idlang = $this->pst("SELECT idlang FROM tbl_languages WHERE idstatus = 1 AND lancode = :lancode ORDER BY idlang DESC LIMIT 1", ['lancode' => $data['lancode']]);
+
+                    $update = $this->pst("UPDATE tbl_languages SET idstatus = 2 WHERE idlang = :id", [ 'id' => $idlang[0]->idlang ], false);
+                }
+            }
+            else
+            {
+                $file = fopen(APP.'/config/languages/'.$data['lancode'].'.php', 'x');
+
+                if ($file)
+                {
+                    $idlang = $this->pst("SELECT idlang FROM tbl_languages WHERE idstatus = 1 AND lancode = :lancode ORDER BY idlang DESC LIMIT 1", ['lancode' => $data['lancode']]);
+
+                    $update = $this->pst("UPDATE tbl_languages SET idstatus = 2 WHERE idlang = :id", [ 'id' => $idlang[0]->idlang ], false);
+                }
+                else
+                {
+                    fclose($file);
+                }
+            }
+        }
 
         return $res;
     }
 
     public function edit_language($data)
     {
-        try {
-            $res = $this->pst("UPDATE tbl_languages SET language = :language, lancode = :lancode, lanicon = :lanicon, timestamp = NOW() WHERE idlang = :id", $data, false);
-        } catch (Exception $e) {
+        try
+        {
+            $lancode = $this->pst("SELECT lancode FROM tbl_languages WHERE idlang = :id", [ 'id' => $data['id'] ]);
+
+            if (!empty($lancode))
+            {
+                $lang_file = APP.'/config/languages/'.$lancode[0]->lancode.'.php';
+
+                $new_lang_file = APP.'/config/languages/'.$data['lancode'].'.php';
+
+                if ($lang_file == $new_lang_file)
+                {
+                    $data['lanicon'] = "<i class='flag-icon flag-icon-{$data['lancode']}'></i>";
+
+                    return $this->pst("UPDATE tbl_languages SET language = :language, lancode = :lancode, lanicon = :lanicon, timestamp = NOW() WHERE idlang = :id", $data, false);
+                }
+                else
+                {
+                    $data['lanicon'] = "<i class='flag-icon flag-icon-{$data['lancode']}'></i>";
+
+                    $res = $this->pst("UPDATE tbl_languages SET language = :language, lancode = :lancode, lanicon = :lanicon, timestamp = NOW() WHERE idlang = :id", $data, false);
+
+                    if (!file_exists($new_lang_file))
+                    {
+                        if (!copy($lang_file, $new_lang_file))
+                        {
+                            $this->pst("UPDATE tbl_languages SET idstatus = 2 WHERE idlang = :id", [ 'id' => $data['id'] ], false);
+                        }
+                    }
+
+                    return $res;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        catch (Exception $e)
+        {
             $res = false;
         }
 

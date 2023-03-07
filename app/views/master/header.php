@@ -55,7 +55,7 @@
 
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <a href="<?= URL ?>?req=home" class="brand-link bg-dark">
-      <img src="dist/img/logo-header.svg" alt="<?= APP_NAME ?>" class="brand-image" style="opacity: .9">
+      <img src="dist/img/logo.png" alt="<?= APP_NAME ?>" class="brand-image" style="opacity: .9">
       <span class="brand-text font-weight-light text-light"><strong><?= APP_NAME ?></strong></span>
     </a>
 

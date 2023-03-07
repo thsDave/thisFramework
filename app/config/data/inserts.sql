@@ -322,8 +322,8 @@ INSERT INTO `tbl_profilepics` (`idpic`, `name`, `format`, `picture`) VALUES
 --
 
 INSERT INTO `tbl_languages` (`idlang`, `language`, `lancode`, `lanicon`, `idstatus`) VALUES
-(NULL, 'Español', 'es', 'flag-icon-es', 1),
-(NULL, 'English', 'en', 'flag-icon-us', 1);
+(NULL, 'Español', 'es', '<i class="flag-icon flag-icon-es"></i>', 1),
+(NULL, 'English', 'us', '<i class="flag-icon flag-icon-us"></i>', 1);
 
 
 --

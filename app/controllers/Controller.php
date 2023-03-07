@@ -407,7 +407,7 @@ class Controller extends Model
     	$html = "
     	<li class='nav-item dropdown'>
 			<a class='nav-link' data-toggle='dropdown' href='#'>
-			  <i class='flag-icon {$_SESSION['lang']['lanicon']}'></i>
+			  {$_SESSION['lang']['lanicon']}
 			</a>
 			<div class='dropdown-menu dropdown-menu-right p-0'>
     	";

@@ -243,6 +243,8 @@ const LANG = [
 
 	'lang_icon' => 'Icon',
 
+	'lang_icon_desc' => 'Language codes: <a href="https://flagicons.lipis.dev/" target="_blank">https://flagicons.lipis.dev/</a>',
+
 
 	/*** DATA TABLES
 	**************************************************/

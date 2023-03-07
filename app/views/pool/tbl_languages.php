@@ -79,19 +79,8 @@
             <div class="col-12">
               <div class="form-group">
                 <label for="lancode"><?= LANG['lang_code'] ?></label>
-                <div class="input-group">
-                  <input type="text" class="form-control" id="lancode" name="lancode" placeholder="<?= LANG['lang_code'] ?>" required>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="col-12">
-              <div class="form-group">
-                <label for="lanicon"><?= LANG['lang_icon'] ?></label>
-                <div class="input-group">
-                  <input type="text" class="form-control" id="lanicon" name="lanicon" placeholder="<?= LANG['lang_icon'] ?>" required>
-                </div>
+                <input type="text" class="form-control" id="lancode" name="lancode" placeholder="<?= LANG['lang_code'] ?>" aria-describedby="lanicondesc" required>
+                <small id="lanicondesc" class="form-text text-muted"><?= LANG['lang_icon_desc'] ?></small>
               </div>
             </div>
           </div>
