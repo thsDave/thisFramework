@@ -6,7 +6,7 @@
 -- Volcado de datos para la tabla `tbl_Estados`
 --
 
-INSERT INTO `tbl_status` (`idstatus`, `status`) VALUES
+INSERT INTO `tbl_status` (`idstatus`, `status`, `btbadge`) VALUES
 (NULL, 'Activo', '<span class="badge badge-success">Activo</span>'),
 (NULL, 'Inactivo', '<span class="badge badge-dark">Inactivo</span>'),
 (NULL, 'Pendiente', '<span class="badge badge-warning">Pendiente</span>'),
