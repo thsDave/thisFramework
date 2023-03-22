@@ -391,13 +391,13 @@ class Controller extends Model
 			}
 			else
 			{
-				$_SESSION['lang']['lanicon'] = 'flag-icon-es';
+				$_SESSION['lang']['lanicon'] = '<i class="flag-icon flag-icon-es mr-2"></i>';
 	    		$_SESSION['lang']['lancode'] = 'es';
 			}
     	}
     	else
     	{
-    		$_SESSION['lang']['lanicon'] = 'flag-icon-es';
+    		$_SESSION['lang']['lanicon'] = '<i class="flag-icon flag-icon-es mr-2"></i>';
     		$_SESSION['lang']['lancode'] = 'es';
     	}
     }
@@ -420,7 +420,7 @@ class Controller extends Model
 
     		$html .= "
 	    		<a href='".URL."?action=selectlang&value={$langs['lancode'][$i]}' class='dropdown-item {$class}'>
-			      <i class='flag-icon {$langs['lanicon'][$i]} mr-2'></i> {$langs['language'][$i]}
+			      {$langs['lanicon'][$i]} {$langs['language'][$i]}
 			    </a>
     		";
     	}

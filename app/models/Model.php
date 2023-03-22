@@ -254,11 +254,9 @@ class Model extends Connection
     // CRUD tbl_countries
     #--------------------------------------------------
 
-    public function data_table($table, $index_column, $columns)
+    public function datatable($table, $index_column, $columns)
     {
         $sQuery = "SELECT SQL_CALC_FOUND_ROWS `".str_replace(" , ", " ", implode("`, `", $columns))."` FROM `".$table."`";
-
-        $_SESSION['data'] = $sQuery;
 
         $res = $this->pst($sQuery);
 
@@ -423,7 +421,7 @@ class Model extends Connection
 
     public function new_language($data)
     {
-        $data['lanicon'] = "<i class='flag-icon flag-icon-{$data['lancode']}'></i>";
+        $data['lanicon'] = "<i class='flag-icon flag-icon-{$data['lancode']}' mr-2></i>";
 
         $lang = $this->pst("SELECT lancode FROM tbl_languages WHERE idstatus = 1 ORDER BY idlang DESC LIMIT 1");
 
@@ -480,13 +478,13 @@ class Model extends Connection
 
                 if ($lang_file == $new_lang_file)
                 {
-                    $data['lanicon'] = "<i class='flag-icon flag-icon-{$data['lancode']}'></i>";
+                    $data['lanicon'] = "<i class='flag-icon flag-icon-{$data['lancode']}' mr-2></i>";
 
                     return $this->pst("UPDATE tbl_languages SET language = :language, lancode = :lancode, lanicon = :lanicon, timestamp = NOW() WHERE idlang = :id", $data, false);
                 }
                 else
                 {
-                    $data['lanicon'] = "<i class='flag-icon flag-icon-{$data['lancode']}'></i>";
+                    $data['lanicon'] = "<i class='flag-icon flag-icon-{$data['lancode']}' mr-2></i>";
 
                     $res = $this->pst("UPDATE tbl_languages SET language = :language, lancode = :lancode, lanicon = :lanicon, timestamp = NOW() WHERE idlang = :id", $data, false);
 

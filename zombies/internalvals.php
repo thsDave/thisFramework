@@ -310,7 +310,7 @@ if (isset($_POST['crud_users']))
 	switch ($option)
 	{
 		case 'read':
-			echo json_encode($model->data_table('v_users','iduser', [ '*' ]));
+			echo json_encode($model->datatable('v_users','iduser', [ '*' ]));
 		break;
 
 		default:
@@ -341,7 +341,7 @@ if (isset($_POST['crud_country']))
 		break;
 
 		case 'read':
-			echo json_encode($model->data_table('v_countries','idcountry', [ '*' ]));
+			echo json_encode($model->datatable('v_countries','idcountry', [ '*' ]));
 		break;
 
 		case 'update':
@@ -410,7 +410,7 @@ if (isset($_POST['crud_language']))
 		break;
 
 		case 'read':
-			echo json_encode($model->data_table('v_languages','idlang', [ '*' ]));
+			echo json_encode($model->datatable('v_languages','idlang', [ '*' ]));
 		break;
 
 		case 'update':
