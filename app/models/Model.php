@@ -256,7 +256,7 @@ class Model extends Connection
 
     public function datatable($table, $index_column, $columns)
     {
-        $sQuery = "SELECT SQL_CALC_FOUND_ROWS `".str_replace(" , ", " ", implode("`, `", $columns))."` FROM `".$table."`";
+        $sQuery = "SELECT SQL_CALC_FOUND_ROWS ".str_replace(" , ", " ", implode(", ", $columns))." FROM `".$table."`";
 
         $res = $this->pst($sQuery);
 
