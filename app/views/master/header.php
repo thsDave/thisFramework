@@ -6,19 +6,26 @@
   <meta property="og:site_name" content="skeleton">
   <meta property="og:description" content="Aquí va una breve descripción del sistema">
   <meta property="og:image" content="<?= URL ?>dist/img/logo.png">
-  <meta name="author" content="Devop name">
+  <meta name="author" content="Isaac Ramos">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title><?= $objHome->title() ?></title>
 
+  <!-- icono del sitio -->
   <link rel="shortcut icon" type="image/x-icon" href="dist/img/icono.ico">
+  <!-- fuente del sitio -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-  <script src="https://kit.fontawesome.com/76dbbc43b7.js" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="plugins/flag-icon-css/css/flag-icon.min.css">
-  <link rel="stylesheet" href="plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+  <!-- adminlte -->
   <link rel="stylesheet" href="dist/css/adminlte.css">
+  <!-- librería de iconos -->
+  <script src="https://kit.fontawesome.com/76dbbc43b7.js" crossorigin="anonymous"></script>
+  <!-- librería de banderas para seleccion de idiomas -->
+  <link rel="stylesheet" href="plugins/flag-icon-css/css/flag-icon.min.css">
+  <!-- sweetalert -->
   <link rel="stylesheet" href="plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+  <!-- estilos adicionales -->
   <link rel="stylesheet" href="dist/css/thistyle.css">
+  <!-- select2 para formularios -->
   <link rel="stylesheet" href="plugins/select2/css/select2.min.css">
   <link rel="stylesheet" href="plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
 </head>

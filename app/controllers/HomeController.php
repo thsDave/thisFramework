@@ -114,14 +114,7 @@ class HomeController extends Controller
 
 	public function menu_active_class($view)
 	{
-		if (isset($_SESSION['view'])) {
-			if ($_SESSION['view'] == $view)
-				return 'active';
-			else
-				return '';
-		}else {
-			return '';
-		}
+		return (isset($_SESSION['view'])) ? ($_SESSION['view'] == $view) ? 'active' : '' : '';
 	}
 
 	public function menu_treeview_class()
@@ -146,20 +139,10 @@ class HomeController extends Controller
 
 	public function title()
 	{
-		if (isset($_SESSION['view']))
-		{
-			if (isset(VIEWS_LIST[$_SESSION['title']]['titles'][$_SESSION['view']])) {
-				$title = APP_NAME.' - '.VIEWS_LIST[$_SESSION['title']]['titles'][$_SESSION['view']];
-			}else {
-				$title = APP_NAME;
-			}
-		}
-		else
-		{
-			$title = APP_NAME.' - Inicio';
-		}
-
-		return $title;
+		return
+		(isset($_SESSION['view'])) ?
+			(isset(VIEWS_LIST[$_SESSION['title']]['titles'][$_SESSION['view']])) ?
+				APP_NAME.' - '.VIEWS_LIST[$_SESSION['title']]['titles'][$_SESSION['view']] : APP_NAME : APP_NAME.' - Inicio';
 	}
 
 	public function upInfo($val)
