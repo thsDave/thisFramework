@@ -32,14 +32,9 @@ class Controller extends Model
 				if (strlen($value) == 50)
 				{
 					if (parent::token_validator($value))
-					{
 						parent::del_register($value);
-						session_destroy();
-					}
-					else
-					{
-						session_destroy();
-					}
+
+					session_destroy();
 				}
 			break;
 

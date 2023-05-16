@@ -46,23 +46,24 @@
       <li class="nav-item d-none d-sm-inline-block">
         <a href="<?= URL ?>?req=info" class="nav-link"><?= LANG['header3'] ?></a>
       </li>
-      <li class="nav-item d-none d-sm-inline-block">
-        <a href="<?= URL ?>?event=logout" class="nav-link text-danger">
-          <i class="fa-solid fa-arrow-right-from-bracket fa-xs"></i>
-          <?= LANG['logout'] ?>
-        </a>
-      </li>
     </ul>
 
     <ul class="navbar-nav ml-auto">
       <?= $objController->lang_menu(); ?>
     </ul>
 
+    <a href="<?= URL ?>?event=logout" class="nav-link text-dark">
+      <strong>
+        <i class="fa-solid fa-arrow-right-from-bracket fa-xs"></i>
+        <?= LANG['logout'] ?>
+      </strong>
+    </a>
+
   </nav>
 
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <a href="<?= URL ?>?req=home" class="brand-link bg-dark">
-      <img src="dist/img/logo.png" alt="<?= APP_NAME ?>" class="brand-image" style="opacity: .9">
+      <img src="dist/img/logo-header.png" alt="<?= APP_NAME ?>" class="brand-image">
       <span class="brand-text font-weight-light text-light"><strong><?= APP_NAME ?></strong></span>
     </a>
 

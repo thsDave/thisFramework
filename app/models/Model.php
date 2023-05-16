@@ -21,11 +21,13 @@ class Model extends Connection
     // Métodos para el control de usuarios
     #--------------------------------------------------
 
+    // principal
     public function register_user($arr_data)
     {
         return $this->pst("CALL sp_useregister(:name, :email, :password, :lang, 3, 0, 3, :access_type, :country)", $arr_data, false);
     }
 
+    // sudo
     public function new_user($arr_data)
     {
         $arr_data['password'] = password_hash($arr_data['pass'], PASSWORD_DEFAULT, ['cost' => 10]);
@@ -35,6 +37,7 @@ class Model extends Connection
         return $this->pst("CALL sp_newuser(:name, :email, :password, :lang, :level, :country)", $arr_data, false);
     }
 
+    // all levels
     public function info_login($email, $pass, $cookie_token = null)
     {
         $cookie_res = (!is_null($cookie_token)) ? $this->pst("SELECT * FROM tbl_cookies WHERE sessiontoken = :token AND email = :email", ['token' => $cookie_token, 'email' => $email]) : false;
@@ -105,6 +108,7 @@ class Model extends Connection
         }
     }
 
+    // admin
     public function user_info($iduser)
     {
         $res = $this->pst("CALL sp_userinfo(:iduser)", ['iduser' => $iduser]);
@@ -142,6 +146,7 @@ class Model extends Connection
         }
     }
 
+    // principal
     public function user_info_by_token($token)
     {
         $res = $this->pst("SELECT * FROM tbl_users WHERE token = :token", ['token' => $token]);
@@ -162,6 +167,7 @@ class Model extends Connection
         }
     }
 
+    // admin
     public function user_list()
     {
         $res = $this->pst("CALL sp_userlist(:idlvl, :idcountry)", ['idlvl' => $_SESSION['session_appname']['idlvl'], 'idcountry' => $_SESSION['session_appname']['idcountry']]);
@@ -192,6 +198,7 @@ class Model extends Connection
         }
     }
 
+    // all levels
     public function update_user($data_user)
     {
         $res = $this->pst("CALL sp_updtuser(:name, :level, :lang, :status, :country, :id)", $data_user, false);
@@ -202,6 +209,7 @@ class Model extends Connection
         return ($res) ? true : false;
     }
 
+    // all levels
     public function thumbnail_profile()
     {
         $res = $this->pst("SELECT * FROM tbl_profilepics");
@@ -226,6 +234,7 @@ class Model extends Connection
         }
     }
 
+    // all levels
     public function update_pic_profile($idpic)
     {
         $arr_data = [
@@ -240,20 +249,19 @@ class Model extends Connection
         return ($res) ? true : false;
     }
 
+    // principal
     protected function del_register($token)
     {
         $this->pst("DELETE FROM tbl_users WHERE token = :token", ['token' => $token], false);
     }
 
+    // principal
     public function del_user($email)
     {
         $this->pst("DELETE FROM tbl_users WHERE email = :email", ['email' => $email], false);
     }
 
-    #--------------------------------------------------
-    // CRUD tbl_countries
-    #--------------------------------------------------
-
+    // all levels
     public function datatable($table, $index_column, $columns)
     {
         $sQuery = "SELECT SQL_CALC_FOUND_ROWS ".str_replace(" , ", " ", implode(", ", $columns))." FROM `".$table."`";
@@ -288,6 +296,11 @@ class Model extends Connection
         }
     }
 
+    #--------------------------------------------------
+    // CRUD tbl_countries
+    #--------------------------------------------------
+
+    // all levels
     public function countries_list()
     {
         $query = "SELECT c.*, s.status FROM tbl_countries c INNER JOIN tbl_status s ON c.idstatus = s.idstatus WHERE c.idstatus <> 11";
@@ -316,6 +329,7 @@ class Model extends Connection
         }
     }
 
+    // all levels
     public function info_country($idcountry)
     {
         $query = "SELECT c.*, s.status FROM tbl_countries c INNER JOIN tbl_status s ON c.idstatus = s.idstatus WHERE idcountry = :id";
@@ -344,6 +358,7 @@ class Model extends Connection
         }
     }
 
+    // sudo
     public function ch_countries_status($data)
     {
         $res = $this->pst("SELECT idstatus FROM tbl_countries WHERE idcountry = :id", $data);
@@ -355,6 +370,7 @@ class Model extends Connection
         return $update;
     }
 
+    // sudo
     public function new_country($data)
     {
         $res = $this->pst("INSERT INTO tbl_countries VALUES (NULL, :country, :badge, :isocode, 1, NOW())", $data, false);
@@ -362,6 +378,7 @@ class Model extends Connection
         return $res;
     }
 
+    // sudo
     public function edit_country($data)
     {
         $res = $this->pst("UPDATE tbl_countries SET country = :country, badge = :badge, isocode = :isocode, timestamp = NOW() WHERE idcountry = :id", $data, false);
@@ -369,6 +386,7 @@ class Model extends Connection
         return $res;
     }
 
+    // sudo
     public function delete_country($data)
     {
         $res = $this->pst("UPDATE tbl_countries SET idstatus = 11, timestamp = NOW() WHERE idcountry = :id", $data, false);
@@ -380,6 +398,7 @@ class Model extends Connection
     // CRUD tbl_languages
     #--------------------------------------------------
 
+    // all levels
     public function language_list()
     {
         $query = "SELECT c.*, s.status FROM tbl_languages c INNER JOIN tbl_status s ON c.idstatus = s.idstatus WHERE c.idstatus = 1";
@@ -408,6 +427,7 @@ class Model extends Connection
         }
     }
 
+    // sudo
     public function ch_language_status($data)
     {
         $res = $this->pst("SELECT idstatus FROM tbl_languages WHERE idlang = :id", $data);
@@ -419,6 +439,7 @@ class Model extends Connection
         return $update;
     }
 
+    // sudo
     public function new_language($data)
     {
         $data['lanicon'] = "<i class='flag-icon flag-icon-{$data['lancode']}' mr-2></i>";
@@ -464,6 +485,7 @@ class Model extends Connection
         return $res;
     }
 
+    // sudo
     public function edit_language($data)
     {
         try
@@ -512,6 +534,7 @@ class Model extends Connection
         return $res;
     }
 
+    // sudo
     public function delete_language($data)
     {
         $res = $this->pst("UPDATE tbl_languages SET idstatus = 11, timestamp = NOW() WHERE idlang = :id", $data, false);
@@ -523,6 +546,7 @@ class Model extends Connection
     // CRUD tbl_welcome
     #--------------------------------------------------
 
+    // all levels
     public function info_welcome($iduser)
     {
         $res = $this->pst("SELECT * FROM tbl_welcome WHERE iduser = :id", ['id' => $iduser]);
@@ -548,6 +572,7 @@ class Model extends Connection
         }
     }
 
+    // all levels
     public function welcome_finished($iduser)
     {
         $now = date('Y-m-d');
@@ -563,6 +588,7 @@ class Model extends Connection
         return $res;
     }
 
+    // all levels
     public function welcome_denied($iduser)
     {
         $now = date('Y-m-d');
@@ -578,6 +604,7 @@ class Model extends Connection
         return $res;
     }
 
+    // all levels
     public function addwelcome($data)
     {
         $update = $this->pst("UPDATE tbl_users SET name = :name, idcountry = :country, idlang = :lang WHERE iduser = :id", $data, false);
@@ -594,6 +621,7 @@ class Model extends Connection
     // Password
     #--------------------------------------------------
 
+    // principal
     public function recover_password($pass, $token)
     {
         $data = $this->pst("SELECT iduser FROM tbl_users WHERE token = :token", ['token' => $token]);
@@ -627,6 +655,7 @@ class Model extends Connection
         }
     }
 
+    // principal
     public function pass_validator($curpass, $iduser)
     {
         $res = $this->pst("SELECT * FROM tbl_users WHERE iduser = {$iduser}");
@@ -634,6 +663,7 @@ class Model extends Connection
         return (password_verify($curpass, $res[0]->pass)) ? true : false;
     }
 
+    // principal
     public function update_password($arr_data)
     {
         return $this->pst("UPDATE tbl_users SET pass = :pass WHERE iduser = :iduser", $arr_data, false);
@@ -643,7 +673,8 @@ class Model extends Connection
     // Cookies & Tokens
     #--------------------------------------------------
 
-	public function set_cookie_token($email, $pass, $token)
+	// principal
+    public function set_cookie_token($email, $pass, $token)
 	{
         $arr_data = [
             'email' => $email,
@@ -654,14 +685,16 @@ class Model extends Connection
 		return $this->pst("INSERT INTO tbl_cookies VALUES (:email, :pass, :token, NOW())", $arr_data, false);
 	}
 
-	public function get_cookie_token($token)
+	// principal
+    public function get_cookie_token($token)
 	{
 		$res = $this->pst("SELECT email FROM tbl_cookies WHERE sessiontoken = :token", ['token' => $token]);
 
         return (!empty($res)) ? $res[0]->email : false;
 	}
 
-	public function set_reset_token($email, $token)
+	// principal
+    public function set_reset_token($email, $token)
 	{
         $arr_data = [
             'token' => $token,
@@ -675,7 +708,8 @@ class Model extends Connection
         return ($res) ? true : false;
 	}
 
-	public function token_validator($token)
+	// principal
+    public function token_validator($token)
 	{
 		$res = $this->pst("SELECT * FROM tbl_users WHERE token = :token", ['token' => $token]);
 
@@ -689,6 +723,7 @@ class Model extends Connection
     // Other methods
     #--------------------------------------------------
 
+    // sudo
     public function support_list()
     {
         $res = $this->pst("CALL sp_supportlist()");
@@ -718,11 +753,13 @@ class Model extends Connection
         }
     }
 
+    // all levels
     public function outputs($id)
     {
         $this->pst("INSERT INTO tbl_outputs(iduser) VALUES (:foca)", ['foca' => $id], false);
     }
 
+    // all levels
     public function status_list()
     {
         $res = $this->pst("SELECT * FROM tbl_status");
@@ -745,6 +782,7 @@ class Model extends Connection
         }
     }
 
+    // admin
     public function level_list()
     {
         $res = $this->pst("SELECT * FROM tbl_levels");
@@ -768,6 +806,7 @@ class Model extends Connection
         }
     }
 
+    // principal
     public function is_correct_mail($email)
     {
         $res = $this->pst("SELECT * FROM tbl_users WHERE email = :email", ['email' => $email]);
@@ -788,6 +827,7 @@ class Model extends Connection
         }
     }
 
+    // all levels
     public function mails_sent($email, $token)
     {
         $arr_data = [
@@ -803,6 +843,7 @@ class Model extends Connection
         return $this->pst($query, $arr_data, false);
     }
 
+    // all levels
     public function savelog($id, $mensaje)
     {
         $arr_data = [
@@ -814,22 +855,26 @@ class Model extends Connection
         $this->pst("INSERT INTO tbl_logscron VALUES (:idlog, :idstatus, :mnsj)", $arr_data, false);
     }
 
+    // principal
     public function recovery_req_on($iduser)
     {
         return $this->pst("UPDATE tbl_users SET forgetpass = 1, idstatus = 3 WHERE iduser = :id", ['id' => $iduser], false);
     }
 
+    // principal
     public function forgetpass_mail($iduser)
     {
         return $this->pst("UPDATE tbl_users SET forgetpass = 1, idstatus = 3 WHERE iduser = :id", ['id' => $iduser], false);
     }
 
+    // principal
     public function available_mail($email)
     {
         $res = $this->pst("SELECT * FROM tbl_users WHERE email = :email", ['email' => $email]);
         return (empty($res)) ? true : false;
     }
 
+    // all levels
     public function new_support_request($subject, $mssg, $id)
     {
         $arr_data = [
@@ -841,6 +886,7 @@ class Model extends Connection
         return $this->pst("CALL sp_supportrequest(:id, :subject, :mssg)", $arr_data, false);
     }
 
+    // all levels
     public function history_request($iduser)
     {
         $query = "SELECT s.subject, s.mssg, s.response, s.idstatus, e.status FROM tbl_supports s INNER JOIN tbl_status e ON s.idstatus = e.idstatus WHERE iduser = :iduser";
