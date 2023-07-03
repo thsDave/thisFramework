@@ -31,7 +31,7 @@ class HomeController extends Controller
 			break;
 
 			case 'logout':
-				parent::outputs($_SESSION['session_appname']['id']);
+				parent::outputs($_SESSION[USER_SESSION]['id']);
 				session_destroy();
 			break;
 		}
@@ -89,7 +89,7 @@ class HomeController extends Controller
 						<div class='row'>
 							<div class='col-8'>
 								<h5>". LANG['support_subject'].": {$value}</h5>
-								<h6 class='mt-2'>From: {$_SESSION['session_appname']['email']}</h6>
+								<h6 class='mt-2'>From: {$_SESSION[USER_SESSION]['email']}</h6>
 							</div>
 							<div class='col-4'>
 								<span class='badge {$class} float-right'>{$list['status'][$index]}</span>
@@ -157,7 +157,7 @@ class HomeController extends Controller
 
 	public function logout()
 	{
-		parent::pst("INSERT INTO tbl_outputs(iduser) VALUES (:iduser)", ['iduser' => $_SESSION['session_appname']['id']], false);
+		parent::pst("INSERT INTO tbl_outputs(iduser) VALUES (:iduser)", ['iduser' => $_SESSION[USER_SESSION]['id']], false);
 		session_destroy();
 		load_view();
 	}

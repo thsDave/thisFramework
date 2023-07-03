@@ -1,6 +1,6 @@
 <?php require_once APP . "/views/master/header.php"; ?>
 
-<?php require_once APP."/views/master/{$_SESSION['session_appname']['level']}_nav.php"; ?>
+<?php require_once APP."/views/master/{$_SESSION[USER_SESSION]['level']}_nav.php"; ?>
 
   <div class="content-wrapper">
     <section class="content-header">
@@ -51,7 +51,7 @@
               <h3 class="card-title"><?= LANG['support_history'] ?></h3>
             </div>
             <div class="direct-chat-messages" style="height: 320px !important;">
-            <?= $objHome->historysupportreq($_SESSION['session_appname']['id']); ?>
+            <?= $objHome->historysupportreq($_SESSION[USER_SESSION]['id']); ?>
             </div>
           </div>
         </div>

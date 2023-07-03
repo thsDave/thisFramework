@@ -1,6 +1,6 @@
 <?php require_once APP . "/views/master/header.php"; ?>
 
-<?php require_once APP."/views/master/{$_SESSION['session_appname']['level']}_nav.php"; ?>
+<?php require_once APP."/views/master/{$_SESSION[USER_SESSION]['level']}_nav.php"; ?>
 
 <div class="content-wrapper">
 	<section class="content-header">

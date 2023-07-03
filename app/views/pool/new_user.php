@@ -1,6 +1,6 @@
 <?php require_once APP."/views/master/header.php"; ?>
 
-<?php require_once APP."/views/master/{$_SESSION['session_appname']['level']}_nav.php"; ?>
+<?php require_once APP."/views/master/{$_SESSION[USER_SESSION]['level']}_nav.php"; ?>
 
 <?php $fotos = $model->thumbnail_profile(); ?>
 
@@ -108,7 +108,7 @@
                         <?php $levels = $model->level_list(); ?>
                         <option value="" selected disabled><?= LANG['select_item'] ?></option>
                         <?php foreach ($levels['id'] as $key => $val): ?>
-                        <?php if ($_SESSION['session_appname']['idlvl'] == 1): ?>
+                        <?php if ($_SESSION[USER_SESSION]['idlvl'] == 1): ?>
                           <option value="<?= $val ?>"><?= $levels['alias'][$key] ?></option>
                         <?php else: ?>
                           <?php if ($val != 1): ?>

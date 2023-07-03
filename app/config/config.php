@@ -5,11 +5,13 @@
 | Session start
 |--------------------------------------------------------------------------
 |
-| Inicialización global de las sesiones
+| Inicialización global de las sesiones + nombre de sesión principal del usuario
 |
 */
 
 session_start();
+
+const USER_SESSION = 'session_user';
 
 /*
 |--------------------------------------------------------------------------

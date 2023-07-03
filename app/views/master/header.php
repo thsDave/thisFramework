@@ -70,7 +70,7 @@
     <div class="sidebar">
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img src="data:imge/png;base64,<?= $_SESSION['session_appname']['pic'] ?>" class="img-circle elevation-2" alt="user profile">
+          <img src="data:imge/png;base64,<?= $_SESSION[USER_SESSION]['pic'] ?>" class="img-circle elevation-2" alt="user profile">
         </div>
         <div class="info">
           <a href="<?= URL ?>?req=profile" class="d-block"><?= LANG['header4'] ?></a>

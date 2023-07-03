@@ -2,7 +2,7 @@
 
 require_once "../app/config/config.php";
 require_once "../app/controllers/HomeController.php";
-require_once "../app/controllers/{$_SESSION['session_appname']['level']}Controller.php";
+require_once "../app/controllers/{$_SESSION[USER_SESSION]['level']}Controller.php";
 require_once '../app/config/languages/'.$_SESSION['lang']['lancode'].'.php';
 
 
@@ -48,9 +48,9 @@ if (isset($_POST['selecttab'])) {
 
 if (isset($_POST['starter']))
 {
-	$user = $model->user_info($_SESSION['session_appname']['id']);
+	$user = $model->user_info($_SESSION[USER_SESSION]['id']);
 
-	$welcome = $model->info_welcome($_SESSION['session_appname']['id']);
+	$welcome = $model->info_welcome($_SESSION[USER_SESSION]['id']);
 
 	$data = ($welcome) ? array_merge($user, $welcome) : $user;
 
@@ -62,13 +62,13 @@ if (isset($_POST['starter']))
 
 if (isset($_POST['welcome_finished']))
 {
-	echo json_encode($model->welcome_finished($_SESSION['session_appname']['id']));
+	echo json_encode($model->welcome_finished($_SESSION[USER_SESSION]['id']));
 }
 
 
 if (isset($_POST['welcome_denied']))
 {
-	echo json_encode($model->welcome_denied($_SESSION['session_appname']['id']));
+	echo json_encode($model->welcome_denied($_SESSION[USER_SESSION]['id']));
 }
 
 
@@ -124,7 +124,7 @@ if (isset($_POST['welcomeform']))
 	$data['name'] = (isset($_POST['name'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['name'])) : null;
 	$data['country'] = (isset($_POST['country'])) ? preg_replace('([^0-9])', '', trim($_POST['country'])) : null;
 	$data['lang'] = (isset($_POST['lang'])) ? preg_replace('([^0-9])', '', trim($_POST['lang'])) : null;
-	$data['id'] = $_SESSION['session_appname']['id'];
+	$data['id'] = $_SESSION[USER_SESSION]['id'];
 
 	if (!in_array(null, $data)) {
 		$res = $model->addwelcome($data);
@@ -155,9 +155,9 @@ if (isset($_POST['update_profile']))
 	$data['name'] = (isset($_POST['name'])) ? preg_replace('([^A-Za-zÁ-ź0-9 ])', '', trim($_POST['name'])) : false;
 	$data['lang'] = (isset($_POST['language'])) ? preg_replace('([^0-9 ])', '', trim($_POST['language'])) : false;
 	$data['country'] = (isset($_POST['country'])) ? preg_replace('([^0-9 ])', '', trim($_POST['country'])) : false;
-	$data['level'] = $_SESSION['session_appname']['idlvl'];
-	$data['status'] = $_SESSION['session_appname']['idstatus'];
-	$data['id'] = $_SESSION['session_appname']['id'];
+	$data['level'] = $_SESSION[USER_SESSION]['idlvl'];
+	$data['status'] = $_SESSION[USER_SESSION]['idstatus'];
+	$data['id'] = $_SESSION[USER_SESSION]['id'];
 
 	if (!in_array(false, $data)) {
 		unset($_SESSION['updateInfoUser']);
@@ -219,7 +219,7 @@ if (isset($_POST['picprofile']))
 
 if (isset($_POST['validate_pass']))
 {
-	echo json_encode($model->pass_validator($_POST['curpass'], $_SESSION['session_appname']['id']));
+	echo json_encode($model->pass_validator($_POST['curpass'], $_SESSION[USER_SESSION]['id']));
 }
 
 if (isset($_POST['updtpwd']))
@@ -227,7 +227,7 @@ if (isset($_POST['updtpwd']))
 	if (isset($_SESSION['val'])) {
 		$res = $objHome->updatePass($_SESSION['val'], $_POST['pass1'], $_POST['pass2']);
 	}else {
-		$res = $objHome->updatePass($_SESSION['session_appname']['id'], $_POST['pass1'], $_POST['pass2'], $_POST['curpass']);
+		$res = $objHome->updatePass($_SESSION[USER_SESSION]['id'], $_POST['pass1'], $_POST['pass2'], $_POST['curpass']);
 	}
 
 	echo json_encode($res);
@@ -265,7 +265,7 @@ if (isset($_POST['newreqsupport'])) {
 	$subject = preg_replace('([^A-Za-zÁ-ź0-9-.¡!:\) ])', '', trim($_POST['subject']));
 	$mssg = preg_replace('([^A-Za-zÁ-ź0-9-.¡!:\) ])', '', trim($_POST['mssg']));
 	if (!empty($subject) && !empty($mssg)) {
-		echo json_encode($model->new_support_request($subject, $mssg, $_SESSION['session_appname']['id']));
+		echo json_encode($model->new_support_request($subject, $mssg, $_SESSION[USER_SESSION]['id']));
 	}else {
 		echo json_encode(false);
 	}

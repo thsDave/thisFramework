@@ -74,9 +74,9 @@ class Model extends Connection
                             // if (!empty($res) && $res[0]->total == 0 )
                             //     $_SESSION['view'] = "updateinfo";
 
-                            $_SESSION['session_appname'] = $this->user_info($iduser);
+                            $_SESSION[USER_SESSION] = $this->user_info($iduser);
 
-                            $_SESSION['lang'] = [ 'lanicon' => $_SESSION['session_appname']['lanicon'], 'lancode' => $_SESSION['session_appname']['lancode'] ];
+                            $_SESSION['lang'] = [ 'lanicon' => $_SESSION[USER_SESSION]['lanicon'], 'lancode' => $_SESSION[USER_SESSION]['lancode'] ];
 
                             $this->pst("INSERT INTO tbl_inputs(iduser) VALUES (:iduser)", ['iduser' => $iduser], false);
 
@@ -170,7 +170,7 @@ class Model extends Connection
     // admin
     public function user_list()
     {
-        $res = $this->pst("CALL sp_userlist(:idlvl, :idcountry)", ['idlvl' => $_SESSION['session_appname']['idlvl'], 'idcountry' => $_SESSION['session_appname']['idcountry']]);
+        $res = $this->pst("CALL sp_userlist(:idlvl, :idcountry)", ['idlvl' => $_SESSION[USER_SESSION]['idlvl'], 'idcountry' => $_SESSION[USER_SESSION]['idcountry']]);
 
         if (!empty($res))
         {
@@ -204,7 +204,7 @@ class Model extends Connection
         $res = $this->pst("CALL sp_updtuser(:name, :level, :lang, :status, :country, :id)", $data_user, false);
 
         if (!isset($_SESSION['val']))
-            $_SESSION['session_appname'] = $this->user_info($_SESSION['session_appname']['id']);
+            $_SESSION[USER_SESSION] = $this->user_info($_SESSION[USER_SESSION]['id']);
 
         return ($res) ? true : false;
     }
@@ -239,12 +239,12 @@ class Model extends Connection
     {
         $arr_data = [
             'idpic' => $idpic,
-            'iduser' => $_SESSION['session_appname']['id']
+            'iduser' => $_SESSION[USER_SESSION]['id']
         ];
 
         $res = $this->pst("UPDATE tbl_users SET idpic = :idpic WHERE iduser = :iduser", $arr_data, false);
 
-        $_SESSION['session_appname'] = $this->user_info($_SESSION['session_appname']['id']);
+        $_SESSION[USER_SESSION] = $this->user_info($_SESSION[USER_SESSION]['id']);
 
         return ($res) ? true : false;
     }

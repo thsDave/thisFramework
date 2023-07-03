@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
 <link rel="stylesheet" href="plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
 
-<?php require_once APP."/views/master/{$_SESSION['session_appname']['level']}_nav.php"; ?>
+<?php require_once APP."/views/master/{$_SESSION[USER_SESSION]['level']}_nav.php"; ?>
 
   <div class="content-wrapper">
     <section class="content-header">

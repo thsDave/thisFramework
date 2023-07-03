@@ -5,7 +5,7 @@ require_once '../main.php';
 //Niveles permitidos
 $levels = [ 'Super', 'Admin' ];
 
-if (in_array($_SESSION['session_appname']['level'], $levels))
+if (in_array($_SESSION[USER_SESSION]['level'], $levels))
 {
 	if (isset($_SESSION['data_report']))
 	{

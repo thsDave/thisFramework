@@ -1,6 +1,6 @@
 <?php require_once APP . "/views/master/header.php"; ?>
 
-<?php require_once APP."/views/master/{$_SESSION['session_appname']['level']}_nav.php"; ?>
+<?php require_once APP."/views/master/{$_SESSION[USER_SESSION]['level']}_nav.php"; ?>
 
 <?php $disabled = (isset($_SESSION['updateInfoUser'])) ? '' : 'disabled'; ?>
 <?php $fotos = $model->thumbnail_profile(); ?>
@@ -33,19 +33,19 @@
           <div class="card card-dark card-outline">
             <div class="card-body box-profile">
               <div class="text-center">
-                <img class="profile-user-img img-fluid img-circle" src="data:image/png;base64,<?= $_SESSION['session_appname']['pic'] ?>" alt="User profile picture" data-toggle="modal" data-target="#picProfile" style="cursor: pointer;">
+                <img class="profile-user-img img-fluid img-circle" src="data:image/png;base64,<?= $_SESSION[USER_SESSION]['pic'] ?>" alt="User profile picture" data-toggle="modal" data-target="#picProfile" style="cursor: pointer;">
               </div>
 
-              <h3 class="profile-username text-center"><?= $_SESSION['session_appname']['name'] ?></h3>
+              <h3 class="profile-username text-center"><?= $_SESSION[USER_SESSION]['name'] ?></h3>
 
               <ul class="list-group list-group-unbordered mb-3">
                 <li class="list-group-item">
                   <b><?= LANG['profile_email'] ?></b><br>
-                  <a class="float-left"><?= $_SESSION['session_appname']['email'] ?></a>
+                  <a class="float-left"><?= $_SESSION[USER_SESSION]['email'] ?></a>
                 </li>
                 <li class="list-group-item">
                   <b><?= LANG['profile_level'] ?></b><br>
-                  <a class="float-left"><?= $_SESSION['session_appname']['alias'] ?></a>
+                  <a class="float-left"><?= $_SESSION[USER_SESSION]['alias'] ?></a>
                 </li>
               </ul>
             </div>
@@ -67,7 +67,7 @@
                     <div class="form-group row">
                       <label for="name" class="col-sm-2 col-form-label"><?= LANG['profile_name'] ?></label>
                       <div class="col-sm-10">
-                        <input type="text" class="form-control" id="name" name="name" value="<?= $_SESSION['session_appname']['name'] ?>" placeholder="<?= LANG['profile_name'] ?>" <?= $disabled ?> autofocus>
+                        <input type="text" class="form-control" id="name" name="name" value="<?= $_SESSION[USER_SESSION]['name'] ?>" placeholder="<?= LANG['profile_name'] ?>" <?= $disabled ?> autofocus>
                       </div>
                     </div>
                     <div class="form-group row">
@@ -75,7 +75,7 @@
                       <div class="col-sm-10">
                         <select name="country" id="region" class="form-control select2" <?= $disabled ?>>
                           <?php foreach ($countries['idcountry'] as $key => $val): ?>
-                            <?php $selected = ($countries['idcountry'][$key] == $_SESSION['session_appname']['idcountry']) ? 'selected' : ''; ?>
+                            <?php $selected = ($countries['idcountry'][$key] == $_SESSION[USER_SESSION]['idcountry']) ? 'selected' : ''; ?>
                             <option value="<?= $val ?>" <?= $selected ?>><?= $countries['country'][$key] ?></option>
                           <?php endforeach ?>
                         </select>
@@ -86,7 +86,7 @@
                       <div class="col-sm-10">
                         <select id="language" name="language" class="form-control select2" <?= $disabled ?>>
                           <?php foreach ($langs['idlang'] as $i => $val): ?>
-                            <?php $selected = ($val == $_SESSION['session_appname']['idlang']) ? 'selected' : ''; ?>
+                            <?php $selected = ($val == $_SESSION[USER_SESSION]['idlang']) ? 'selected' : ''; ?>
                             <option value="<?= $val ?>" <?= $selected ?>><?= $langs['language'][$i] ?></option>
                           <?php endforeach ?>
                         </select>
@@ -114,7 +114,7 @@
                         <div class="form-group row">
                           <label for="inputName" class="col-sm-2 col-form-label"><?= LANG['profile_account'] ?></label>
                           <div class="col-sm-10">
-                            <input type="email" class="form-control" id="inputName" value="<?= $_SESSION['session_appname']['email'] ?>" disabled="true">
+                            <input type="email" class="form-control" id="inputName" value="<?= $_SESSION[USER_SESSION]['email'] ?>" disabled="true">
                           </div>
                         </div>
                       </form>

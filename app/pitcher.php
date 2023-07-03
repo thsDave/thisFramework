@@ -6,13 +6,13 @@ require_once 'controllers/Controller.php';
 
 if (!empty($_SESSION))
 {
-	if (isset($_SESSION['session_appname']))
+	if (isset($_SESSION[USER_SESSION]))
 	{
 		require_once select_lang($_SESSION['lang']['lancode']);
 
 		require_once 'controllers/HomeController.php';
 
-		$class = $_SESSION['session_appname']['level']."Controller";
+		$class = $_SESSION[USER_SESSION]['level']."Controller";
 
 		$userController = "app/controllers/{$class}.php";
 
@@ -24,11 +24,11 @@ if (!empty($_SESSION))
 			{
 				$levels = $model->level_list();
 
-				if (in_array($_SESSION['session_appname']['level'], $levels['level']))
+				if (in_array($_SESSION[USER_SESSION]['level'], $levels['level']))
 				{
-					if (in_array($_SESSION['view'], VIEWS_LIST[$_SESSION['session_appname']['level']]['views']))
+					if (in_array($_SESSION['view'], VIEWS_LIST[$_SESSION[USER_SESSION]['level']]['views']))
 					{
-						$_SESSION['title'] = $_SESSION['session_appname']['level'];
+						$_SESSION['title'] = $_SESSION[USER_SESSION]['level'];
 						$location = APP.'/views/pool/'.$_SESSION['view'].'.php';
 					}
 					else if (in_array($_SESSION['view'], VIEWS_LIST['Master']['views']))
@@ -57,7 +57,7 @@ if (!empty($_SESSION))
 		{
 			try
 			{
-				$starter = strtolower($_SESSION['session_appname']['level']).'_starter.php';
+				$starter = strtolower($_SESSION[USER_SESSION]['level']).'_starter.php';
 
 				$location = APP.'/views/pool/'.$starter;
 

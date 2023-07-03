@@ -4,7 +4,7 @@ require_once "../main.php";
 //Niveles permitidos
 $levels = [ 'Super', 'Admin' ];
 
-if (in_array($_SESSION['session_appname']['level'], $levels))
+if (in_array($_SESSION[USER_SESSION]['level'], $levels))
 {
 	$arr_docs = [
 		'users_list' => LANG['report_name_doc_users'].date("dmY-His"),
