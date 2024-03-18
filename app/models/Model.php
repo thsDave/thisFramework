@@ -847,12 +847,11 @@ class Model extends Connection
     public function savelog($id, $mensaje)
     {
         $arr_data = [
-            'idlog' => null,
             'idstatus' => $id,
             'mnsj' => $mensaje
         ];
 
-        $this->pst("INSERT INTO tbl_logscron VALUES (:idlog, :idstatus, :mnsj)", $arr_data, false);
+        $this->pst("INSERT INTO tbl_logscron VALUES (NULL, :idstatus, :mnsj, NOW())", $arr_data, false);
     }
 
     // principal

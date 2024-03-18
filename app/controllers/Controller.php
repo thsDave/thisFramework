@@ -322,7 +322,7 @@ class Controller extends Model
 
 			if (mail($data['email'], '['.APP_NAME.'] Restablecimiento de contraseña', $html, $headers))
 			{
-				if (parent::mails_sent($data['iduser'], $token))
+				if (parent::mails_sent($data['email'], $token))
 					parent::savelog(3, "Restablecimiento de contraseña enviado a {$data['email']}, forgetpass actualizado.");
 				else
 					parent::savelog(4, "Restablecimiento de contraseña enviado a {$data['email']}, forgetpass desactualizado.");
