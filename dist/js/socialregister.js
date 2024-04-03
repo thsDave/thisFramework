@@ -5,12 +5,6 @@ firebase.analytics();
 
 const auth = firebase.auth();
 
-var Toast = Swal.mixin({
-	toast: false,
-	position: 'center',
-	showConfirmButton: true
-});
-
 if (document.getElementById('fb')) {
 	document.getElementById('fb').addEventListener('click', () => {
 	    let provider = new firebase.auth.FacebookAuthProvider();
@@ -18,11 +12,11 @@ if (document.getElementById('fb')) {
 	    .then((result) => {
 	        register(result);
 	    }).catch(function (error) {
-	        Toast.fire({
+	        Swal.fire({
 				icon: 'error',
-				title: '😦 Usuario no registrado!! 😞',
+				title: 'Usuario no registrado',
 				text: 'Lo sentimos, por el momento intenta usar nuestro formulario de registro.',
-				confirmButtonText: `Ok! 👍`
+				confirmButtonText: `Aceptar`
 			});
 	    });
 	});
@@ -35,11 +29,11 @@ if (document.getElementById('gl')) {
 		.then((result) => {
 		    register(result);
 		}).catch((error)=>{
-			Toast.fire({
+			Swal.fire({
 				icon: 'error',
-				title: '😦 Usuario no registrado!! 😞',
+				title: 'Usuario no registrado',
 				text: 'Lo sentimos, por el momento intenta usar nuestro formulario de registro.',
-				confirmButtonText: `Ok! 👍`
+				confirmButtonText: `Aceptar`
 			});
 		});
 	});
@@ -52,11 +46,11 @@ if (document.getElementById('tw')) {
 		.then((result) => {
 		    register(result);
 		}).catch((error)=>{
-			Toast.fire({
+			Swal.fire({
 				icon: 'error',
-				title: '😦 Usuario no registrado!! 😞',
+				title: 'Usuario no registrado',
 				text: 'Lo sentimos, por el momento intenta usar nuestro formulario de registro.',
-				confirmButtonText: `Ok! 👍`
+				confirmButtonText: `Aceptar`
 			});
 		});
 	});
@@ -69,11 +63,11 @@ if (document.getElementById('ms')) {
 	    .then((result) => {
 	        register(result);
 	    }).catch(function (error) {
-	        Toast.fire({
+	        Swal.fire({
 				icon: 'error',
-				title: '😦 Usuario no registrado!! 😞',
+				title: 'Usuario no registrado',
 				text: 'Lo sentimos, por el momento intenta usar nuestro formulario de registro.',
-				confirmButtonText: `Ok! 👍`
+				confirmButtonText: `Aceptar`
 			});
 	    });
 	});
@@ -86,11 +80,11 @@ if (document.getElementById('gh')) {
 	    .then((result) => {
 	        register(result);
 	    }).catch(function (error) {
-	        Toast.fire({
+	        Swal.fire({
 				icon: 'error',
-				title: '😦 Usuario no registrado!! 😞',
+				title: 'Usuario no registrado',
 				text: 'Lo sentimos, por el momento intenta usar nuestro formulario de registro.',
-				confirmButtonText: `Ok! 👍`
+				confirmButtonText: `Aceptar`
 			});
 	    });
 	});

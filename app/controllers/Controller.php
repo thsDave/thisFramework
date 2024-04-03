@@ -28,11 +28,35 @@ class Controller extends Model
 				}
 			break;
 
+			case 'confirm':
+				if (parent::token_validator($value))
+				{
+					$_SESSION['gestion'] = 'confirm';
+					$_SESSION['token'] = $value;
+				}
+				else
+				{
+					session_destroy();
+				}
+			break;
+
 			case 'delregister':
-				if (strlen($value) == 50)
+				if (parent::token_validator($value))
+				{
+					$_SESSION['gestion'] = 'cancel';
+					parent::del_register($value);
+				}
+				else
+				{
+					session_destroy();
+				}
+			break;
+
+			case 'delrestore':
+				if (strlen($value) == 70)
 				{
 					if (parent::token_validator($value))
-						parent::del_register($value);
+						parent::del_restore($value);
 
 					session_destroy();
 				}
@@ -40,10 +64,6 @@ class Controller extends Model
 
 			case 'login':
 				session_destroy();
-			break;
-
-			case 'resetpass':
-				$this->resetPass($_SESSION['email']);
 			break;
 
 			case 'delresetpass':
@@ -174,7 +194,7 @@ class Controller extends Model
 								<p style="margin-top: 30px;">Hola '.$data['name'].',</p>
 								<p style="margin-top: 30px;">Te informamos que has sido registrado exitosamente en <strong>'.APP_NAME.'.</strong></p>
 								<p style="margin-top: 30px;">Te damos la bienvenida a nuestra aplicación, para finalizar tu registro, haz clic sobre el siguiente enlace:</p>
-								<p><a href="'.URL.'?action=reset&value='.$token.'" target="_blank">Confirmar correo electrónico</a></p>
+								<p><a href="'.URL.'?action=confirm&value='.$token.'" target="_blank">Confirmar correo electrónico</a></p>
 								<p style="margin-top: 30px;"><strong>¿No deseas registrarte?</strong></p>
 								<p>
 									Si no deseas registrarte, haz clic en el siguiente enlace para eliminar tus datos de nuestros registros.
@@ -201,7 +221,7 @@ class Controller extends Model
 
 					if (mail($data['email'], '['.APP_NAME.'] Confirmación de registro', $html, $headers))
 					{
-						if (parent::mails_sent($data['email'], $token))
+						if (parent::register_mail($data['email'], $token))
 							parent::savelog(3, "Confirmación de registro enviado a {$data['email']}, mailRegister actualizado.");
 						else
 							parent::savelog(4, "Confirmación de registro enviado a {$data['email']}, mailRegister desactualizado.");
@@ -244,23 +264,13 @@ class Controller extends Model
 
 	}
 
-	public function resetPass($email)
-	{
-		$data = parent::is_correct_mail($email);
-
-		if ($data)
-			return (parent::recovery_req_on($data)) ? true : false;
-		else
-			return false;
-	}
-
 	public function send_resetpass($email)
 	{
 		$data = parent::is_correct_mail($email);
 
 		if ($data)
 		{
-			$token = $this->getKey(50);
+			$token = $this->getKey(70);
 
 			$html = '
 			<!DOCTYPE html>
@@ -322,7 +332,7 @@ class Controller extends Model
 
 			if (mail($data['email'], '['.APP_NAME.'] Restablecimiento de contraseña', $html, $headers))
 			{
-				if (parent::mails_sent($data['email'], $token))
+				if (parent::forgetpass_mail($data['email'], $token))
 					parent::savelog(3, "Restablecimiento de contraseña enviado a {$data['email']}, forgetpass actualizado.");
 				else
 					parent::savelog(4, "Restablecimiento de contraseña enviado a {$data['email']}, forgetpass desactualizado.");
@@ -345,7 +355,7 @@ class Controller extends Model
 	public function resetPassword($pass)
 	{
 		$arr_pass = str_split($pass);
-		$banco = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ0123456789abcdefghijklmnñopqrstuvwxyz';
+		$banco = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ0123456789abcdefghijklmnñopqrstuvwxyzÁÉÍÓÚáéíóú_@-$!.';
 		$arr_banco = str_split($banco);
 		$x = true;
 
@@ -360,7 +370,7 @@ class Controller extends Model
 
 	protected function getKey($length)
 	{
-	    $cadena = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ0123456789abcdefghijklmnñopqrstuvwxyz";
+	    $cadena = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz$@/_-";
 	    $longitudCadena = strlen($cadena);
 	    $pass = "";
 	    for($i=1 ; $i<=$length ; $i++)

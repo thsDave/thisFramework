@@ -14,11 +14,11 @@
   <!-- icono del sitio -->
   <link rel="shortcut icon" type="image/x-icon" href="dist/img/icono.ico">
   <!-- fuente del sitio -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
   <!-- adminlte -->
   <link rel="stylesheet" href="dist/css/adminlte.css">
   <!-- librería de iconos -->
-  <script src="https://kit.fontawesome.com/76dbbc43b7.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="plugins/fontawesome-free-6.5.1-web/css/all.min.css">
   <!-- librería de banderas para seleccion de idiomas -->
   <link rel="stylesheet" href="plugins/flag-icon-css/css/flag-icon.min.css">
   <!-- sweetalert -->

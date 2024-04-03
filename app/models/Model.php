@@ -255,6 +255,11 @@ class Model extends Connection
         $this->pst("DELETE FROM tbl_users WHERE token = :token", ['token' => $token], false);
     }
 
+    protected function del_restore($token)
+    {
+        $this->pst("UPDATE tbl_users SET token = NULL, tokendate = NULL WHERE token = :token", ['token' => $token], false);
+    }
+
     // principal
     public function del_user($email)
     {
@@ -636,14 +641,10 @@ class Model extends Connection
 
             $arr_data = [
                 'pass' => $pass,
-                'token' => NULL,
-                'td' => NULL,
-                'fp' => 0,
-                'idstatus' => 1,
                 'iduser' => $id
             ];
 
-            $query = "UPDATE tbl_users SET pass = :pass, token = :token, tokendate = :td, forgetpass = :fp, idstatus = :idstatus WHERE iduser = :iduser";
+            $query = "UPDATE tbl_users SET pass = :pass, token = NULL, tokendate = NULL, forgetpass = 0, registermail = 0, idstatus = 1 WHERE iduser = :iduser";
 
             $res = $this->pst($query, $arr_data, false);
 
@@ -828,22 +829,6 @@ class Model extends Connection
     }
 
     // all levels
-    public function mails_sent($email, $token)
-    {
-        $arr_data = [
-            'token' => $token,
-            'now' => date('Y-m-d'),
-            'register' => 1,
-            'email' => $email,
-            'status' => 1
-        ];
-
-        $query = "UPDATE tbl_users SET token = :token, tokendate = :now, registermail = :register, idstatus = :status WHERE email = :email";
-
-        return $this->pst($query, $arr_data, false);
-    }
-
-    // all levels
     public function savelog($id, $mensaje)
     {
         $arr_data = [
@@ -854,16 +839,30 @@ class Model extends Connection
         $this->pst("INSERT INTO tbl_logscron VALUES (NULL, :idstatus, :mnsj, NOW())", $arr_data, false);
     }
 
-    // principal
-    public function recovery_req_on($iduser)
+    // all levels
+    public function register_mail($email, $token)
     {
-        return $this->pst("UPDATE tbl_users SET forgetpass = 1, idstatus = 3 WHERE iduser = :id", ['id' => $iduser], false);
+        $arr_data = [
+            'token' => $token,
+            'email' => $email
+        ];
+
+        $query = "UPDATE tbl_users SET token = :token, tokendate = NOW(), registermail = 1, idstatus = 1 WHERE email = :email";
+
+        return $this->pst($query, $arr_data, false);
     }
 
     // principal
-    public function forgetpass_mail($iduser)
+    public function forgetpass_mail($email, $token)
     {
-        return $this->pst("UPDATE tbl_users SET forgetpass = 1, idstatus = 3 WHERE iduser = :id", ['id' => $iduser], false);
+        $arr_data = [
+            'token' => $token,
+            'email' => $email
+        ];
+
+        $query = "UPDATE tbl_users SET token = :token, tokendate = NOW(), forgetpass = 1, idstatus = 1 WHERE email = :email";
+
+        return $this->pst($query, $arr_data, false);
     }
 
     // principal

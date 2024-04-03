@@ -107,7 +107,7 @@ form.addEventListener('submit', async (e) => {
 
 	Swal.fire({
         title: '✍️ Iniciando registro 👌',
-        html: 'Estamos registrando tus datos en nuestra base de datos, por favor no cierres la ventana del navegador.',
+        html: 'Estamos registrando sus datos en nuestra base de datos, por favor no cierre la ventana del navegador.',
         didOpen: () => {
             Swal.showLoading();
         }
@@ -125,20 +125,19 @@ form.addEventListener('submit', async (e) => {
 	if (result) {
 		Swal.fire({
 			icon: 'success',
-			title: '😃 Usuario registrado!! 🥳',
-			text: 'Te hemos enviado un correo electrónico con los ultimos pasos de registro.',
-			confirmButtonText: `De acuerdo! 👍`
+			title: 'Usuario registrado',
+			text: 'Te hemos enviado un correo electrónico con los pasos finales de registro.',
+			confirmButtonText: `Aceptar`
 		})
 		.then(() => {
-			let url = window.location;
-			window.open(url+'?action=login','_self');
+			window.open(window.location+'?action=login','_self');
 		});
 	}else {
 		Swal.fire({
 			icon: 'error',
-			title: '😦 Usuario no registrado!! 😞',
-			text: '¿Ya estas registrado con nosotros? intenta restablecer tu contraseña o verifica los datos y vuelve a intentarlo',
-			confirmButtonText: `Ok! 👍`
+			title: 'Usuario no registrado',
+			text: '¿Ya estás registrado con nosotros? intenta restablecer tu contraseña o verifica tus datos y vuelve a intentarlo.',
+			confirmButtonText: `Aceptar`
 		});
 	}
 

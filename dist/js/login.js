@@ -1,32 +1,34 @@
 var login_form = document.getElementById('login_form');
 
-login_form.addEventListener('submit', (e) => {
-	e.preventDefault();
+login_form.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-	let arr_data = new FormData(login_form);
+    let arr_data = new FormData(login_form);
 
-	arr_data.append('localogin', true);
+    arr_data.append('localogin', true);
 
-	fetch('external_data',{
-		method: 'POST',
-		body: arr_data
-	})
-	.then(res => res.json())
-	.then(data => {
+    try {
+        const response = await fetch('external_data', {
+            method: 'POST',
+            body: arr_data
+        });
 
-		if(data) {
-			location.reload();
-		} else {
-			Swal.fire({
-				icon: 'error',
-				title: '😦 Fail! 😞',
-				text: 'Usuario y/o Contraseña incorrectos',
-				confirmButtonText: `Ok! 👍`
-			});
+        const data = await response.json();
 
-			$('#user').val('');
-			$('#pwd').val('');
-		}
-	});
+        if (data) {
+            location.reload();
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Usuario y/o Contraseña incorrectos',
+                confirmButtonText: `Aceptar`
+            });
+
+            $('#user').val('');
+            $('#pwd').val('');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
 });
-

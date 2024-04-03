@@ -41,7 +41,9 @@ BEGIN
         u.idstatus,
         u.idcountry,
         c.country,
-        u.timestamp
+        DATE_FORMAT(u.created_at, '%d/%m/%Y | %H:%m:%s') AS 'created_at',
+        DATE_FORMAT(u.updated_at, '%d/%m/%Y | %H:%m:%s') AS 'updated_at',
+        DATE_FORMAT(u.deleted_at, '%d/%m/%Y | %H:%m:%s') AS 'deleted_at'
 	FROM
 		tbl_users u
 	INNER JOIN
@@ -77,7 +79,8 @@ BEGIN
         idlvl = _level,
         idlang = _lang,
         idstatus = _status,
-        idcountry = _country
+        idcountry = _country,
+        updated_at = NOW()
 	WHERE
 		iduser = _iduser;
 END //
@@ -107,7 +110,9 @@ BEGIN
         s.status,
         c.idcountry,
         c.country,
-        u.timestamp
+        DATE_FORMAT(u.created_at, '%d/%m/%Y | %H:%m:%s') AS 'created_at',
+        DATE_FORMAT(u.updated_at, '%d/%m/%Y | %H:%m:%s') AS 'updated_at',
+        DATE_FORMAT(u.deleted_at, '%d/%m/%Y | %H:%m:%s') AS 'deleted_at'
 	FROM
 		tbl_users u
 	INNER JOIN
@@ -140,7 +145,7 @@ BEGIN
 	INSERT INTO
 		`tbl_users`
 	VALUES
-		(NULL, _name, _level, _email, _pass, NULL, NULL, _accesstype, _mailregister, 0, _lang, 1, _status, _country, NOW());
+		(NULL, _name, _level, _email, _pass, NULL, NULL, _accesstype, _mailregister, 0, _lang, 1, _status, _country, NOW(), NOW(), NULL);
 END //
 
 
@@ -158,7 +163,7 @@ BEGIN
 	INSERT INTO
 		`tbl_users`
 	VALUES
-		(NULL, _name, _level, _email, _pass, NULL, NULL, 'form', 1, 0, _lang, 1, 1, _country, NOW());
+		(NULL, _name, _level, _email, _pass, NULL, NULL, 'form', 1, 0, _lang, 1, 1, _country, NOW(), NOW(), NULL);
 END //
 
 
@@ -170,7 +175,7 @@ CREATE PROCEDURE sp_supportrequest(
     _mssg		VARCHAR(2000)
 )
 BEGIN
-	INSERT INTO tbl_supports VALUES (NULL, _iduser, _subject, _mssg, '', 0, 3, NOW());
+	INSERT INTO tbl_supports VALUES (NULL, _iduser, _subject, _mssg, '', 0, 3, NOW(), NOW(), NULL);
 END //
 
 
@@ -189,7 +194,9 @@ BEGIN
 		s.idstatus,
 		e.btbadge,
 		e.status,
-		s.timestamp
+		DATE_FORMAT(s.created_at, '%d/%m/%Y | %H:%m:%s') AS 'created_at',
+        DATE_FORMAT(s.updated_at, '%d/%m/%Y | %H:%m:%s') AS 'updated_at',
+        DATE_FORMAT(s.deleted_at, '%d/%m/%Y | %H:%m:%s') AS 'deleted_at'
 	FROM
 		tbl_supports s
 	INNER JOIN
@@ -210,7 +217,10 @@ BEGIN
 		u.name,
 		s.subject,
 		s.mssg,
-        s.response
+        s.response,
+		DATE_FORMAT(s.created_at, '%d/%m/%Y | %H:%m:%s') AS 'created_at',
+        DATE_FORMAT(s.updated_at, '%d/%m/%Y | %H:%m:%s') AS 'updated_at',
+        DATE_FORMAT(s.deleted_at, '%d/%m/%Y | %H:%m:%s') AS 'deleted_at'
 	FROM
 		tbl_supports s
 	INNER JOIN
@@ -223,7 +233,7 @@ DROP PROCEDURE IF EXISTS sp_savesupportres;
 DELIMITER //
 CREATE PROCEDURE sp_savesupportres( _id INT, _res VARCHAR(2000) )
 BEGIN
-	UPDATE tbl_supports SET response = _res, idstatus = 5 WHERE idsupport = _id;
+	UPDATE tbl_supports SET response = _res, idstatus = 5, updated_at = NOW() WHERE idsupport = _id;
 END //
 
 DROP PROCEDURE IF EXISTS sp_datareport;
@@ -239,7 +249,10 @@ BEGIN
 			u.registertype AS 'tipo_registro',
 			l.language AS 'idioma',
 			p.picture AS 'imagen',
-			s.status AS 'estado'
+			s.status AS 'estado',
+			DATE_FORMAT(u.created_at, '%d/%m/%Y | %H:%m:%s') AS 'created_at',
+	        DATE_FORMAT(u.updated_at, '%d/%m/%Y | %H:%m:%s') AS 'updated_at',
+	        DATE_FORMAT(u.deleted_at, '%d/%m/%Y | %H:%m:%s') AS 'deleted_at'
 		FROM
 			tbl_users u
 		INNER JOIN
@@ -262,7 +275,10 @@ BEGIN
 				s.status AS 'estado',
                 sp.subject AS 'asunto',
                 sp.mssg AS 'mensaje',
-                sp.response AS 'respuesta'
+                sp.response AS 'respuesta',
+				DATE_FORMAT(sp.created_at, '%d/%m/%Y | %H:%m:%s') AS 'created_at',
+		        DATE_FORMAT(sp.updated_at, '%d/%m/%Y | %H:%m:%s') AS 'updated_at',
+		        DATE_FORMAT(sp.deleted_at, '%d/%m/%Y | %H:%m:%s') AS 'deleted_at'
 			FROM
 				tbl_supports sp
 			INNER JOIN
@@ -275,31 +291,6 @@ BEGIN
 				tbl_status s ON sp.idstatus = s.idstatus
 			INNER JOIN
 				tbl_levels v ON u.idlvl = v.idlvl;
-		ELSE IF _option = 'comments' THEN
-				SELECT
-					u.name AS 'nombre',
-					u.email,
-					u.position AS 'cargo',
-					v.level AS 'permiso',
-					u.registertype AS 'tipo_registro',
-					l.language AS 'idioma',
-					p.picture AS 'imagen',
-					s.status AS 'estado',
-					c.comment AS 'comentario',
-                    c.dcomment AS 'fecha'
-				FROM
-					tbl_comments c
-				INNER JOIN
-					tbl_users u ON c.iduser = u.iduser
-				INNER JOIN
-					tbl_languages l ON u.idlang = l.idlang
-				INNER JOIN
-					tbl_profilepics p ON u.idpic = p.idpic
-				INNER JOIN
-					tbl_status s ON u.idstatus = s.idstatus
-				INNER JOIN
-					tbl_levels v ON u.idlvl = v.idlvl;
-			END IF;
 		END IF;
     END IF;
 END //

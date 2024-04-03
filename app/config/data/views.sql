@@ -11,13 +11,15 @@
 -- ----------------------------------- --
 
 CREATE VIEW v_cookies AS
-SELECT
-	email,
-	pass,
-	sessiontoken,
-	timestamp
-FROM
-	tbl_cookies;
+	SELECT
+		email,
+		ipaddr,
+		sessiontoken,
+		DATE_FORMAT(created_at, '%d/%m/%Y | %H:%m:%s') AS 'created_at',
+		DATE_FORMAT(updated_at, '%d/%m/%Y | %H:%m:%s') AS 'updated_at',
+		DATE_FORMAT(deleted_at, '%d/%m/%Y | %H:%m:%s') AS 'deleted_at'
+	FROM
+		tbl_cookies;
 
 -- ------------------------------------- --
 -- --------- [ tbl_countries ] --------- --
@@ -30,15 +32,15 @@ CREATE VIEW v_countries AS
 		c.badge,
 		c.isocode,
 		c.idstatus,
-		c.timestamp,
+		DATE_FORMAT(c.created_at, '%d/%m/%Y | %H:%m:%s') AS 'created_at',
+		DATE_FORMAT(c.updated_at, '%d/%m/%Y | %H:%m:%s') AS 'updated_at',
+		DATE_FORMAT(c.deleted_at, '%d/%m/%Y | %H:%m:%s') AS 'deleted_at',
 		s.status,
 		s.btbadge
 	FROM
 		tbl_countries c
 	INNER JOIN
-		tbl_status s ON c.idstatus = s.idstatus
-	WHERE
-		c.idstatus <> 11;
+		tbl_status s ON c.idstatus = s.idstatus;
 
 -- ---------------------------------- --
 -- --------- [ tbl_status ] --------- --
@@ -49,7 +51,8 @@ CREATE VIEW v_status AS
 		idstatus,
 		status,
 		btbadge,
-		timestamp
+		CASE WHEN showfield = 1 THEN 'showing' ELSE 'hidden' END AS 'showfield',
+		DATE_FORMAT(created_at, '%d/%m/%Y | %H:%m:%s') AS 'created_at'
 	FROM
 		tbl_status;
 
@@ -64,15 +67,15 @@ CREATE VIEW v_languages AS
 		l.lancode,
 		l.lanicon,
 		l.idstatus,
-		l.timestamp,
+		DATE_FORMAT(l.created_at, '%d/%m/%Y | %H:%m:%s') AS 'created_at',
+		DATE_FORMAT(l.updated_at, '%d/%m/%Y | %H:%m:%s') AS 'updated_at',
+		DATE_FORMAT(l.deleted_at, '%d/%m/%Y | %H:%m:%s') AS 'deleted_at',
 		s.status,
 		s.btbadge
 	FROM
 		tbl_languages l
 	INNER JOIN
-		tbl_status s ON l.idstatus = s.idstatus
-	WHERE
-		l.idstatus <> 11;
+		tbl_status s ON l.idstatus = s.idstatus;
 
 -- ---------------------------------- --
 -- --------- [ tbl_levels ] --------- --
@@ -83,7 +86,8 @@ CREATE VIEW v_levels AS
 		idlvl,
 		level,
 		alias,
-		timestamp
+		CASE WHEN showfield = 1 THEN 'showing' ELSE 'hidden' END AS 'showfield',
+		DATE_FORMAT(created_at, '%d/%m/%Y | %H:%m:%s') AS 'created_at'
 	FROM
 		tbl_levels;
 
@@ -96,7 +100,7 @@ CREATE VIEW v_logscron AS
 		idlog,
 		idstatus,
 		message,
-		timestamp
+		DATE_FORMAT(created_at, '%d/%m/%Y | %H:%m:%s') AS 'created_at'
 	FROM
 		tbl_logscron;
 
@@ -111,36 +115,43 @@ CREATE VIEW v_profilepics AS
 		p.format,
 		p.picture,
 		p.idstatus,
-		p.timestamp,
+		DATE_FORMAT(p.created_at, '%d/%m/%Y | %H:%m:%s') AS 'created_at',
 		s.status,
 		s.btbadge
 	FROM
 		tbl_profilepics p
 	INNER JOIN
-		tbl_status s ON p.idstatus = s.idstatus
-	WHERE
-		p.idstatus <> 11;
+		tbl_status s ON p.idstatus = s.idstatus;
 
 -- --------------------------------- --
 -- --------- [ tbl_users ] --------- --
 -- --------------------------------- --
 
--- CREATE VIEW v_users AS SELECT u.iduser, u.name, u.idlvl, u.email, u.pass, u.token, u.tokendate, u.registertype, u.registermail, u.forgetpass, u.idlang, u.idpic, u.idstatus, u.idcountry, u.timestamp, s.status, s.btbadge FROM tbl_users u INNER JOIN tbl_status s ON u.idstatus = s.idstatus WHERE u.idstatus <> 11;
-
 CREATE VIEW v_users AS
 	SELECT
 		u.iduser,
 		u.name,
+		u.idlvl,
 		u.email,
-        i.language,
+		u.pass,
+		u.token,
+		u.tokendate,
+        u.registertype,
+        u.registermail,
+        u.forgetpass,
+        u.idlang,
+        u.idpic,
+        u.idstatus,
+        u.idcountry,
+        DATE_FORMAT(u.created_at, '%d/%m/%Y | %H:%m:%s') AS 'created_at',
+		DATE_FORMAT(u.updated_at, '%d/%m/%Y | %H:%m:%s') AS 'updated_at',
+		DATE_FORMAT(u.deleted_at, '%d/%m/%Y | %H:%m:%s') AS 'deleted_at',
         n.level,
         n.alias,
-        u.registertype,
-        s.btbadge,
+        i.language,
         s.status,
-        c.idcountry,
-        c.country,
-        u.timestamp
+        s.btbadge,
+        c.country
 	FROM
 		tbl_users u
 	INNER JOIN
@@ -150,15 +161,11 @@ CREATE VIEW v_users AS
 	INNER JOIN
 		tbl_status s ON u.idstatus = s.idstatus
 	INNER JOIN
-		tbl_levels n ON u.idlvl = n.idlvl
-	WHERE
-		u.idstatus <> 11;
+		tbl_levels n ON u.idlvl = n.idlvl;
 
 -- ------------------------------------ --
 -- --------- [ tbl_supports ] --------- --
 -- ------------------------------------ --
-
--- CREATE VIEW v_supports AS SELECT sp.idsupport, sp.iduser, sp.subject, sp.mssg, sp.response, sp.sendmail, sp.idstatus, sp.timestamp, s.status, s.btbadge FROM tbl_supports sp INNER JOIN tbl_status s ON sp.idstatus = s.idstatus WHERE sp.idstatus <> 11;
 
 CREATE VIEW v_supports AS
 	SELECT
@@ -172,7 +179,9 @@ CREATE VIEW v_supports AS
 		s.idstatus,
 		e.btbadge,
 		e.status,
-		s.timestamp
+		DATE_FORMAT(s.created_at, '%d/%m/%Y | %H:%m:%s') AS 'created_at',
+		DATE_FORMAT(s.updated_at, '%d/%m/%Y | %H:%m:%s') AS 'updated_at',
+		DATE_FORMAT(s.deleted_at, '%d/%m/%Y | %H:%m:%s') AS 'deleted_at'
 	FROM
 		tbl_supports s
 	INNER JOIN
@@ -180,6 +189,4 @@ CREATE VIEW v_supports AS
 	INNER JOIN
 		tbl_status e ON s.idstatus = e.idstatus
     INNER JOIN
-		tbl_levels l ON u.idlvl = l.idlvl
-	WHERE
-		u.idstatus <> 11;
+		tbl_levels l ON u.idlvl = l.idlvl;

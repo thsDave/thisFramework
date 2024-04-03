@@ -73,7 +73,7 @@ const DB_SOCKET		= '';
 const DB_HOST 		= 'localhost';
 const DB_USER		= 'root';
 const DB_PWD 		= '';
-const DB_NAME 		= 'db_skeleton';
+const DB_NAME 		= 'skeleton2';
 const DB_PORT 		= '';
 const DB_CHARSET 	= 'utf8';
 

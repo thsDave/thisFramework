@@ -2,44 +2,32 @@
 var btn = document.getElementById('btn_pass');
 btn.disabled = true;
 
-let arr_data = new FormData();
+async function getUserInfo() {
+  try {
+    let arr_data = new FormData();
+    arr_data.append('getusrinfo', true);
 
-  arr_data.append('getusrinfo', true);
+    const response = await fetch('external_data', {
+      method: 'POST',
+      body: arr_data
+    });
 
-  fetch('external_data', {
-    method: 'POST',
-    body: arr_data
-  })
-  .then(res => res.json())
-  .then(data => {
+    const data = await response.json();
 
     if (data) {
       $('#username').html(data.name);
       $('#usermail').html(data.email);
-    }else {
-      let url = window.location;
-      window.open(url+'?action=login','_self');
+    } else {
+      window.open(window.location + '?action=login', '_self');
     }
-
-  });
-
-function validation(pass) {
-  var banco = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ0123456789abcdefghijklmnñopqrstuvwxyz_@-$!.';
-  var arr_banco = banco.split('');
-  var arr_pass = pass.split('');
-
-  var x = true;
-
-  arr_pass.forEach( function(element) {
-    if (!arr_banco.includes(element)) {
-      x = false;
-    }
-  });
-
-  return x;
+  } catch (error) {
+    window.open(window.location + '?action=login', '_self');
+  }
 }
 
-function validapass1() {
+getUserInfo();
+
+$('#pass1').keyup(()=>{
   var pass = document.getElementById('pass1');
   var mensaje = document.getElementById('mnsj');
   var btn = document.getElementById('btn_pass');
@@ -54,9 +42,9 @@ function validapass1() {
     mensaje.className = 'form-text text-danger';
     mensaje.innerHTML = 'Contraseña inválida';
   }
-}
+});
 
-function validapass2() {
+$('#pass2').keyup(()=>{
   var pass1 = document.getElementById('pass1');
   var pass2 = document.getElementById('pass2');
   var mensaje = document.getElementById('mnsj2');
@@ -84,42 +72,64 @@ function validapass2() {
     mensaje.className = 'form-text text-danger';
     mensaje.innerHTML = 'Contraseña inválida';
   }
+});
+
+function validation(pass) {
+  var banco = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ0123456789abcdefghijklmnñopqrstuvwxyzÁÉÍÓÚáéíóú_@-$!.';
+  var arr_banco = banco.split('');
+  var arr_pass = pass.split('');
+
+  var x = true;
+
+  arr_pass.forEach( function(element) {
+    if (!arr_banco.includes(element)) {
+      x = false;
+    }
+  });
+
+  return x;
 }
 
 var form = document.getElementById('restorepass');
 
-form.addEventListener('submit', (e) => {
-
+form.addEventListener('submit', async (e) => {
   e.preventDefault();
 
   let arr_data = new FormData(form);
-
   arr_data.append('restorepwd', true);
 
-  fetch('external_data', {
-    method: 'POST',
-    body: arr_data
-  })
-  .then(res => res.json())
-  .then(data => {
+  try {
+    const response = await fetch('external_data', {
+      method: 'POST',
+      body: arr_data
+    });
+
+    const data = await response.json();
+
     if (data) {
       $('#restore-card').hide();
-      Swal.fire({
+      await Swal.fire({
         icon: 'success',
-        title: '😃 Datos actualizados 🥳',
-        text: 'Tu contraseña ha sido actualizada con éxito.',
-        confirmButtonText: `Genial 👍`
-      }).then(()=>{
-        let url = window.location;
-        window.open(url+'?action=login','_self');
+        title: 'Contraseña actualizada',
+        text: 'Su contraseña ha sido actualizada satisfactoriamente.',
+        confirmButtonText: `Aceptar`
       });
-    }else {
-      Swal.fire({
+      let url = window.location;
+      window.open(url + '?action=login', '_self');
+    } else {
+      await Swal.fire({
         icon: 'error',
-        title: '😦 Error 😞',
-        text: 'No se pudo actualizar tu contraseña, intenta nuevamente',
-        confirmButtonText: `Ok! 👍`
+        title: 'Error',
+        text: 'No se pudo actualizar su contraseña, inténtelo nuevamente.',
+        confirmButtonText: `Aceptar`
       });
     }
-  });
+  } catch (error) {
+    await Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'No se pudo actualizar su contraseña, inténtelo nuevamente.',
+      confirmButtonText: `Aceptar`
+    });
+  }
 });
