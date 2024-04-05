@@ -73,7 +73,7 @@ const LANG = [
 
 	'newuser_email' => 'Correo electrónico',
 
-	'newuser_email2' => 'Repita su correo electrónico',
+	'newuser_email2' => 'Repetir correo electrónico',
 
 	'newuser_country' => 'País',
 
@@ -257,8 +257,6 @@ const LANG = [
 	'field_name' => 'nombre',
 
 	'field_email' => 'correo',
-
-	'field_email' => '',
 
 	'field_level' => 'nivel de usuario',
 

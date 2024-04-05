@@ -28,41 +28,6 @@ $('#profile-access-tab').click(() => {
 	});
 });
 
-function picprofile(val) {
-	let arr_data = new FormData();
-
-	arr_data.append('id', val);
-	arr_data.append('picprofile', true);
-
-	fetch('internal_data', {
-		method: 'POST',
-		body: arr_data
-	})
-	.then(res => res.json())
-	.then(data => {
-
-		$('#picProfile').modal('hide');
-
-		if (data) {
-			Swal.fire({
-				icon: 'success',
-				title: '😃 Exito!! 🥳',
-				text: 'Imagen de perfil actualizada con éxito!',
-				confirmButtonText: `Genial 👍`
-			}).then(()=>{
-				location.reload();
-			});
-		}else {
-			Swal.fire({
-				icon: 'error',
-				title: '😦 Error! 😞',
-				text: 'La imagen de perfil no pudo se actualizada.',
-				confirmButtonText: 'Continuar 😞'
-			});
-		}
-	});
-}
-
 /************************************************************************************************/
 
 var btn = document.getElementById('btn_pass');
@@ -92,22 +57,32 @@ const validateform = () => {
 		btn.disabled = true;
 }
 
-$('#curpass').keyup(() => {
-	let arr_data = new FormData();
+$('#curpass').keyup(async () => {
+    let arr_data = new FormData();
 
-	arr_data.append('curpass', $('#curpass').val());
-	arr_data.append('validate_pass', true);
+    arr_data.append('curpass', $('#curpass').val());
+    arr_data.append('validate_pass', true);
 
-	fetch('internal_data', {
-		method: 'POST',
-		body: arr_data
-	})
-	.then(res => res.json())
-	.then(data => {
-		campos.curpass = (data) ? true : false;
-		validateform();
-	});
+    try {
+        const response = await fetch('internal_data', {
+            method: 'POST',
+            body: arr_data
+        });
+
+        const data = await response.json();
+
+        campos.curpass = (data) ? true : false;
+        validateform();
+    } catch (error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Ocurrió un error dentro del sistema, actualiza el sitio e intentalo nuevamente o ponte en contacto con el administrador del sistema.',
+            confirmButtonText: 'Aceptar'
+        });
+    }
 });
+
 
 $('#pass1').keyup(() => {
 	var pass = document.getElementById('pass1');
@@ -168,113 +143,123 @@ $('#pass2').keyup(() => {
 
 var passform = document.getElementById('password-form');
 
-passform.addEventListener('submit', (e) => {
-	e.preventDefault();
+passform.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-	let arr_data = new FormData(passform);
+    let arr_data = new FormData(passform);
+    arr_data.append('updtpwd', 'true');
 
-	arr_data.append('updtpwd', 'true');
+    if (arr_data.get('pass1') === '' || arr_data.get('pass2') === '') {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Ingrese datos válidos',
+        });
+    } else {
+        try {
+            const response = await fetch('internal_data', {
+                method: 'POST',
+                body: arr_data
+            });
 
-	if (arr_data.get('pass1') == '' || arr_data.get('pass2') == '')
-	{
-		Swal.fire({
-			icon: 'error',
-			title: '😦 Error! 😞',
-			text: 'Ingrese datos válidos',
-		});
-	}
-	else
-	{
-		fetch('internal_data', {
-			method: 'POST',
-			body: arr_data
-		})
-		.then(res => res.json())
-		.then(data => {
-			if (data) {
-				Swal.fire({
-					icon: 'success',
-					title: '😃 Felicidades!! 🥳',
-					text: 'La contraseña ha sido actualizada!',
-					confirmButtonText: `Genial! 👍`
-				});
-			}else {
-				Swal.fire({
-					icon: 'error',
-					title: '😦 Error! 😞',
-					text: 'La contraseña no pudo ser actualizada.',
-					confirmButtonText: `Continuar`
-				});
-			}
+            const data = await response.json();
 
-			if ($('#currentPass').length) { $('#currentPass').val(''); }
+            if (data) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Actualización exitosa',
+                    text: 'La contraseña ha sido actualizada',
+                    confirmButtonText: `Aceptar`
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'La contraseña no pudo ser actualizada.',
+                    confirmButtonText: `Continuar`
+                });
+            }
 
-			$('#curpass').val('');
-			$('#pass1').val('');
-			$('#pass2').val('');
+            if ($('#currentPass').length) { $('#currentPass').val(''); }
 
-			$('#pass1').removeClass("is-valid");
-			$('#pass2').removeClass("is-valid");
+            $('#curpass').val('');
+            $('#pass1').val('');
+            $('#pass2').val('');
 
-			$('#mnsj1').html('');
-			$('#mnsj2').html('');
+            $('#pass1').removeClass("is-valid");
+            $('#pass2').removeClass("is-valid");
 
-			$("#modal_pwd").modal('hide');
+            $('#mnsj1').html('');
+            $('#mnsj2').html('');
 
-			let mensaje1 = document.getElementById('mnsj1');
-			let mensaje2 = document.getElementById('mnsj2');
+            $("#modal_pwd").modal('hide');
 
-			mensaje1.className = 'form-text text-muted';
-			mensaje2.className = 'form-text text-muted';
-		});
-	}
+            let mensaje1 = document.getElementById('mnsj1');
+            let mensaje2 = document.getElementById('mnsj2');
+
+            mensaje1.className = 'form-text text-muted';
+            mensaje2.className = 'form-text text-muted';
+        } catch (error) {
+            Swal.fire({
+	            icon: 'error',
+	            title: 'Error',
+	            text: 'Ocurrió un error dentro del sistema, actualiza el sitio e intentalo nuevamente o ponte en contacto con el administrador del sistema.',
+	            confirmButtonText: 'Aceptar'
+	        });
+        }
+    }
 });
+
 
 /************************************************************************************************/
 
 var userProfileForm = document.getElementById('profile_form');
 
-userProfileForm.addEventListener('submit', (e) => {
-	e.preventDefault();
+userProfileForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-	let arr_data = new FormData(userProfileForm);
+    let arr_data = new FormData(userProfileForm);
+    arr_data.append('update_profile', 'true');
 
-	arr_data.append('update_profile', 'true');
+    if (arr_data.get('name') == '') {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Ingresa datos válidos',
+            confirmButtonText: 'Aceptar'
+        });
+    } else {
+        try {
+            const response = await fetch('internal_data', {
+                method: 'POST',
+                body: arr_data
+            });
 
-	if (arr_data.get('name') == '')
-	{
-		Swal.fire({
-			icon: 'error',
-			title: '😦 Error! 😞',
-			text: 'Ingresa datos válidos',
-			confirmButtonText: 'Continue..'
-		});
-	}
-	else
-	{
-		fetch('internal_data', {
-			method: 'POST',
-			body: arr_data
-		})
-		.then(res => res.json())
-		.then(data => {
-			if (data) {
-				Swal.fire({
-					icon: 'success',
-					title: '😃 Exito!! 🥳',
-					text: 'La información del usuario ha sido actualizada! 👍',
-					confirmButtonText: 'Continue..'
-				}).then(()=>{
-					location.reload();
-				});
-			}else {
-				Swal.fire({
-					icon: 'error',
-					title: '😦 Error! 😞',
-					text: 'Usuario no actualizado',
-					confirmButtonText: 'Continue..'
-				});
-			}
-		});
-	}
+            const data = await response.json();
+
+            if (data) {
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Actualización exitosa',
+                    text: 'La información del usuario ha sido actualizada',
+                    confirmButtonText: 'Aceptar'
+                });
+                location.reload();
+            } else {
+                await Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Usuario no actualizado',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        } catch (error) {
+            Swal.fire({
+	            icon: 'error',
+	            title: 'Error',
+	            text: 'Ocurrió un error dentro del sistema, actualiza el sitio e intentalo nuevamente o ponte en contacto con el administrador del sistema.',
+	            confirmButtonText: 'Aceptar'
+	        });
+        }
+    }
 });

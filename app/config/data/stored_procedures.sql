@@ -164,6 +164,8 @@ BEGIN
 		`tbl_users`
 	VALUES
 		(NULL, _name, _level, _email, _pass, NULL, NULL, 'form', 1, 0, _lang, 1, 1, _country, NOW(), NOW(), NULL);
+
+	SELECT LAST_INSERT_ID() AS iduser;
 END //
 
 

@@ -23,6 +23,7 @@ if (isset($_GET['event']))
 		else
 			$employee_c->$method_name($val);
 	}
+
 	if (method_exists($objHome, $method_name))
 	{
 		if (is_null($val))

@@ -44,7 +44,8 @@ class Controller extends Model
 				if (parent::token_validator($value))
 				{
 					$_SESSION['gestion'] = 'cancel';
-					parent::del_register($value);
+					$_SESSION['tipo_gestion'] = 'registro';
+					parent::del_register_restore($value, 'register');
 				}
 				else
 				{
@@ -53,11 +54,14 @@ class Controller extends Model
 			break;
 
 			case 'delrestore':
-				if (strlen($value) == 70)
+				if (parent::token_validator($value))
 				{
-					if (parent::token_validator($value))
-						parent::del_restore($value);
-
+					$_SESSION['gestion'] = 'cancel';
+					$_SESSION['tipo_gestion'] = 'restablecimiento';
+					parent::del_register_restore($value, 'restore');
+				}
+				else
+				{
 					session_destroy();
 				}
 			break;
@@ -70,10 +74,6 @@ class Controller extends Model
 				unset($_SESSION['progressBar']);
 				unset($_SESSION['email']);
 				unset($_SESSION['resetpass']);
-			break;
-
-			case 'sessiondel':
-				$this->delCookie();
 			break;
 
 			case 'selectlang':
@@ -96,10 +96,6 @@ class Controller extends Model
 
 				case 'social':
 					$info = parent::info_login($email);
-				break;
-
-				case 'cookie':
-					$info = parent::info_login($email, null, trim($cookie_token));
 				break;
 
 				default:
@@ -154,7 +150,16 @@ class Controller extends Model
 		{
 			$data['password'] = password_hash($this->getKey(8), PASSWORD_DEFAULT, ['cost' => 10]);
 
-			$token = password_hash($this->getKey(50), PASSWORD_DEFAULT, ['cost' => 10]);
+			$centinel = true;
+
+			while ($centinel)
+			{
+				$token = password_hash($this->getKey(70), PASSWORD_DEFAULT, ['cost' => 10]);
+				if (!parent::token_validator($token)) {
+					$centinel = false;
+					break;
+				}
+			}
 
 			if (parent::set_reset_token($data['email'], $token))
 			{
@@ -221,14 +226,7 @@ class Controller extends Model
 
 					if (mail($data['email'], '['.APP_NAME.'] Confirmación de registro', $html, $headers))
 					{
-						if (parent::register_mail($data['email'], $token))
-							parent::savelog(3, "Confirmación de registro enviado a {$data['email']}, mailRegister actualizado.");
-						else
-							parent::savelog(4, "Confirmación de registro enviado a {$data['email']}, mailRegister desactualizado.");
-					}
-					else
-					{
-						parent::savelog(4, "Confirmación de registro no fue enviado a {$data['email']}, mailRegister desactualizado.");
+						parent::register_mail($data['email'], $token);
 					}
 
 					return true;
@@ -254,23 +252,22 @@ class Controller extends Model
 		}
 	}
 
-	public function delCookie()
-	{
-		if (isset($_COOKIE['user_token']))
-		{
-			parent::pst("DELETE FROM tbl_cookies WHERE sessiontoken = :cmonster", ['cmonster' => $_COOKIE['user_token']], false);
-			setcookie('user_token', '', 1);
-		}
-
-	}
-
 	public function send_resetpass($email)
 	{
 		$data = parent::is_correct_mail($email);
 
 		if ($data)
 		{
-			$token = $this->getKey(70);
+			$centinel = true;
+
+			while ($centinel)
+			{
+				$token = password_hash($this->getKey(70), PASSWORD_DEFAULT, ['cost' => 10]);
+				if (!parent::token_validator($token)) {
+					$centinel = false;
+					break;
+				}
+			}
 
 			$html = '
 			<!DOCTYPE html>
@@ -332,17 +329,10 @@ class Controller extends Model
 
 			if (mail($data['email'], '['.APP_NAME.'] Restablecimiento de contraseña', $html, $headers))
 			{
-				if (parent::forgetpass_mail($data['email'], $token))
-					parent::savelog(3, "Restablecimiento de contraseña enviado a {$data['email']}, forgetpass actualizado.");
-				else
-					parent::savelog(4, "Restablecimiento de contraseña enviado a {$data['email']}, forgetpass desactualizado.");
-
-				return true;
+				return parent::forgetpass_mail($data['email'], $token);
 			}
 			else
 			{
-				parent::savelog(4, "Restablecimiento de contraseña no enviado a {$data['email']}, forgetpass desactualizado.");
-
 				return false;
 			}
 		}
@@ -364,7 +354,7 @@ class Controller extends Model
 
 		if ($x) {
 			$password = password_hash($pass, PASSWORD_DEFAULT, ['cost' => 12]);
-			return parent::recover_password($password, $_SESSION['token']);
+			return parent::recover_password($password);
 		}
 	}
 

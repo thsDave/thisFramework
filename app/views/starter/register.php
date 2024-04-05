@@ -58,7 +58,7 @@
         </div>
         <div class="input-group mb-3">
           <div class="input-group-prepend">
-            <span class="input-group-text"><i class="fa-solid fa-globe"></i></span>
+            <span class="input-group-text"><i class="fa-solid fa-earth-americas"></i></span>
           </div>
           <select name="country" class="form-control select2">
             <?php $countries = $model->countries_list(); ?>

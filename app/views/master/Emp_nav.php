@@ -26,7 +26,7 @@
           <li class="nav-item">
             <a href="<?= URL ?>?req=info" class="nav-link">
               <i class="nav-icon fa-solid fa-circle-info"></i>
-              <p><?= LANG['header2'] ?></p>
+              <p><?= LANG['header3'] ?></p>
             </a>
           </li>
           <li class="nav-item has-treeview">

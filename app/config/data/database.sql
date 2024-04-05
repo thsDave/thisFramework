@@ -115,18 +115,6 @@ CREATE TABLE IF NOT EXISTS tbl_users(
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-/*TABLA Cookies*/
-
-CREATE TABLE IF NOT EXISTS tbl_cookies(
-	email					VARCHAR(60) NOT NULL,
-	ipaddr 				VARCHAR(15) NOT NULL,
-  sessiontoken	VARCHAR(125) NOT NULL,
-  created_at 		DATETIME NOT NULL DEFAULT NOW(),
-  updated_at		DATETIME NOT NULL,
-	deleted_at		DATETIME NULL
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
 /*TABLA Soporte técnico*/
 
 CREATE TABLE IF NOT EXISTS tbl_supports(
@@ -170,15 +158,30 @@ CREATE TABLE IF NOT EXISTS tbl_outputs(
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-/* Registros de cron.php */
+/*
+	Histórico de acciones
 
-CREATE TABLE IF NOT EXISTS tbl_logscron(
-	idlog				INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  idstatus 		INT NOT NULL,
-  message			VARCHAR(100) NOT NULL,
-  created_at 	DATETIME NOT NULL DEFAULT NOW(),
+	Esta tabla se usa para guardar todo el histórico de los movimientos que hacen los usuarios
+	iniciando en el registro de su usuario, esta se relaciona con la categorización de acciones
+	la cual ayuda a encontrar acciones específicas dentro del histórico
+*/
 
-  CONSTRAINT FK_logscron_idstatus FOREIGN KEY (idstatus) REFERENCES tbl_status (idstatus)
+
+CREATE TABLE IF NOT EXISTS tbl_actions(
+	idaction		INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  action 			VARCHAR(50) NOT NULL
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE IF NOT EXISTS tbl_logs(
+	idlog					INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  description		VARCHAR(100) NOT NULL,
+  idaction 			INT NOT NULL,
+  iduser 				INT NOT NULL,
+  created_at 		DATETIME NOT NULL DEFAULT NOW(),
+
+  CONSTRAINT FK_logs_idaction FOREIGN KEY (idaction) REFERENCES tbl_actions (idaction),
+  CONSTRAINT FK_logs_iduser FOREIGN KEY (iduser) REFERENCES tbl_actions (iduser)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

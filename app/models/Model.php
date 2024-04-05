@@ -34,24 +34,25 @@ class Model extends Connection
 
         unset($arr_data['pass']);
 
-        return $this->pst("CALL sp_newuser(:name, :email, :password, :lang, :level, :country)", $arr_data, false);
+        $res = $this->pst("CALL sp_newuser(:name, :email, :password, :lang, :level, :country)", $arr_data);
+
+        if ($res) {
+            $this->savelog(1, "Creación de usuario con id: {$res[0]->iduser} en la sección 'nuevo' del módulo de usuarios", $_SESSION[USER_SESSION]['id']);
+            return true;
+        }else {
+            return false;
+        }
+
     }
 
     // all levels
-    public function info_login($email, $pass, $cookie_token = null)
+    public function info_login($email, $pass)
     {
-        $cookie_res = (!is_null($cookie_token)) ? $this->pst("SELECT * FROM tbl_cookies WHERE sessiontoken = :token AND email = :email", ['token' => $cookie_token, 'email' => $email]) : false;
-
-        $pass = ($cookie_res) ? null : $pass;
-
         $res = $this->pst("SELECT * FROM tbl_users WHERE email = :email AND idstatus = 1", [ 'email' => $email ]);
 
         if (!empty($res))
         {
-            if (!is_null($pass))
-                $iduser = (password_verify($pass, $res[0]->pass)) ? $res[0]->iduser : false;
-            else
-                $iduser = $res[0]->iduser;
+            $iduser = (password_verify($pass, $res[0]->pass)) ? $res[0]->iduser : false;
 
             if ($iduser)
             {
@@ -78,7 +79,7 @@ class Model extends Connection
 
                             $_SESSION['lang'] = [ 'lanicon' => $_SESSION[USER_SESSION]['lanicon'], 'lancode' => $_SESSION[USER_SESSION]['lancode'] ];
 
-                            $this->pst("INSERT INTO tbl_inputs(iduser) VALUES (:iduser)", ['iduser' => $iduser], false);
+                            $this->session_log($iduser, 'in');
 
                             return true;
                         }
@@ -203,8 +204,14 @@ class Model extends Connection
     {
         $res = $this->pst("CALL sp_updtuser(:name, :level, :lang, :status, :country, :id)", $data_user, false);
 
-        if (!isset($_SESSION['val']))
-            $_SESSION[USER_SESSION] = $this->user_info($_SESSION[USER_SESSION]['id']);
+        if ($res) {
+            if (!isset($_SESSION['val'])) {
+                $this->savelog(3, "Se actualizó la información de usuario", $_SESSION[USER_SESSION]['id']);
+                $_SESSION[USER_SESSION] = $this->user_info($_SESSION[USER_SESSION]['id']);
+            }else {
+                $this->savelog(3, "Se actualizó la información del usuario con id: {$data_user['id']}", $_SESSION[USER_SESSION]['id']);
+            }
+        }
 
         return ($res) ? true : false;
     }
@@ -239,10 +246,18 @@ class Model extends Connection
     {
         $arr_data = [
             'idpic' => $idpic,
-            'iduser' => $_SESSION[USER_SESSION]['id']
+            'iduser' => (!isset($_SESSION['val'])) ? $_SESSION[USER_SESSION]['id'] : $_SESSION['val']
         ];
 
-        $res = $this->pst("UPDATE tbl_users SET idpic = :idpic WHERE iduser = :iduser", $arr_data, false);
+        $res = $this->pst("UPDATE tbl_users SET idpic = :idpic, updated_at = NOW() WHERE iduser = :iduser", $arr_data, false);
+
+        if ($res) {
+            if (!isset($_SESSION['val'])) {
+                $this->savelog(3, 'Se actualizó la imagen de perfil de usuario', $_SESSION[USER_SESSION]['id']);
+            }else {
+                $this->savelog(3, "Se actualizó la imagen del perfil del usuario con id: {$_SESSION['val']}", $_SESSION[USER_SESSION]['id']);
+            }
+        }
 
         $_SESSION[USER_SESSION] = $this->user_info($_SESSION[USER_SESSION]['id']);
 
@@ -250,14 +265,25 @@ class Model extends Connection
     }
 
     // principal
-    protected function del_register($token)
+    protected function del_register_restore($token, $type)
     {
-        $this->pst("DELETE FROM tbl_users WHERE token = :token", ['token' => $token], false);
-    }
+        switch ($type)
+        {
+            case 'register':
+                $this->pst("DELETE FROM tbl_users WHERE token = :token", ['token' => $token], false);
+            break;
 
-    protected function del_restore($token)
-    {
-        $this->pst("UPDATE tbl_users SET token = NULL, tokendate = NULL WHERE token = :token", ['token' => $token], false);
+            case 'restore':
+                $res = $this->pst("SELECT * FROM tbl_users WHERE token = :token", ['token' => $token]);
+
+                if (!empty($res))
+                {
+                    $this->pst("UPDATE tbl_users SET token = NULL, tokendate = NULL, forgetpass = 0 WHERE token = :token", ['token' => $token], false);
+
+                    $this->savelog(4, "Se canceló el restablecimiento de contraseña.", $res[0]->iduser);
+                }
+            break;
+        }
     }
 
     // principal
@@ -282,11 +308,6 @@ class Model extends Connection
             foreach ($res as $val)
             {
                 $val->no = $correlativo;
-
-                //personalización de timestamp
-                $date = date('d/m/Y',strtotime($val->timestamp));
-                $hour = date('H:i:s A',strtotime($val->timestamp));
-                $val->timestamp = "🗓️ {$date} ⌚ {$hour}";
 
                 $data[] = (array) $val;
 
@@ -627,28 +648,32 @@ class Model extends Connection
     #--------------------------------------------------
 
     // principal
-    public function recover_password($pass, $token)
+    public function recover_password($pass)
     {
-        $data = $this->pst("SELECT iduser FROM tbl_users WHERE token = :token", ['token' => $token]);
+        $data = $this->pst("SELECT iduser FROM tbl_users WHERE token = :token", ['token' => $_SESSION['token']]);
 
         if (!empty($data))
         {
-            unset($_SESSION['token']);
-
-            $id = $data[0]->iduser;
-
-            $this->pst("INSERT INTO tbl_inputs(iduser) VALUES (:id)", ['id' => $id], false);
-
             $arr_data = [
                 'pass' => $pass,
-                'iduser' => $id
+                'iduser' => $data[0]->iduser
             ];
 
-            $query = "UPDATE tbl_users SET pass = :pass, token = NULL, tokendate = NULL, forgetpass = 0, registermail = 0, idstatus = 1 WHERE iduser = :iduser";
+            $query = "UPDATE tbl_users SET pass = :pass, token = NULL, tokendate = NULL, forgetpass = 0, registermail = 0, idstatus = 1, updated_at = NOW() WHERE iduser = :iduser";
 
             $res = $this->pst($query, $arr_data, false);
 
-            return ($res) ? true : false;
+            if ($_SESSION['gestion'] == 'confirm')
+            {
+                $this->savelog(1, 'Registro de usuario desde formulario', $arr_data['iduser']);
+                $this->session_log($arr_data['iduser'], 'in');
+            }
+            else
+            {
+                $this->savelog(3, 'Restablecimiento de contraseña', $arr_data['iduser']);
+            }
+
+            return $res;
         }
         else
         {
@@ -667,7 +692,17 @@ class Model extends Connection
     // principal
     public function update_password($arr_data)
     {
-        return $this->pst("UPDATE tbl_users SET pass = :pass WHERE iduser = :iduser", $arr_data, false);
+        $res = $this->pst("UPDATE tbl_users SET pass = :pass WHERE iduser = :iduser", $arr_data, false);
+
+        if ($res) {
+            if (!isset($_SESSION['val'])) {
+                $this->savelog(3, 'Se actualizó la contraseña de acceso', $arr_data['iduser']);
+            }else {
+                $this->savelog(3, "Se actualizó la contraseña de acceso del usuario con id: {$arr_data['iduser']}", $_SESSION[USER_SESSION]['id']);
+            }
+        }
+
+        return $res;
     }
 
     #--------------------------------------------------
@@ -829,14 +864,31 @@ class Model extends Connection
     }
 
     // all levels
-    public function savelog($id, $mensaje)
+    public function savelog($idaction, $description, $iduser)
     {
         $arr_data = [
-            'idstatus' => $id,
-            'mnsj' => $mensaje
+            'idaction' => $idaction,
+            'description' => $description,
+            'iduser' => $iduser
         ];
 
-        $this->pst("INSERT INTO tbl_logscron VALUES (NULL, :idstatus, :mnsj, NOW())", $arr_data, false);
+        $this->pst("INSERT INTO tbl_logs VALUES (NULL, :description, :idaction, :iduser, NOW())", $arr_data, false);
+    }
+
+    public function session_log($iduser, $type)
+    {
+        $input_data = [ 'id' => $iduser, 'addr' => $_SERVER['REMOTE_ADDR'] ];
+
+        switch ($type) {
+            case 'in':
+                $this->pst("INSERT INTO tbl_inputs VALUES (NULL, :addr, :id, NOW())", $input_data, false);
+            break;
+
+            case 'out':
+                $this->pst("INSERT INTO tbl_outputs VALUES (NULL, :addr, :id, NOW())", $input_data, false);
+            break;
+        }
+
     }
 
     // all levels
@@ -862,7 +914,16 @@ class Model extends Connection
 
         $query = "UPDATE tbl_users SET token = :token, tokendate = NOW(), forgetpass = 1, idstatus = 1 WHERE email = :email";
 
-        return $this->pst($query, $arr_data, false);
+        $res = $this->pst($query, $arr_data, false);
+
+        if ($res)
+        {
+            $data = $this->is_correct_mail($email);
+
+            $this->savelog(3, "Solicitud de restablecimiento de contraseña", $data['iduser']);
+        }
+
+        return $res;
     }
 
     // principal

@@ -327,8 +327,19 @@ INSERT INTO `tbl_languages` (`idlang`, `language`, `lancode`, `lanicon`, `idstat
 
 
 --
+-- Volcado de datos para la tabla actions
+--
+
+INSERT INTO `tbl_actions` (`idaction`, `action`) VALUES
+(NULL, 'Registro de usuario'),
+(NULL, 'Inserciones'),
+(NULL, 'Actualizaciones'),
+(NULL, 'Eliminaciones');
+
+
+--
 -- Volcado de datos para la tabla usuarios
 --
 
 INSERT INTO `tbl_users` (`iduser`, `name`, `idlvl`, `email`, `pass`, `token`, `tokendate`, `registertype`, `registermail`, `forgetpass`, `idlang`, `idpic`, `idstatus`, `idcountry`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(NULL, 'Super admin', 1, 'yourmail@here.com', '$2y$10$PIjopU4tnfAljYjZQAMgGOwL7w2OvWlWkZf6Z14awRXY8SPBcSmqq', NULL, NULL, 'script', 1, 0, 1, 1, 1, 54, NOW(), NOW(), NULL);
+(NULL, 'root', 1, 'admin@skeleton.com', '$2y$10$PIjopU4tnfAljYjZQAMgGOwL7w2OvWlWkZf6Z14awRXY8SPBcSmqq', NULL, NULL, 'script', 0, 0, 1, 1, 1, 54, NOW(), NOW(), NULL);

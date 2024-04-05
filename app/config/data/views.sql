@@ -6,21 +6,6 @@
 
 -- USE `db_skeleton`;
 
--- ----------------------------------- --
--- --------- [ tbl_cookies ] --------- --
--- ----------------------------------- --
-
-CREATE VIEW v_cookies AS
-	SELECT
-		email,
-		ipaddr,
-		sessiontoken,
-		DATE_FORMAT(created_at, '%d/%m/%Y | %H:%m:%s') AS 'created_at',
-		DATE_FORMAT(updated_at, '%d/%m/%Y | %H:%m:%s') AS 'updated_at',
-		DATE_FORMAT(deleted_at, '%d/%m/%Y | %H:%m:%s') AS 'deleted_at'
-	FROM
-		tbl_cookies;
-
 -- ------------------------------------- --
 -- --------- [ tbl_countries ] --------- --
 -- ------------------------------------- --

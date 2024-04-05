@@ -15,32 +15,7 @@ require_once "../app/controllers/Controller.php";
 
 if (isset($_POST['localogin']))
 {
-	if (isset($_POST['remember']))
-		$res = $objController->login($_POST['user'], 'local', $_POST['pwd'], $_POST['remember']);
-	else
-		$res = $objController->login($_POST['user'], 'local', $_POST['pwd']);
-
-	echo json_encode($res);
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Cookie login
-|--------------------------------------------------------------------------
-|
-| Inicio de sesión usando acceso de cookie guardado
-|
-*/
-
-
-if (isset($_POST['cookielogin']))
-{
-	$email = $model->get_cookie_token($_POST['token_login']);
-
-	$user = (isset($_POST['user'])) ? preg_replace('([^A-Za-z0-9-_.@])', '', trim($_POST['user'])) : null;
-
-	echo ($email && $user) ? json_encode($objController->login($user, 'cookie', null, null, $_POST['token_login'])) : json_encode(false);
+	echo json_encode($objController->login($_POST['user'], 'local', $_POST['pwd']));
 }
 
 
@@ -132,16 +107,6 @@ if (isset($_POST['newregister']))
 |
 */
 
-
-if (isset($_POST['isavailablemail']))
-{
-	$email = (isset($_POST['email'])) ? preg_replace('([^A-Za-z-_.@ ])', '', trim($_POST['email'])) : null;
-
-	$res = (!is_null($email)) ? $model->is_correct_mail($email) : false;
-
-	echo json_encode($res);
-}
-
 if (isset($_POST['forgot-email']))
 {
 	echo json_encode($objController->send_resetpass($_POST['mail']));
@@ -167,7 +132,7 @@ if (isset($_POST['getusrinfo']))
 if (isset($_POST['restorepwd']))
 {
 	if ( strlen( trim( $_POST['pass1'] ) ) >= 8 && strlen( trim( $_POST['pass2'] ) ) >= 8 ) {
-		if ($_POST['pass1'] == $_POST['pass2']) {
+		if ($_POST['pass1'] === $_POST['pass2']) {
 			echo json_encode($objController->resetPassword($_POST['pass1']));
 		}else {
 			echo json_encode(false);

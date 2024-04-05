@@ -198,7 +198,9 @@
               <?php for ($j = $x; $j <= $y; $j++): ?>
                 <?php if ($j != count($fotos['id'])): ?>
                 <td>
-                  <img src="data:image/png;base64,<?= $fotos['pic'][$j] ?>" class="w-75 imgProfile" onclick="picprofile(<?= $fotos['id'][$j] ?>);" style="cursor: pointer;">
+                  <a href="<?= URL ?>?event=profilepic&val=<?= $fotos['id'][$j] ?>">
+                    <img src="data:image/png;base64,<?= $fotos['pic'][$j] ?>" class="w-75 imgProfile">
+                  </a>
                 </td>
                 <?php else: ?>
                 <?php break; ?>

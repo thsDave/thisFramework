@@ -73,7 +73,7 @@ const LANG = [
 
 	'newuser_email' => 'Email',
 
-	'newuser_email2' => 'Repeat your email',
+	'newuser_email2' => 'Repeat email',
 
 	'newuser_country' => 'Country',
 

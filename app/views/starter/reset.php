@@ -34,7 +34,9 @@
     <div class="card-body">
       <div class="row">
         <div class="col-12">
-          <h5 class="text-center"><?php echo ($_SESSION['gestion'] == 'confirm') ? 'Finalización del registro' : 'Actualización de contraseña';?></h5>
+          <h5 class="text-center">
+            <?php echo ($_SESSION['gestion'] == 'confirm') ? 'Finalización del registro' : 'Actualización de contraseña';?>
+          </h5>
         </div>
         <div class="col-12">
           <hr>

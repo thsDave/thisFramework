@@ -29,11 +29,6 @@ class HomeController extends Controller
 				unset($_SESSION['view']);
 				unset($_SESSION['title']);
 			break;
-
-			case 'logout':
-				parent::outputs($_SESSION[USER_SESSION]['id']);
-				session_destroy();
-			break;
 		}
 
 		load_view();
@@ -155,9 +150,16 @@ class HomeController extends Controller
 		load_view();
 	}
 
+	public function profilepic($id)
+	{
+		parent::update_pic_profile($id);
+
+		load_view();
+	}
+
 	public function logout()
 	{
-		parent::pst("INSERT INTO tbl_outputs(iduser) VALUES (:iduser)", ['iduser' => $_SESSION[USER_SESSION]['id']], false);
+		parent::session_log($_SESSION[USER_SESSION]['id'], 'out');
 		session_destroy();
 		load_view();
 	}

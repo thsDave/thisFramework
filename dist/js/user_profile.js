@@ -30,43 +30,6 @@ $('#profile-access-tab').click(() => {
 
 /************************************************************************************************/
 
-function picprofile(val) {
-	let arr_data = new FormData();
-
-	arr_data.append('id', val);
-	arr_data.append('picprofile', true);
-
-	fetch('internal_data', {
-		method: 'POST',
-		body: arr_data
-	})
-	.then(res => res.json())
-	.then(data => {
-
-		$('#picProfile').modal('hide');
-
-		if (data) {
-			Swal.fire({
-				icon: 'success',
-				title: '😃 Exito!! 🥳',
-				text: 'Imagen de perfil actualizada con éxito!',
-				confirmButtonText: `Genial 👍`
-			}).then(()=>{
-				location.reload();
-			});
-		}else {
-			Swal.fire({
-				icon: 'error',
-				title: '😦 Error! 😞',
-				text: 'La imagen de perfil no pudo se actualizada.',
-				confirmButtonText: 'Continuar 😞'
-			});
-		}
-	});
-}
-
-/************************************************************************************************/
-
 var btn = document.getElementById('btn_update');
 
 $("#name").keyup(() => {
@@ -139,40 +102,50 @@ $("#status").change(function(){
 	}
 });
 
+/************************************************************************************************/
+
 var userProfileForm = document.getElementById('user_form');
 
-userProfileForm.addEventListener('submit', (e) => {
-	e.preventDefault();
+userProfileForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-	let arr_data = new FormData(userProfileForm);
+    let arr_data = new FormData(userProfileForm);
+    arr_data.append('update_user', 'true');
 
-	arr_data.append('update_user', 'true');
+    try {
+        const response = await fetch('internal_data', {
+            method: 'POST',
+            body: arr_data
+        });
 
-	fetch('internal_data', {
-		method: 'POST',
-		body: arr_data
-	})
-	.then(res => res.json())
-	.then(data => {
-		if (data) {
-			Swal.fire({
-				icon: 'success',
-				title: '😃 Exito!! 🥳',
-				text: 'La información del usuario ha sido actualizada! 👍',
-				confirmButtonText: 'Aceptar'
-			}).then(()=>{
-				location.reload();
-			});
-		}else {
-			Swal.fire({
-				icon: 'error',
-				title: '😦 Error! 😞',
-				text: 'Usuario no actualizado',
-				confirmButtonText: 'Aceptar'
-			});
-		}
-	});
+        const data = await response.json();
+
+        if (data) {
+            await Swal.fire({
+                icon: 'success',
+                title: 'Actualización exitosa',
+                text: 'La información del usuario ha sido actualizada',
+                confirmButtonText: 'Aceptar'
+            });
+            location.reload();
+        } else {
+            await Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Usuario no actualizado, revisa los datos e intenta nuevamente.',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    } catch (error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Ocurrió un error dentro del sistema, actualiza el sitio e intentalo nuevamente o ponte en contacto con el administrador del sistema.',
+            confirmButtonText: 'Aceptar'
+        });
+    }
 });
+
 
 /************************************************************************************************/
 
@@ -231,53 +204,59 @@ $('#pass2').keyup(() => {
 
 var passform = document.getElementById('password-form');
 
-passform.addEventListener('submit', (e) => {
-	e.preventDefault();
+passform.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-	let arr_data = new FormData(passform);
+    let arr_data = new FormData(passform);
+    arr_data.append('updtpwd', 'true');
 
-	arr_data.append('updtpwd', 'true');
+    if (arr_data.get('pass1') == '' || arr_data.get('pass2') == '') {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Ingrese datos válidos',
+            confirmButtonText: 'Aceptar'
+        });
+    } else {
+        try {
+            const response = await fetch('internal_data', {
+                method: 'POST',
+                body: arr_data
+            });
 
-	if (arr_data.get('pass1') == '' || arr_data.get('pass2') == '')
-	{
-		Swal.fire({
-			icon: 'error',
-			title: '😦 Error! 😞',
-			text: 'Ingrese datos válidos',
-		});
-	}
-	else
-	{
-		fetch('internal_data', {
-			method: 'POST',
-			body: arr_data
-		})
-		.then(res => res.json())
-		.then(data => {
-			if (data) {
-				Swal.fire({
-					icon: 'success',
-					title: '😃 Felicidades!! 🥳',
-					text: 'La contraseña ha sido actualizada!',
-					confirmButtonText: `Genial! 👍`
-				});
-			}else {
-				Swal.fire({
-					icon: 'error',
-					title: '😦 Error! 😞',
-					text: 'La contraseña no pudo ser actualizada.',
-					confirmButtonText: `Continuar`
-				});
-			}
+            const data = await response.json();
 
-			if ($('#currentPass').length) { $('#currentPass').val(''); }
-			$('#pass1').val('');
-			$('#pass1').removeClass("is-valid");
-			$('#mnsj').html('');
-			$('#pass2').val('');
-			$('#pass2').removeClass("is-valid");
-			$('#mnsj2').html('');
-			$("#modal_pwd").modal('hide');
-		});
-	}
+            if (data) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Actualización exitosa',
+                    text: 'La contraseña ha sido actualizada correctamente.',
+                    confirmButtonText: `Aceptar`
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'La contraseña no pudo ser actualizada.',
+                    confirmButtonText: `Aceptar`
+                });
+            }
+
+            if ($('#currentPass').length) { $('#currentPass').val(''); }
+            $('#pass1').val('');
+            $('#pass1').removeClass("is-valid");
+            $('#mnsj').html('');
+            $('#pass2').val('');
+            $('#pass2').removeClass("is-valid");
+            $('#mnsj2').html('');
+            $("#modal_pwd").modal('hide');
+        } catch (error) {
+            Swal.fire({
+	            icon: 'error',
+	            title: 'Error',
+	            text: 'Ocurrió un error dentro del sistema, actualiza el sitio e intentalo nuevamente o ponte en contacto con el administrador del sistema.',
+	            confirmButtonText: 'Aceptar'
+	        });
+        }
+    }
 });

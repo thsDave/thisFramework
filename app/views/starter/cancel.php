@@ -32,9 +32,11 @@
 
   <div class="card">
     <div class="card-body">
-      <h6 class="login-box-msg">Tu solicitud de registro ha sido cancelada exitosamente</h6>
+      <h6 class="login-box-msg">
+        Tu solicitud de <?= $_SESSION['tipo_gestion'] ?> ha sido cancelada exitosamente
+      </h6>
       <p class="mt-3 mb-1">
-        <a href="<?= URL ?>?action=login" class="btn btn-primary btn-block">Iniciar sesión</a>
+        <a href="<?= URL ?>?action=login" class="btn btn-dark btn-block">Iniciar sesión</a>
       </p>
     </div>
   </div>
