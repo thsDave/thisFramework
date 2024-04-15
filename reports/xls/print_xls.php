@@ -6,28 +6,17 @@ $levels = [ 'Super', 'Admin' ];
 
 if (in_array($_SESSION[USER_SESSION]['level'], $levels))
 {
-	$arr_docs = [
-		'users_list' => LANG['report_name_doc_users'].date("dmY-His"),
-		'support_list' => LANG['report_name_doc_support'].date("dmY-His")
+	$reports = [
+		'user_report',
+		'support_report'
 	];
 
-	if (isset($_GET['xls_req']) && isset($arr_docs[$_GET['xls_req']])) { $view = $_GET['xls_req']; }
+	$arr_docs = [
+		'user_report' => 'xls_users',
+		'support_report' => 'xls_supports'
+	];
 
-	if (isset($view))
-	{
-		header("Content-type: application/vnd.ms-excel");
-		header("Content-Disposition: attachment; filename={$arr_docs[$view]}.xls");
-
-		ob_start();
-
-		include $view.'.php';
-
-		unset($_SESSION['data_report']);
-	}
-	else
-	{
-		header("Location: ".URL);
-	}
+	if (isset($_GET['xls_req']) && in_array($_GET['xls_req'], $reports)) { header("Location: ".URL.$arr_docs[$_GET['xls_req']]); }else { header("Location: ".URL); }
 }
 else
 {
