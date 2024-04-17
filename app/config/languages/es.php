@@ -34,6 +34,10 @@ const LANG = [
 
 	'nav_languages' => 'tbl_languages',
 
+	'nav_actions' => 'tbl_actions',
+
+	'nav_logs' => 'tbl_logs',
+
 	'nav_levels' => 'tbl_levels',
 
 	'nav_logscron' => 'tbl_logscron',
@@ -183,7 +187,9 @@ const LANG = [
 
     'support_response' => 'Respuesta',
 
-    'support_mnsj' => 'Mensaje',
+    'support_request' => 'Mensaje',
+
+    'support_mnsj' => 'Máximo de caracteres: 1000',
 
     'support_subject' => 'Asunto',
 
@@ -245,6 +251,32 @@ const LANG = [
 
 	'lang_icon_desc' => 'Códigos de idiomas: <a href="https://flagicons.lipis.dev/" target="_blank">https://flagicons.lipis.dev/</a>',
 
+	/*** CRUD ACTIONS
+	**************************************************/
+
+	'action_title' => 'Acciones registradas',
+
+	'action_activate' => 'Activar acción',
+
+	'action_deactivate' => 'Desactivar acción',
+
+	'action_new' => 'Registrar nueva acción',
+
+	'action_edit' => 'Editar acción',
+
+	'action_name' => 'Nombre de la acción',
+
+	'action_badge' => 'Bootstrap badge',
+
+	'action_namebadge' => 'Texto',
+
+	'action_showing' => 'Visualización',
+
+	/*** CRUD LOGS
+	**************************************************/
+
+	'log_title' => 'Bitácora de acciones',
+
 	/*** DATA TABLES
 	**************************************************/
 
@@ -263,6 +295,14 @@ const LANG = [
 	'field_idcountry' => 'idcountry',
 
 	'field_country' => 'país',
+
+	'field_action' => 'acción',
+
+	'field_desc' => 'descripción',
+
+	'field_btbadge' => 'bt badge',
+
+	'field_showing' => 'visualización',
 
 	'field_status' => 'estado',
 

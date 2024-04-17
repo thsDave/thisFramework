@@ -10,13 +10,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="shortcut icon" type="image/x-icon" href="dist/img/icono.ico">
 
-  <title><?= APP_NAME ?>  | <?php echo ($_SESSION['gestion'] == 'confirm') ? 'Confirmar registro' : 'Actualizar contraseña';?> </title>
+  <title>
+    <?= APP_NAME ?>  | <?php echo ($_SESSION['gestion'] == 'confirm' || $_SESSION['gestion'] == 'firstIn') ? 'Confirmar registro' : 'Actualizar contraseña';?>
+  </title>
 
   <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="plugins/fontawesome-free-6.5.1-web/css/all.min.css">
   <link rel="stylesheet" href="plugins/icheck-bootstrap/icheck-bootstrap.min.css">
   <link rel="stylesheet" href="plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
   <link rel="stylesheet" href="dist/css/adminlte.min.css">
+
+  <script src="https://www.google.com/recaptcha/api.js?render=<?= WEBKEY ?>"></script>
+
   <style>
     body {
       /*background: transparent url("dist/img/index_background.png") no-repeat fixed 0px 0px / cover !important;*/
@@ -35,7 +40,7 @@
       <div class="row">
         <div class="col-12">
           <h5 class="text-center">
-            <?php echo ($_SESSION['gestion'] == 'confirm') ? 'Finalización del registro' : 'Actualización de contraseña';?>
+            <?php echo ($_SESSION['gestion'] == 'confirm' || $_SESSION['gestion'] == 'firstIn') ? 'Finalización del registro' : 'Actualización de contraseña';?>
           </h5>
         </div>
         <div class="col-12">
@@ -63,7 +68,7 @@
           <div class="row mt-4">
             <div class="col-12">
               <button type="submit" id="btn_pass" class="btn btn-primary btn-block">
-                <?php echo ($_SESSION['gestion'] == 'confirm') ? 'Confirmar registro' : 'Reiniciar contraseña';?>
+                <?php echo ($_SESSION['gestion'] == 'confirm' || $_SESSION['gestion'] == 'firstIn') ? 'Confirmar registro' : 'Reiniciar contraseña';?>
               </button>
             </div>
           </div>

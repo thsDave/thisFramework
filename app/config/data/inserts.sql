@@ -330,11 +330,12 @@ INSERT INTO `tbl_languages` (`idlang`, `language`, `lancode`, `lanicon`, `idstat
 -- Volcado de datos para la tabla actions
 --
 
-INSERT INTO `tbl_actions` (`idaction`, `action`) VALUES
-(NULL, 'Registro de usuario'),
-(NULL, 'Inserciones'),
-(NULL, 'Actualizaciones'),
-(NULL, 'Eliminaciones');
+INSERT INTO `tbl_actions` (`idaction`, `action`, `btbadge`, `showfield`, `created_at`) VALUES
+(NULL, 'Registro de usuario', '<span class="badge badge-info">Registro de usuario</span>', 1, NOW()),
+(NULL, 'Consultas', '<span class="badge badge-primary">Consultas</span>', 1, NOW()),
+(NULL, 'Inserciones', '<span class="badge badge-success">Inserciones</span>', 1, NOW()),
+(NULL, 'Actualizaciones', '<span class="badge badge-warning">Actualizaciones</span>', 1, NOW()),
+(NULL, 'Eliminaciones', '<span class="badge badge-danger">Eliminaciones</span>', 1, NOW());
 
 
 --

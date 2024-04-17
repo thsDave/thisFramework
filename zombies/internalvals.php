@@ -268,6 +268,11 @@ if (isset($_POST['newreqsupport'])) {
 |
 */
 
+if (isset($_POST['getmessages'])) {
+	echo json_encode($model->history_request($_SESSION[USER_SESSION]['id']));
+}
+
+
 if (isset($_POST['getsupportreq'])) {
 	$info = $sudo_m->getsupportreq($_POST['id']);
 	echo json_encode($info);
@@ -391,9 +396,17 @@ if (isset($_POST['crud_language']))
 	{
 		case 'create':
 			$data['language'] = (isset($_POST['language'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['language'])) : null;
-			$data['lancode'] = (isset($_POST['lancode'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['lancode'])) : null;
+			$data['lancode'] = (isset($_POST['lancode'])) ? strtolower(preg_replace('([^A-Za-z ])', '', trim($_POST['lancode']))) : null;
 
-			echo (!in_array(null, $data)) ? json_encode($model->new_language($data)) : json_encode(false);
+			if (!in_array(null, $data)) {
+				if ($model->verify_lancode($data['lancode'])) {
+					echo json_encode($model->new_language($data));
+				}else {
+					echo json_encode(false);
+				}
+			}else {
+				echo json_encode(false);
+			}
 		break;
 
 		case 'read':
@@ -442,6 +455,139 @@ if (isset($_POST['infolanguage']))
 	];
 
 	echo json_encode($data);
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| C R U D -> tbl_actions
+|--------------------------------------------------------------------------
+*/
+
+if (isset($_POST['crud_actions']))
+{
+	$option = (isset($_POST['option'])) ? preg_replace('([^a-z])', '', trim( strtolower($_POST['option']) )) : false;
+
+	switch ($option)
+	{
+		case 'create':
+			$data['action'] = (isset($_POST['action'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['action'])) : null;
+			$data['btbadge'] = (isset($_POST['btbadge'])) ? preg_replace('([^a-z])', '', trim($_POST['btbadge'])) : null;
+			$data['text'] = (isset($_POST['text'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['text'])) : null;
+
+			$data['btbadge'] = (!in_array(null, $data)) ? "<span class='badge badge-{$data['btbadge']}'>{$data['text']}</span>" : null;
+
+			unset($data['text']);
+
+			echo (!in_array(null, $data)) ? json_encode($model->new_action($data)) : json_encode(false);
+		break;
+
+		case 'read':
+			echo json_encode($model->datatable('v_actions','idaction', [ '*' ]));
+		break;
+
+		case 'update':
+			$data['action'] = (isset($_POST['action'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['action'])) : null;
+			$data['btbadge'] = (isset($_POST['btbadge'])) ? preg_replace('([^a-z])', '', trim($_POST['btbadge'])) : null;
+			$data['text'] = (isset($_POST['text'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['text'])) : null;
+
+			$data['btbadge'] = (!in_array(null, $data)) ? "<span class='badge badge-{$data['btbadge']}'>{$data['text']}</span>" : null;
+
+			unset($data['text']);
+
+			$data['id'] = (isset($_POST['idaction'])) ? preg_replace('([^0-9])', '', trim($_POST['idaction'])) : null;
+
+			echo (!in_array(null, $data)) ? json_encode($model->edit_action($data)) : json_encode(false);
+		break;
+
+		case 'change':
+			$data['id'] = (isset($_POST['idaction'])) ? preg_replace('([^0-9])', '', trim($_POST['idaction'])) : null;
+
+			echo (!is_null($data['id'])) ? json_encode($model->show_action($data)) : json_encode(false);
+		break;
+
+		default:
+			return false;
+		break;
+	}
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| C R U D -> tbl_supports
+|--------------------------------------------------------------------------
+*/
+
+if (isset($_POST['crud_supports']))
+{
+	$option = (isset($_POST['option'])) ? preg_replace('([^a-z])', '', trim( strtolower($_POST['option']) )) : false;
+
+	switch ($option)
+	{
+		case 'create':
+			$data['action'] = (isset($_POST['action'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['action'])) : null;
+			$data['btbadge'] = (isset($_POST['btbadge'])) ? preg_replace('([^a-z])', '', trim($_POST['btbadge'])) : null;
+			$data['text'] = (isset($_POST['text'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['text'])) : null;
+
+			$data['btbadge'] = (!in_array(null, $data)) ? "<span class='badge badge-{$data['btbadge']}'>{$data['text']}</span>" : null;
+
+			unset($data['text']);
+
+			echo (!in_array(null, $data)) ? json_encode($model->new_action($data)) : json_encode(false);
+		break;
+
+		case 'read':
+			echo json_encode($model->datatable('v_supports','idsupport', [ '*' ]));
+		break;
+
+		case 'update':
+			$data['action'] = (isset($_POST['action'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['action'])) : null;
+			$data['btbadge'] = (isset($_POST['btbadge'])) ? preg_replace('([^a-z])', '', trim($_POST['btbadge'])) : null;
+			$data['text'] = (isset($_POST['text'])) ? preg_replace('([^A-Za-zÁ-ź ])', '', trim($_POST['text'])) : null;
+
+			$data['btbadge'] = (!in_array(null, $data)) ? "<span class='badge badge-{$data['btbadge']}'>{$data['text']}</span>" : null;
+
+			unset($data['text']);
+
+			$data['id'] = (isset($_POST['idaction'])) ? preg_replace('([^0-9])', '', trim($_POST['idaction'])) : null;
+
+			echo (!in_array(null, $data)) ? json_encode($model->edit_action($data)) : json_encode(false);
+		break;
+
+		case 'change':
+			$data['id'] = (isset($_POST['idaction'])) ? preg_replace('([^0-9])', '', trim($_POST['idaction'])) : null;
+
+			echo (!is_null($data['id'])) ? json_encode($model->show_action($data)) : json_encode(false);
+		break;
+
+		default:
+			return false;
+		break;
+	}
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| C R U D -> tbl_logs
+|--------------------------------------------------------------------------
+*/
+
+if (isset($_POST['crud_logs']))
+{
+	$option = (isset($_POST['option'])) ? preg_replace('([^a-z])', '', trim( strtolower($_POST['option']) )) : false;
+
+	switch ($option)
+	{
+		case 'read':
+			echo json_encode($model->datatable('v_logs','idlog', [ '*' ]));
+		break;
+
+		default:
+			return false;
+		break;
+	}
 }
 
 

@@ -17,9 +17,9 @@ CREATE VIEW v_countries AS
 		c.badge,
 		c.isocode,
 		c.idstatus,
-		DATE_FORMAT(c.created_at, '%d/%m/%Y | %H:%m:%s') AS 'created_at',
-		DATE_FORMAT(c.updated_at, '%d/%m/%Y | %H:%m:%s') AS 'updated_at',
-		DATE_FORMAT(c.deleted_at, '%d/%m/%Y | %H:%m:%s') AS 'deleted_at',
+		DATE_FORMAT(c.created_at, '📅 %d/%m/%Y ⌚ %H:%m:%s') AS 'created_at',
+		DATE_FORMAT(c.updated_at, '📅 %d/%m/%Y ⌚ %H:%m:%s') AS 'updated_at',
+		DATE_FORMAT(c.deleted_at, '📅 %d/%m/%Y ⌚ %H:%m:%s') AS 'deleted_at',
 		s.status,
 		s.btbadge
 	FROM
@@ -37,7 +37,7 @@ CREATE VIEW v_status AS
 		status,
 		btbadge,
 		CASE WHEN showfield = 1 THEN 'showing' ELSE 'hidden' END AS 'showfield',
-		DATE_FORMAT(created_at, '%d/%m/%Y | %H:%m:%s') AS 'created_at'
+		DATE_FORMAT(created_at, '📅 %d/%m/%Y ⌚ %H:%m:%s') AS 'created_at'
 	FROM
 		tbl_status;
 
@@ -52,9 +52,9 @@ CREATE VIEW v_languages AS
 		l.lancode,
 		l.lanicon,
 		l.idstatus,
-		DATE_FORMAT(l.created_at, '%d/%m/%Y | %H:%m:%s') AS 'created_at',
-		DATE_FORMAT(l.updated_at, '%d/%m/%Y | %H:%m:%s') AS 'updated_at',
-		DATE_FORMAT(l.deleted_at, '%d/%m/%Y | %H:%m:%s') AS 'deleted_at',
+		DATE_FORMAT(l.created_at, '📅 %d/%m/%Y ⌚ %H:%m:%s') AS 'created_at',
+		DATE_FORMAT(l.updated_at, '📅 %d/%m/%Y ⌚ %H:%m:%s') AS 'updated_at',
+		DATE_FORMAT(l.deleted_at, '📅 %d/%m/%Y ⌚ %H:%m:%s') AS 'deleted_at',
 		s.status,
 		s.btbadge
 	FROM
@@ -72,22 +72,31 @@ CREATE VIEW v_levels AS
 		level,
 		alias,
 		CASE WHEN showfield = 1 THEN 'showing' ELSE 'hidden' END AS 'showfield',
-		DATE_FORMAT(created_at, '%d/%m/%Y | %H:%m:%s') AS 'created_at'
+		DATE_FORMAT(created_at, '📅 %d/%m/%Y ⌚ %H:%m:%s') AS 'created_at'
 	FROM
 		tbl_levels;
 
 -- ------------------------------------ --
--- --------- [ tbl_logscron ] --------- --
+-- --------- [ tbl_logs ] ------------- --
 -- ------------------------------------ --
 
-CREATE VIEW v_logscron AS
+CREATE VIEW v_logs AS
 	SELECT
-		idlog,
-		idstatus,
-		message,
-		DATE_FORMAT(created_at, '%d/%m/%Y | %H:%m:%s') AS 'created_at'
+		l.idlog,
+		l.description,
+		l.idaction,
+		a.action,
+		a.btbadge,
+		l.iduser,
+		u.name,
+		u.email,
+		DATE_FORMAT(l.created_at, '📅 %d/%m/%Y ⌚ %H:%m:%s') AS 'created_at'
 	FROM
-		tbl_logscron;
+		tbl_logs l
+	INNER JOIN
+		tbl_actions a ON l.idaction = a.idaction
+	INNER JOIN
+		tbl_users u ON l.iduser = u.iduser;
 
 -- --------------------------------------- --
 -- --------- [ tbl_profilepics ] --------- --
@@ -100,7 +109,7 @@ CREATE VIEW v_profilepics AS
 		p.format,
 		p.picture,
 		p.idstatus,
-		DATE_FORMAT(p.created_at, '%d/%m/%Y | %H:%m:%s') AS 'created_at',
+		DATE_FORMAT(p.created_at, '📅 %d/%m/%Y ⌚ %H:%m:%s') AS 'created_at',
 		s.status,
 		s.btbadge
 	FROM
@@ -128,9 +137,9 @@ CREATE VIEW v_users AS
         u.idpic,
         u.idstatus,
         u.idcountry,
-        DATE_FORMAT(u.created_at, '%d/%m/%Y | %H:%m:%s') AS 'created_at',
-		DATE_FORMAT(u.updated_at, '%d/%m/%Y | %H:%m:%s') AS 'updated_at',
-		DATE_FORMAT(u.deleted_at, '%d/%m/%Y | %H:%m:%s') AS 'deleted_at',
+        DATE_FORMAT(u.created_at, '📅 %d/%m/%Y ⌚ %H:%m:%s') AS 'created_at',
+		DATE_FORMAT(u.updated_at, '📅 %d/%m/%Y ⌚ %H:%m:%s') AS 'updated_at',
+		DATE_FORMAT(u.deleted_at, '📅 %d/%m/%Y ⌚ %H:%m:%s') AS 'deleted_at',
         n.level,
         n.alias,
         i.language,
@@ -160,13 +169,13 @@ CREATE VIEW v_supports AS
         l.level,
 		s.subject,
 		s.mssg,
-		s.response,
+		CASE WHEN s.response = '' THEN 'Pendente de respuesta' ELSE s.response END AS 'response',
 		s.idstatus,
 		e.btbadge,
 		e.status,
-		DATE_FORMAT(s.created_at, '%d/%m/%Y | %H:%m:%s') AS 'created_at',
-		DATE_FORMAT(s.updated_at, '%d/%m/%Y | %H:%m:%s') AS 'updated_at',
-		DATE_FORMAT(s.deleted_at, '%d/%m/%Y | %H:%m:%s') AS 'deleted_at'
+		DATE_FORMAT(s.created_at, '📅 %d/%m/%Y ⌚ %H:%m:%s') AS 'created_at',
+		DATE_FORMAT(s.updated_at, '📅 %d/%m/%Y ⌚ %H:%m:%s') AS 'updated_at',
+		DATE_FORMAT(s.deleted_at, '📅 %d/%m/%Y ⌚ %H:%m:%s') AS 'deleted_at'
 	FROM
 		tbl_supports s
 	INNER JOIN
@@ -175,3 +184,17 @@ CREATE VIEW v_supports AS
 		tbl_status e ON s.idstatus = e.idstatus
     INNER JOIN
 		tbl_levels l ON u.idlvl = l.idlvl;
+
+-- ---------------------------------- --
+-- --------- [ tbl_actions ] --------- --
+-- ---------------------------------- --
+
+CREATE VIEW v_actions AS
+	SELECT
+		idaction,
+		action,
+		btbadge,
+		CASE WHEN showfield = 1 THEN 'showing' ELSE 'hidden' END AS 'showfield',
+		DATE_FORMAT(created_at, '📅 %d/%m/%Y ⌚ %H:%m:%s') AS 'created_at'
+	FROM
+		tbl_actions;

@@ -97,57 +97,65 @@ $("#email2").keyup(() => {
 	validateform();
 });
 
-form.addEventListener('submit', async (e) => {
+grecaptcha.ready(function() {
+    grecaptcha.execute('6Ld7NrgpAAAAACIokUnERwXs4qmJcN3S3KRWxUfd', {
+        action: 'register'
+    }).then(function(token) {
+		form.addEventListener('submit', async (e) => {
 
-	e.preventDefault();
+			e.preventDefault();
 
-	let arr_data = new FormData(form);
+			let arr_data = new FormData(form);
 
-	arr_data.append('newregister', true);
+			arr_data.append('newregister', true);
 
-	Swal.fire({
-        title: '✍️ Iniciando registro 👌',
-        html: 'Estamos registrando sus datos en nuestra base de datos, por favor no cierre la ventana del navegador.',
-        didOpen: () => {
-            Swal.showLoading();
-        }
-    });
+			arr_data.append('token', token);
 
-    const result = await fetch('external_data', {
-        method: 'POST',
-        body: arr_data
-    })
-    .then(res => res.json())
-    .then(data => {
-        return data;
-    });
+			Swal.fire({
+		        title: '✍️ Iniciando registro 👌',
+		        html: 'Estamos registrando sus datos en nuestra base de datos, por favor no cierre la ventana del navegador.',
+		        didOpen: () => {
+		            Swal.showLoading();
+		        }
+		    });
 
-	if (result) {
-		Swal.fire({
-			icon: 'success',
-			title: 'Usuario registrado',
-			text: 'Te hemos enviado un correo electrónico con los pasos finales de registro.',
-			confirmButtonText: `Aceptar`
-		})
-		.then(() => {
-			window.open(window.location+'?action=login','_self');
+		    const result = await fetch('external_data', {
+		        method: 'POST',
+		        body: arr_data
+		    })
+		    .then(res => res.json())
+		    .then(data => {
+		        return data;
+		    });
+
+			if (result) {
+				Swal.fire({
+					icon: 'success',
+					title: 'Usuario registrado',
+					text: 'Te hemos enviado un correo electrónico con los pasos finales de registro.',
+					confirmButtonText: `Aceptar`
+				})
+				.then(() => {
+					window.open(window.location+'?action=login','_self');
+				});
+			}else {
+				Swal.fire({
+					icon: 'error',
+					title: 'Usuario no registrado',
+					text: '¿Ya estás registrado con nosotros? intenta restablecer tu contraseña o verifica tus datos y vuelve a intentarlo.',
+					confirmButtonText: `Aceptar`
+				});
+			}
+
+			$('#name').val('');
+			$('#email').val('');
+			$('#email2').val('');
+			$('#name').removeClass('is-valid');
+			$('#email').removeClass('is-valid');
+			$('#email2').removeClass('is-valid');
+			$('#name').removeClass('is-invalid');
+			$('#email').removeClass('is-invalid');
+			$('#email2').removeClass('is-invalid');
 		});
-	}else {
-		Swal.fire({
-			icon: 'error',
-			title: 'Usuario no registrado',
-			text: '¿Ya estás registrado con nosotros? intenta restablecer tu contraseña o verifica tus datos y vuelve a intentarlo.',
-			confirmButtonText: `Aceptar`
-		});
-	}
-
-	$('#name').val('');
-	$('#email').val('');
-	$('#email2').val('');
-	$('#name').removeClass('is-valid');
-	$('#email').removeClass('is-valid');
-	$('#email2').removeClass('is-valid');
-	$('#name').removeClass('is-invalid');
-	$('#email').removeClass('is-invalid');
-	$('#email2').removeClass('is-invalid');
+	});
 });

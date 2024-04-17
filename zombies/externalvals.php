@@ -15,7 +15,22 @@ require_once "../app/controllers/Controller.php";
 
 if (isset($_POST['localogin']))
 {
-	echo json_encode($objController->login($_POST['user'], 'local', $_POST['pwd']));
+	$token = trim($_POST['token']);
+
+	$cu = curl_init();
+
+	curl_setopt($cu, CURLOPT_URL, "https://www.google.com/recaptcha/api/siteverify");
+	curl_setopt($cu, CURLOPT_POST, 1);
+	curl_setopt($cu, CURLOPT_POSTFIELDS, http_build_query(array('secret' => SECRETKEY, 'response' => $token)));
+	curl_setopt($cu, CURLOPT_RETURNTRANSFER, true);
+
+	$response = curl_exec($cu);
+
+	curl_close($cu);
+
+	$datos = json_decode($response, true);
+
+	echo ( $datos['success'] == 1 && $datos['score'] >= 0.5 ) ? json_encode($objController->login($_POST['user'], 'local', $_POST['pwd'])) : json_encode(false);
 }
 
 
@@ -77,25 +92,36 @@ if (isset($_POST['fireregister']))
 
 if (isset($_POST['newregister']))
 {
-	$data['name'] = (isset($_POST['name']) && !empty($_POST['name'])) ? $_POST['name'] : false;
-	$data['lang'] = (isset($_POST['lang']) && !empty($_POST['lang'])) ? $_POST['lang'] : false;
-	$data['country'] = (isset($_POST['country']) && !empty($_POST['country'])) ? $_POST['country'] : false;
-	$data['email'] = (isset($_POST['email']) && !empty($_POST['email'])) ? $_POST['email'] : false;
-	$data['email2'] = (isset($_POST['email2']) && !empty($_POST['email2'])) ? $_POST['email2'] : false;
+	$token = trim($_POST['token']);
 
-	if (!in_array(false, $data))
+	$cu = curl_init();
+
+	curl_setopt($cu, CURLOPT_URL, "https://www.google.com/recaptcha/api/siteverify");
+	curl_setopt($cu, CURLOPT_POST, 1);
+	curl_setopt($cu, CURLOPT_POSTFIELDS, http_build_query(array('secret' => SECRETKEY, 'response' => $token)));
+	curl_setopt($cu, CURLOPT_RETURNTRANSFER, true);
+
+	$response = curl_exec($cu);
+
+	curl_close($cu);
+
+	$datos = json_decode($response, true);
+
+	if ( $datos['success'] == 1 && $datos['score'] >= 0.5 )
 	{
-		if ($data['email'] == $data['email2'])
-			$res = $objController->newregister($data);
-		else
-			$res = false;
+		$data['name'] = (isset($_POST['name']) && !empty($_POST['name'])) ? $_POST['name'] : false;
+		$data['lang'] = (isset($_POST['lang']) && !empty($_POST['lang'])) ? $_POST['lang'] : false;
+		$data['country'] = (isset($_POST['country']) && !empty($_POST['country'])) ? $_POST['country'] : false;
+		$data['email'] = (isset($_POST['email']) && !empty($_POST['email'])) ? $_POST['email'] : false;
+		$data['email2'] = (isset($_POST['email2']) && !empty($_POST['email2'])) ? $_POST['email2'] : false;
+
+		echo (!in_array(false, $data)) ? ($data['email'] == $data['email2']) ? json_encode($objController->newregister($data)) : json_encode(false) : json_encode(false);
 	}
 	else
 	{
-		$res = false;
+		echo json_encode(false);
 	}
 
-	echo json_encode($res);
 }
 
 /*
@@ -109,7 +135,22 @@ if (isset($_POST['newregister']))
 
 if (isset($_POST['forgot-email']))
 {
-	echo json_encode($objController->send_resetpass($_POST['mail']));
+	$token = trim($_POST['token']);
+
+	$cu = curl_init();
+
+	curl_setopt($cu, CURLOPT_URL, "https://www.google.com/recaptcha/api/siteverify");
+	curl_setopt($cu, CURLOPT_POST, 1);
+	curl_setopt($cu, CURLOPT_POSTFIELDS, http_build_query(array('secret' => SECRETKEY, 'response' => $token)));
+	curl_setopt($cu, CURLOPT_RETURNTRANSFER, true);
+
+	$response = curl_exec($cu);
+
+	curl_close($cu);
+
+	$datos = json_decode($response, true);
+
+	echo ( $datos['success'] == 1 && $datos['score'] >= 0.5 ) ? json_encode( $objController->send_resetpass( $_POST['mail'] ) ) : json_encode( false );
 }
 
 
@@ -131,15 +172,34 @@ if (isset($_POST['getusrinfo']))
 
 if (isset($_POST['restorepwd']))
 {
-	if ( strlen( trim( $_POST['pass1'] ) ) >= 8 && strlen( trim( $_POST['pass2'] ) ) >= 8 ) {
-		if ($_POST['pass1'] === $_POST['pass2']) {
-			echo json_encode($objController->resetPassword($_POST['pass1']));
+	$token = trim($_POST['token']);
+
+	$cu = curl_init();
+
+	curl_setopt($cu, CURLOPT_URL, "https://www.google.com/recaptcha/api/siteverify");
+	curl_setopt($cu, CURLOPT_POST, 1);
+	curl_setopt($cu, CURLOPT_POSTFIELDS, http_build_query(array('secret' => SECRETKEY, 'response' => $token)));
+	curl_setopt($cu, CURLOPT_RETURNTRANSFER, true);
+
+	$response = curl_exec($cu);
+
+	curl_close($cu);
+
+	$datos = json_decode($response, true);
+
+	if ( $datos['success'] == 1 && $datos['score'] >= 0.5 )
+	{
+		if ( strlen( trim( $_POST['pass1'] ) ) >= 8 && strlen( trim( $_POST['pass2'] ) ) >= 8 ) {
+			echo ( $_POST['pass1'] === $_POST['pass2'] ) ? json_encode( $objController->resetPassword( $_POST['pass1'] ) ) : json_encode( false );
 		}else {
 			echo json_encode(false);
 		}
-	}else {
+	}
+	else
+	{
 		echo json_encode(false);
 	}
+
 }
 
 /*

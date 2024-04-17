@@ -3,34 +3,30 @@ $(document).ready(function() {
 
     // var fila captura la fila para editar o eliminar un registro
 
-    var idcountry, fila, option;
+    var idaction, fila, option;
 
-    var tbl_countries = $('#datable').DataTable({
+    var tbl_actions = $('#datable').DataTable({
         "ajax":{
             "url": "internal_data",
             "method": 'POST',
-            "data": { crud_country: true, option: 'read' },
+            "data": { crud_actions: true, option: 'read' },
             "dataSrc": ""
         },
         "columns":[
             {"data": "no"},
-            {"data": "country"},
-            {"data": "badge"},
-            {"data": "isocode"},
+            {"data": "action"},
             {"data": "btbadge"},
+            {"data": "showfield"},
             {"data": "created_at"},
             {
-                "data": "idcountry",
+                "data": "idaction",
                 "render": function (data, type, row) {
                     return `<div class='wrapper'>
-                        <button type="button" class="btn btn-sm btn-info edit-data" value="${row.idcountry}" data-toggle="tooltip" data-bs-placement="top" title="editar registro">
+                        <button type="button" class="btn btn-sm btn-info edit-data" value="${row.idaction}" data-toggle="tooltip" data-bs-placement="top" title="editar registro">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </button>
-                        <button type="button" class="btn btn-sm btn-warning edit-status" value="${row.idcountry}" data-toggle="tooltip" data-bs-placement="top" title="cambiar estado">
+                        <button type="button" class="btn btn-sm btn-warning edit-status" value="${row.idaction}" data-toggle="tooltip" data-bs-placement="top" title="cambiar estado">
                             <i class="fa-solid fa-rotate"></i>
-                        </button>
-                        <button type="button" class="btn btn-sm btn-danger delete-data" value="${row.idcountry}" data-toggle="tooltip" data-bs-placement="top" title="eliminar registro">
-                            <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </div>`
                 }
@@ -74,15 +70,15 @@ $(document).ready(function() {
 
     //submit para el Alta y Actualización
 
-    var country_form = document.getElementById('country_form');
+    var country_form = document.getElementById('action_form');
 
     country_form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         let arr_data = new FormData(country_form);
-        arr_data.append('crud_country', true);
+        arr_data.append('crud_actions', true);
         arr_data.append('option', option);
-        arr_data.append('idcountry', idcountry);
+        arr_data.append('idaction', idaction);
 
         try {
             const response = await fetch('internal_data', {
@@ -93,14 +89,15 @@ $(document).ready(function() {
             const data = await response.json();
 
             if (data) {
-                let mnsj = (option == 'update') ? 'Registro actualizado' : 'País registrado';
+                let mnsj = (option == 'update') ? 'Registro actualizado' : 'Acción registrada';
 
                 await Swal.fire({
                     icon: 'success',
                     title: mnsj,
                     confirmButtonText: `Aceptar`
                 });
-                tbl_countries.ajax.reload(null, false);
+
+                tbl_actions.ajax.reload(null, false);
             } else {
                 await Swal.fire({
                     icon: 'error',
@@ -111,7 +108,7 @@ $(document).ready(function() {
             }
 
             country_form.reset();
-            $('#modal_country').modal('hide');
+            $('#modal_action').modal('hide');
         } catch (error) {
             Swal.fire({
                 icon: 'error',
@@ -124,11 +121,11 @@ $(document).ready(function() {
 
     //para limpiar los campos antes de dar de Alta una Persona
 
-    $("#add_country").click(() => {
+    $("#add_action").click(() => {
         option = 'create';
-        idcountry = null;
+        idaction = null;
 
-        $(".modal-title").text("Nuevo país");
+        $(".modal-title").text("Nueva acción");
     });
 
     //Evento de edición
@@ -138,18 +135,16 @@ $(document).ready(function() {
 
         fila = $(this).closest("tr");
 
-        idcountry = this.value;
-        country = fila.find('td:eq(1)').text();
-        badge = fila.find('td:eq(2)').text();
-        isocode = fila.find('td:eq(3)').text();
+        idaction = this.value;
+        accion = fila.find('td:eq(1)').text();
+        btbadge = fila.find('td:eq(2)').text();
 
-        $("#country").val(country);
-        $("#badge").val(badge);
-        $("#isocode").val(isocode);
+        $("#action").val(accion);
+        $("#text").val(btbadge);
 
         $(".modal-title").text("Editar país");
 
-        $('#modal_country').modal('show');
+        $('#modal_action').modal('show');
     });
 
     // Evento de actualización de estado
@@ -157,14 +152,14 @@ $(document).ready(function() {
     $(document).on("click", ".edit-status", async function() {
         let arr_data = new FormData();
 
-        arr_data.append('crud_country', true);
+        arr_data.append('crud_actions', true);
         arr_data.append('option', 'change');
-        arr_data.append('idcountry', this.value);
+        arr_data.append('idaction', this.value);
 
         const confirmation = await Swal.fire({
             icon: 'question',
-            title: 'Actualizar país',
-            html: '¿Realmente deseas actualizar el estado de este país?',
+            title: 'Actualizar acción',
+            html: '¿Realmente deseas actualizar el estado de este acción?',
             showCancelButton: true,
             confirmButtonText: 'Actualizar estado',
             confirmButtonColor: '#007bff',
@@ -183,70 +178,15 @@ $(document).ready(function() {
                 if (data) {
                     await Swal.fire({
                         icon: 'success',
-                        title: 'País actualizado',
+                        title: 'Acción actualizada',
                         confirmButtonText: `Aceptar`
                     });
-                    tbl_countries.ajax.reload(null, false);
+                    tbl_actions.ajax.reload(null, false);
                 } else {
                     await Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        html: 'No se logró actualizar el país, inténtalo nuevamente.',
-                        confirmButtonText: `Aceptar`
-                    });
-                }
-            } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Ocurrió un error dentro del sistema, actualiza el sitio, intentalo nuevamente o ponte en contacto con el administrador del sistema.',
-                    confirmButtonText: 'Aceptar'
-                });
-            }
-        } else if (confirmation.isDenied) {
-            Swal.fire('Acción cancelada', '', 'info');
-        }
-    });
-
-    //Borrar
-    $(document).on("click", ".delete-data", async function() {
-        let arr_data = new FormData();
-
-        arr_data.append('crud_country', true);
-        arr_data.append('option', 'delete');
-        arr_data.append('idcountry', this.value);
-
-        const confirmation = await Swal.fire({
-            icon: 'question',
-            title: 'Eliminar país',
-            html: '¿Realmente deseas eliminar este país?',
-            showCancelButton: true,
-            confirmButtonText: 'Eliminar país',
-            confirmButtonColor: '#dc3545',
-            cancelButtonText: 'Cancelar'
-        });
-
-        if (confirmation.isConfirmed) {
-            try {
-                const response = await fetch('internal_data', {
-                    method: 'POST',
-                    body: arr_data
-                });
-
-                const data = await response.json();
-
-                if (data) {
-                    await Swal.fire({
-                        icon: 'success',
-                        title: 'País eliminado',
-                        confirmButtonText: `Aceptar`
-                    });
-                    tbl_countries.ajax.reload(null, false);
-                } else {
-                    await Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        html: 'No se logró eliminar el país, inténtalo nuevamente.',
+                        html: 'No se logró actualizar la acción, inténtalo nuevamente.',
                         confirmButtonText: `Aceptar`
                     });
                 }

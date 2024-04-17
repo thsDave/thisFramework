@@ -18,7 +18,7 @@ $(document).ready(function() {
             {"data": "lancode"},
             {"data": "lanicon"},
             {"data": "btbadge"},
-            {"data": "timestamp"},
+            {"data": "updated_at"},
             {
                 "data": "idlang",
                 "render": function (data, type, row) {
@@ -76,45 +76,52 @@ $(document).ready(function() {
 
     var lang_form = document.getElementById('lang_form');
 
-    lang_form.addEventListener('submit', (e) => {
+    lang_form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         let arr_data = new FormData(lang_form);
-
         arr_data.append('crud_language', true);
         arr_data.append('option', option);
         arr_data.append('idlang', idlang);
 
-        fetch('internal_data', {
-            method: 'POST',
-            body: arr_data
-        })
-        .then(res => res.json())
-        .then(data => {
+        try {
+            const response = await fetch('internal_data', {
+                method: 'POST',
+                body: arr_data
+            });
+
+            const data = await response.json();
+
             if (data) {
                 let mnsj = (option == 'update') ? 'Registro actualizado' : 'País registrado';
 
-                Swal.fire({
+                await Swal.fire({
                     icon: 'success',
                     title: mnsj,
                     confirmButtonText: `Aceptar`
-                })
-                .then(() => {
-                    tbl_languages.ajax.reload(null, false);
                 });
-            }else {
-                Swal.fire({
+                tbl_languages.ajax.reload(null, false);
+            } else {
+                await Swal.fire({
                     icon: 'error',
                     title: 'Error',
                     text: 'Hemos tenido problemas para actualizar este registro, por favor intenta nuevamente.',
                     confirmButtonText: `Aceptar`
                 });
             }
-        }).then(()=>{
-            lang_form.reset();
-            $('#modal_lang').modal('hide');
-        });
 
+            lang_form.reset();
+
+            $('#modal_lang').modal('hide');
+
+        } catch (error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Ocurrió un error dentro del sistema, actualiza el sitio, intentalo nuevamente o ponte en contacto con el administrador del sistema.',
+                confirmButtonText: 'Aceptar'
+            });
+        }
     });
 
     //para limpiar los campos antes de dar de Alta una Persona
@@ -149,15 +156,14 @@ $(document).ready(function() {
 
     // Evento de actualización de estado
 
-    $(document).on("click", ".edit-status", function(){
-
+    $(document).on("click", ".edit-status", async function() {
         let arr_data = new FormData();
 
         arr_data.append('crud_language', true);
         arr_data.append('option', 'change');
         arr_data.append('idlang', this.value);
 
-        Swal.fire({
+        const confirmation = await Swal.fire({
             icon: 'question',
             title: 'Actualizar idioma',
             html: '¿Realmente deseas actualizar el estado de este idioma?',
@@ -165,46 +171,54 @@ $(document).ready(function() {
             confirmButtonText: 'Actualizar estado',
             confirmButtonColor: '#007bff',
             cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                fetch('internal_data', {
+        });
+
+        if (confirmation.isConfirmed) {
+            try {
+                const response = await fetch('internal_data', {
                     method: 'POST',
                     body: arr_data
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: '😃 Idioma actualizado!! 🥳',
-                            confirmButtonText: `Genial! 👍`
-                        }).then(()=>{
-                            tbl_languages.ajax.reload(null, false);
-                        });
-                    }else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: '😦 Error 😞',
-                            html: 'No se logró actualizar el idioma, intentalo nuevamente.',
-                            confirmButtonText: `Ok! 👍`
-                        });
-                    }
                 });
-            } else if (result.isDenied) {
-                Swal.fire('Acción cancelada', '', 'info');
+
+                const data = await response.json();
+
+                if (data) {
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Idioma actualizado',
+                        confirmButtonText: `Aceptar`
+                    });
+                    tbl_languages.ajax.reload(null, false);
+                } else {
+                    await Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        html: 'No se logró actualizar el idioma, inténtalo nuevamente.',
+                        confirmButtonText: `Aceptar`
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ocurrió un error dentro del sistema, actualiza el sitio e intentalo nuevamente o ponte en contacto con el administrador del sistema.',
+                    confirmButtonText: 'Aceptar'
+                });
             }
-        });
+        } else if (confirmation.isDenied) {
+            Swal.fire('Acción cancelada', '', 'info');
+        }
     });
 
     //Borrar
-    $(document).on("click", ".delete-data", function(){
+    $(document).on("click", ".delete-data", async function() {
         let arr_data = new FormData();
 
         arr_data.append('crud_language', true);
         arr_data.append('option', 'delete');
         arr_data.append('idlang', this.value);
 
-        Swal.fire({
+        const confirmation = await Swal.fire({
             icon: 'question',
             title: 'Eliminar idioma',
             html: '¿Realmente deseas eliminar este idioma?',
@@ -212,35 +226,43 @@ $(document).ready(function() {
             confirmButtonText: 'Eliminar idioma',
             confirmButtonColor: '#dc3545',
             cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                fetch('internal_data', {
+        });
+
+        if (confirmation.isConfirmed) {
+            try {
+                const response = await fetch('internal_data', {
                     method: 'POST',
                     body: arr_data
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: '😃 Idioma eliminado!! 🥳',
-                            confirmButtonText: `Genial! 👍`
-                        }).then(()=>{
-                            tbl_languages.ajax.reload(null, false);
-                        });
-                    }else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: '😦 Error 😞',
-                            html: 'No se logró eliminar el idioma, intentalo nuevamente.',
-                            confirmButtonText: `Ok! 👍`
-                        });
-                    }
                 });
-            } else if (result.isDenied) {
-                Swal.fire('Acción cancelada', '', 'info');
+
+                const data = await response.json();
+
+                if (data) {
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Idioma eliminado',
+                        confirmButtonText: `Aceptar`
+                    });
+                    tbl_languages.ajax.reload(null, false);
+                } else {
+                    await Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        html: 'No se logró eliminar el idioma, inténtalo nuevamente.',
+                        confirmButtonText: `Aceptar`
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ocurrió un error dentro del sistema, actualiza el sitio, intentalo nuevamente o ponte en contacto con el administrador del sistema.',
+                    confirmButtonText: 'Aceptar'
+                });
             }
-        });
+        } else if (confirmation.isDenied) {
+            Swal.fire('Acción cancelada', '', 'info');
+        }
     });
 
 });

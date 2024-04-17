@@ -30,7 +30,7 @@
           </div>
         </div>
         <div class="row mt-4">
-          <div class="col-12 col-md-4">
+          <div class="col-12 col-sm-12 col-md-12 col-lg-8 col-xl-6">
             <div class="card card-dark">
               <div class="card-header">
                 <h3 class="card-title">
@@ -55,7 +55,7 @@
                           <label for="hr_users" class="custom-control-label"><?= LANG['report_hr_report'] ?></label>
                         </div>
                       </div>
-                      <input type="hidden" name="report" value="users_list">
+                      <input type="hidden" name="report" value="user_report">
                       <button type="submit" class="btn btn-sm btn-success" id="xls1" name="print" value="xls"><?= LANG['report_print_xls'] ?></button>
                       <button type="submit" class="btn btn-sm btn-danger" id="pdf1" name="print" value="pdf"><?= LANG['report_print_pdf'] ?></button>
                     </form>
@@ -74,7 +74,7 @@
                 <div class="row mt-3">
                   <div class="col-12">
                     <form action="print_report" method="post">
-                      <input type="hidden" name="report" value="support_list">
+                      <input type="hidden" name="report" value="support_report">
                       <button type="submit" class="btn btn-sm btn-success" id="xls2" name="print" value="xls"><?= LANG['report_print_xls'] ?></button>
                       <button type="submit" class="btn btn-sm btn-danger" id="pdf2" name="print" value="pdf"><?= LANG['report_print_pdf'] ?></button>
                     </form>

@@ -31,10 +31,15 @@ ErrorDocument 500 http://localhost/skeleton/500
 
 	RewriteRule ^print_report?$ reports/router.php
 
-	RewriteRule ^users_list?$ reports/pdf/users_list.php
-	RewriteRule ^support_list?$ reports/pdf/support_list.php
+#### Reports PDF
 
-	RewriteRule ^xls_report?$ reports/xls/print_xls.php
+	RewriteRule ^user_report?$ reports/pdf/user_report.php
+	RewriteRule ^support_report?$ reports/pdf/support_report.php
+
+#### Reports XLS
+
+	RewriteRule ^xls_users/?$ reports/xls/users.php
+	RewriteRule ^xls_supports/?$ reports/xls/supports.php
 
 #### For AutoTasks
 

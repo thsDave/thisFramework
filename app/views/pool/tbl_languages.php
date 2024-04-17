@@ -27,7 +27,7 @@
         <div class="row">
           <div class="col-12">
             <button type="button" class="btn btn-sm btn-success" id="add_lang" data-toggle="modal" data-target="#modal_lang">
-              <i class="fa-solid fa-circle-plus"></i> Nuevo
+              <i class="fa-solid fa-circle-plus"></i> <?= LANG['tab_new'] ?>
             </button>
           </div>
         </div>
@@ -70,7 +70,7 @@
               <div class="form-group">
                 <label for="language"><?= LANG['lang_name'] ?></label>
                 <div class="input-group">
-                  <input type="text" class="form-control" id="language" name="language" placeholder="<?= LANG['lang_name'] ?>" required autofocus>
+                  <input type="text" class="form-control" id="language" name="language" maxlength="15" placeholder="<?= LANG['lang_name'] ?>" required autofocus>
                 </div>
               </div>
             </div>
@@ -79,7 +79,7 @@
             <div class="col-12">
               <div class="form-group">
                 <label for="lancode"><?= LANG['lang_code'] ?></label>
-                <input type="text" class="form-control" id="lancode" name="lancode" placeholder="<?= LANG['lang_code'] ?>" aria-describedby="lanicondesc" required>
+                <input type="text" class="form-control" id="lancode" name="lancode" maxlength="5" placeholder="<?= LANG['lang_code'] ?>" aria-describedby="lanicondesc" required>
                 <small id="lanicondesc" class="form-text text-muted"><?= LANG['lang_icon_desc'] ?></small>
               </div>
             </div>

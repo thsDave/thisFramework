@@ -18,6 +18,9 @@
   <link rel="stylesheet" href="dist/css/adminlte.min.css">
   <link rel="stylesheet" href="plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
   <link rel="stylesheet" href="dist/css/thistyle.css">
+
+  <script src="https://www.google.com/recaptcha/api.js?render=<?= WEBKEY ?>"></script>
+
   <style>
     body {
       /*background: transparent url("dist/img/index_background.png") no-repeat fixed 0px 0px / cover !important;*/

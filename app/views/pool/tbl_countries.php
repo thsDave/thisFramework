@@ -27,7 +27,7 @@
         <div class="row">
           <div class="col-12">
             <button type="button" class="btn btn-sm btn-success" id="add_country" data-toggle="modal" data-target="#modal_country">
-              <i class="fa-solid fa-circle-plus"></i> Nuevo
+              <i class="fa-solid fa-circle-plus"></i> <?= LANG['tab_new'] ?>
             </button>
           </div>
         </div>
@@ -70,7 +70,7 @@
               <div class="form-group">
                 <label for="country"><?= LANG['countries_name'] ?></label>
                 <div class="input-group">
-                  <input type="text" class="form-control" id="country" name="country" placeholder="<?= LANG['countries_name'] ?>" required autofocus>
+                  <input type="text" class="form-control" id="country" name="country" maxlength="50" placeholder="<?= LANG['countries_name'] ?>" required autofocus>
                 </div>
               </div>
             </div>
@@ -80,7 +80,7 @@
               <div class="form-group">
                 <label for="badge"><?= LANG['countries_badge'] ?></label>
                 <div class="input-group">
-                  <input type="text" class="form-control" id="badge" name="badge" placeholder="<?= LANG['countries_badge'] ?>" required>
+                  <input type="text" class="form-control" id="badge" name="badge" maxlength="50" placeholder="<?= LANG['countries_badge'] ?>" required>
                 </div>
               </div>
             </div>
@@ -90,7 +90,7 @@
               <div class="form-group">
                 <label for="isocode"><?= LANG['countries_iso'] ?></label>
                 <div class="input-group">
-                  <input type="text" class="form-control" id="isocode" name="isocode" placeholder="<?= LANG['countries_iso'] ?>" required>
+                  <input type="text" class="form-control" id="isocode" name="isocode" maxlength="5" placeholder="<?= LANG['countries_iso'] ?>" required>
                 </div>
               </div>
             </div>

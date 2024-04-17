@@ -84,7 +84,7 @@ class Controller extends Model
 		load_view();
 	}
 
-	public function login($email, $accesstype, $pass = null, $remember = null, $cookie_token = null)
+	public function login($email, $accesstype, $pass = null, $remember = null)
 	{
 		if (strlen($email) != 0)
 		{
@@ -108,23 +108,15 @@ class Controller extends Model
 				if ($info === 'firstIn')
 				{
 					$key = password_hash($this->getKey(50), PASSWORD_DEFAULT, ['cost' => 10]);
-
 					if (parent::set_reset_token($email, $key))
 					{
-						$_SESSION['gestion'] = 'reset';
+						$_SESSION['gestion'] = 'firstIn';
 						$_SESSION['token'] = $key;
 					}
 				}
-				else
+				else if ($info === 'pwdRestore')
 				{
-					if (!is_null($remember) && $remember = '1')
-					{
-						$token = password_hash($this->getKey(100), PASSWORD_DEFAULT, ['cost' => 10]);
-
-						if (parent::set_cookie_token($email, $pass, $token)) {
-							setcookie('user_token', $token, strtotime( '+365 days' ));
-						}
-					}
+					$_SESSION['gestion'] = 'pwdRestore';
 				}
 
 				return true;

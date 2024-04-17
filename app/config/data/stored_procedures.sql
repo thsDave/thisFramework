@@ -8,7 +8,7 @@
 
 DROP PROCEDURE IF EXISTS sp_getlvl;
 DELIMITER //
-CREATE PROCEDURE sp_getlvl( _id INT )
+CREATE PROCEDURE sp_getlvl( _id INT, _idstatus INT )
 BEGIN
 	SELECT
 		n.level
@@ -17,7 +17,7 @@ BEGIN
 	INNER JOIN
 		tbl_levels n ON u.idlvl = n.idlvl
 	WHERE
-		u.iduser = _id AND idstatus = 1;
+		u.iduser = _id AND idstatus = _idstatus;
 END //
 
 
@@ -192,7 +192,7 @@ BEGIN
         l.level,
 		s.subject,
 		s.mssg,
-		s.response,
+		CASE WHEN s.response = '' THEN 'Pendente de respuesta' ELSE s.response END AS 'response',
 		s.idstatus,
 		e.btbadge,
 		e.status,
@@ -295,4 +295,45 @@ BEGIN
 				tbl_levels v ON u.idlvl = v.idlvl;
 		END IF;
     END IF;
+END //
+
+
+DROP PROCEDURE IF EXISTS sp_insertcountry;
+DELIMITER //
+CREATE PROCEDURE sp_insertcountry(
+	_country	VARCHAR(50),
+    _badge		VARCHAR(50),
+    _isocode	VARCHAR(5)
+)
+BEGIN
+	INSERT INTO tbl_countries VALUES (NULL, _country, _badge, _isocode, 1, NOW(), NOW(), NULL);
+
+	SELECT LAST_INSERT_ID() AS idcountry;
+END //
+
+
+DROP PROCEDURE IF EXISTS sp_insertlanguage;
+DELIMITER //
+CREATE PROCEDURE sp_insertlanguage(
+	_language	VARCHAR(15),
+    _lancode	VARCHAR(5),
+    _lanicon	VARCHAR(60)
+)
+BEGIN
+	INSERT INTO tbl_languages VALUES (NULL, _language, _lancode, _lanicon, 1, NOW(), NOW(), NULL);
+
+	SELECT LAST_INSERT_ID() AS idlanguage;
+END //
+
+
+DROP PROCEDURE IF EXISTS sp_insertaction;
+DELIMITER //
+CREATE PROCEDURE sp_insertaction(
+	_action		VARCHAR(50),
+    _btbadge	VARCHAR(60)
+)
+BEGIN
+	INSERT INTO tbl_actions VALUES (NULL, _action, _btbadge, 1, NOW());
+
+	SELECT LAST_INSERT_ID() AS idaction;
 END //

@@ -169,7 +169,10 @@ CREATE TABLE IF NOT EXISTS tbl_outputs(
 
 CREATE TABLE IF NOT EXISTS tbl_actions(
 	idaction		INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  action 			VARCHAR(50) NOT NULL
+  action 			VARCHAR(50) NOT NULL,
+  btbadge 		VARCHAR(60) NOT NULL,
+	showfield		TINYINT NOT NULL,
+	created_at 	DATETIME NOT NULL DEFAULT NOW()
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -181,7 +184,7 @@ CREATE TABLE IF NOT EXISTS tbl_logs(
   created_at 		DATETIME NOT NULL DEFAULT NOW(),
 
   CONSTRAINT FK_logs_idaction FOREIGN KEY (idaction) REFERENCES tbl_actions (idaction),
-  CONSTRAINT FK_logs_iduser FOREIGN KEY (iduser) REFERENCES tbl_actions (iduser)
+  CONSTRAINT FK_logs_iduser FOREIGN KEY (iduser) REFERENCES tbl_users (iduser)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

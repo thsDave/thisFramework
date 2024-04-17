@@ -99,7 +99,7 @@ class HomeController extends Controller
 						<p>{$list['response'][$index]}</p>
 					</div>
 				</div>
-				<div class='card-footer bg-dark'></div>
+				<div class='card-footer'><hr bg-dark></div>
 				";
 			}
 		}

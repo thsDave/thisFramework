@@ -40,7 +40,7 @@
               </p>
             </a>
           </li>
-          <li class="nav-item has-treeview <?= $objHome->menu_treeview_class('tbl_cookies', 'tbl_countries', 'tbl_languages', 'tbl_levels', 'tbl_logscron', 'tbl_records', 'tbl_profilepics', 'tbl_status'); ?>">
+          <li class="nav-item has-treeview <?= $objHome->menu_treeview_class('tbl_countries', 'tbl_languages', 'tbl_actions', 'tbl_levels', 'tbl_logs'); ?>">
             <a href="#" class="nav-link">
               <i class="nav-icon fa-solid fa-database"></i>
               <p>
@@ -62,6 +62,22 @@
                   <i class="fas fa-chevron-right nav-icon"></i>
                   <p>
                     <?= LANG['nav_languages'] ?>
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="<?= URL ?>?req=tbl_actions" class="nav-link <?= $objHome->menu_active_class('tbl_actions'); ?>">
+                  <i class="fas fa-chevron-right nav-icon"></i>
+                  <p>
+                    <?= LANG['nav_actions'] ?>
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="<?= URL ?>?req=tbl_logs" class="nav-link <?= $objHome->menu_active_class('tbl_logs'); ?>">
+                  <i class="fas fa-chevron-right nav-icon"></i>
+                  <p>
+                    <?= LANG['nav_logs'] ?>
                   </p>
                 </a>
               </li>

@@ -5,7 +5,7 @@ require_once APP.'/config/Connection.php';
 class Model extends Connection
 {
     #--------------------------------------------------
-    // Preparación de declaraciones de consultas sql
+    // Preparación de declaraciones de consultas sql (pst: PDO Statement)
     #--------------------------------------------------
 
 	protected function pst($query, $arr_data = [], $expect_values = true)
@@ -48,15 +48,19 @@ class Model extends Connection
     // all levels
     public function info_login($email, $pass)
     {
-        $res = $this->pst("SELECT * FROM tbl_users WHERE email = :email AND idstatus = 1", [ 'email' => $email ]);
+        $res = $this->pst("SELECT * FROM tbl_users WHERE email = :email AND idstatus = 1 OR idstatus = 12", [ 'email' => $email ]);
 
         if (!empty($res))
         {
             $iduser = (password_verify($pass, $res[0]->pass)) ? $res[0]->iduser : false;
 
+            if (!is_null($res[0]->token)) { $_SESSION['token'] = $res[0]->token; }
+
             if ($iduser)
             {
-                $res = $this->pst("CALL sp_getlvl(:iduser)", ['iduser' => $iduser]);
+                $idstatus = $res[0]->idstatus;
+
+                $res = $this->pst("CALL sp_getlvl(:iduser, :idstatus)", ['iduser' => $iduser, 'idstatus' => $idstatus]);
 
                 if (!empty($res))
                 {
@@ -68,20 +72,27 @@ class Model extends Connection
                     {
                         if ($res[0]->total > 0)
                         {
-                            // Habilitar las siguientes lineas en caso se necesite actualizar información del usuario en futuras actualizaciones
+                            if ($idstatus == 12)
+                            {
+                                return 'pwdRestore';
+                            }
+                            else
+                            {
+                                // Habilitar las siguientes lineas en caso se necesite actualizar información del usuario en futuras actualizaciones
 
-                            // $res = $this->pst("SELECT COUNT(*) AS 'total' FROM tbl_welcome WHERE iduser = :iduser", ['iduser' => $iduser]);
+                                // $res = $this->pst("SELECT COUNT(*) AS 'total' FROM tbl_welcome WHERE iduser = :iduser", ['iduser' => $iduser]);
 
-                            // if (!empty($res) && $res[0]->total == 0 )
-                            //     $_SESSION['view'] = "updateinfo";
+                                // if (!empty($res) && $res[0]->total == 0 )
+                                // $_SESSION['view'] = "updateinfo";
 
-                            $_SESSION[USER_SESSION] = $this->user_info($iduser);
+                                $_SESSION[USER_SESSION] = $this->user_info($iduser);
 
-                            $_SESSION['lang'] = [ 'lanicon' => $_SESSION[USER_SESSION]['lanicon'], 'lancode' => $_SESSION[USER_SESSION]['lancode'] ];
+                                $_SESSION['lang'] = [ 'lanicon' => $_SESSION[USER_SESSION]['lanicon'], 'lancode' => $_SESSION[USER_SESSION]['lancode'] ];
 
-                            $this->session_log($iduser, 'in');
+                                $this->session_log($iduser, 'in');
 
-                            return true;
+                                return true;
+                            }
                         }
                         else
                         {
@@ -206,10 +217,10 @@ class Model extends Connection
 
         if ($res) {
             if (!isset($_SESSION['val'])) {
-                $this->savelog(3, "Se actualizó la información de usuario", $_SESSION[USER_SESSION]['id']);
+                $this->savelog(4, "Se actualizó la información de usuario", $_SESSION[USER_SESSION]['id']);
                 $_SESSION[USER_SESSION] = $this->user_info($_SESSION[USER_SESSION]['id']);
             }else {
-                $this->savelog(3, "Se actualizó la información del usuario con id: {$data_user['id']}", $_SESSION[USER_SESSION]['id']);
+                $this->savelog(4, "Se actualizó la información del usuario con id: {$data_user['id']}", $_SESSION[USER_SESSION]['id']);
             }
         }
 
@@ -253,9 +264,9 @@ class Model extends Connection
 
         if ($res) {
             if (!isset($_SESSION['val'])) {
-                $this->savelog(3, 'Se actualizó la imagen de perfil de usuario', $_SESSION[USER_SESSION]['id']);
+                $this->savelog(4, 'Se actualizó la imagen de perfil de usuario', $_SESSION[USER_SESSION]['id']);
             }else {
-                $this->savelog(3, "Se actualizó la imagen del perfil del usuario con id: {$_SESSION['val']}", $_SESSION[USER_SESSION]['id']);
+                $this->savelog(4, "Se actualizó la imagen del perfil del usuario con id: {$_SESSION['val']}", $_SESSION[USER_SESSION]['id']);
             }
         }
 
@@ -391,7 +402,9 @@ class Model extends Connection
 
         $data['status'] = ($res[0]->idstatus == 2) ? 1 : 2;
 
-        $update = $this->pst("UPDATE tbl_countries SET idstatus = :status, timestamp = NOW() WHERE idcountry = :id", $data, false);
+        $update = $this->pst("UPDATE tbl_countries SET idstatus = :status, updated_at = NOW(), deleted_at = NULL WHERE idcountry = :id", $data, false);
+
+        if ($update) { $this->savelog(4, "Se actualizó el estado de país con id: {$data['id']}", $_SESSION[USER_SESSION]['id']); }
 
         return $update;
     }
@@ -399,7 +412,11 @@ class Model extends Connection
     // sudo
     public function new_country($data)
     {
-        $res = $this->pst("INSERT INTO tbl_countries VALUES (NULL, :country, :badge, :isocode, 1, NOW())", $data, false);
+        $res = $this->pst("CALL sp_insertcountry(:country, :badge, :isocode)", $data);
+
+        if ($res) {
+            $this->savelog(3, "Se insertó un nuevo registro de país con id: {$res[0]->idcountry}", $_SESSION[USER_SESSION]['id']);
+        }
 
         return $res;
     }
@@ -407,7 +424,9 @@ class Model extends Connection
     // sudo
     public function edit_country($data)
     {
-        $res = $this->pst("UPDATE tbl_countries SET country = :country, badge = :badge, isocode = :isocode, timestamp = NOW() WHERE idcountry = :id", $data, false);
+        $res = $this->pst("UPDATE tbl_countries SET country = :country, badge = :badge, isocode = :isocode, updated_at = NOW() WHERE idcountry = :id", $data, false);
+
+        if ($res) { $this->savelog(4, "Se actualizó el registro de país con id: {$data['id']}", $_SESSION[USER_SESSION]['id']); }
 
         return $res;
     }
@@ -415,7 +434,9 @@ class Model extends Connection
     // sudo
     public function delete_country($data)
     {
-        $res = $this->pst("UPDATE tbl_countries SET idstatus = 11, timestamp = NOW() WHERE idcountry = :id", $data, false);
+        $res = $this->pst("UPDATE tbl_countries SET idstatus = 11, deleted_at = NOW() WHERE idcountry = :id", $data, false);
+
+        if ($res) { $this->savelog(5, "Se eliminó el registro de país con id: {$data['id']}", $_SESSION[USER_SESSION]['id']); }
 
         return $res;
     }
@@ -460,9 +481,18 @@ class Model extends Connection
 
         $data['status'] = ($res[0]->idstatus == 2) ? 1 : 2;
 
-        $update = $this->pst("UPDATE tbl_languages SET idstatus = :status, timestamp = NOW() WHERE idlang = :id", $data, false);
+        $update = $this->pst("UPDATE tbl_languages SET idstatus = :status, updated_at = NOW(), deleted_at = NULL WHERE idlang = :id", $data, false);
+
+        if ($update) { $this->savelog(4, "Se actualizó estado de país con id: {$data['id']}", $_SESSION[USER_SESSION]['id']); }
 
         return $update;
+    }
+
+    //sudo
+
+    public function verify_lancode($lancode)
+    {
+        return (empty($this->pst("SELECT * FROM tbl_languages WHERE lancode = :lancode", ['lancode' => $lancode]))) ? true : false;
     }
 
     // sudo
@@ -474,10 +504,14 @@ class Model extends Connection
 
         $last_lancode = (!empty($lang)) ? $lang[0]->lancode : false;
 
-        $res = $this->pst("INSERT INTO tbl_languages VALUES (NULL, :language, :lancode, :lanicon, 1, NOW())", $data, false);
+        $res = $this->pst("CALL sp_insertlanguage(:language, :lancode, :lanicon)", $data);
 
         if ($res)
         {
+            $idlang = $res[0]->idlanguage;
+
+            $this->savelog(3, "Se insertó un nuevo registro de idioma con id: {$idlang}", $_SESSION[USER_SESSION]['id']);
+
             if ($last_lancode)
             {
                 $last_lang_file = APP.'/config/languages/'.$last_lancode.'.php';
@@ -486,9 +520,7 @@ class Model extends Connection
 
                 if (!copy($last_lang_file, $new_lang_file))
                 {
-                    $idlang = $this->pst("SELECT idlang FROM tbl_languages WHERE idstatus = 1 AND lancode = :lancode ORDER BY idlang DESC LIMIT 1", ['lancode' => $data['lancode']]);
-
-                    $update = $this->pst("UPDATE tbl_languages SET idstatus = 2 WHERE idlang = :id", [ 'id' => $idlang[0]->idlang ], false);
+                    $update = $this->pst("UPDATE tbl_languages SET idstatus = 2, updated_at = NOW(), deleted_at = NULL WHERE idlang = :id", [ 'id' => $idlang ], false);
                 }
             }
             else
@@ -497,14 +529,10 @@ class Model extends Connection
 
                 if ($file)
                 {
-                    $idlang = $this->pst("SELECT idlang FROM tbl_languages WHERE idstatus = 1 AND lancode = :lancode ORDER BY idlang DESC LIMIT 1", ['lancode' => $data['lancode']]);
+                    $update = $this->pst("UPDATE tbl_languages SET idstatus = 2, updated_at = NOW(), deleted_at = NULL WHERE idlang = :id", [ 'id' => $idlang ], false);
+                }
 
-                    $update = $this->pst("UPDATE tbl_languages SET idstatus = 2 WHERE idlang = :id", [ 'id' => $idlang[0]->idlang ], false);
-                }
-                else
-                {
-                    fclose($file);
-                }
+                fclose($file);
             }
         }
 
@@ -528,19 +556,25 @@ class Model extends Connection
                 {
                     $data['lanicon'] = "<i class='flag-icon flag-icon-{$data['lancode']}' mr-2></i>";
 
-                    return $this->pst("UPDATE tbl_languages SET language = :language, lancode = :lancode, lanicon = :lanicon, timestamp = NOW() WHERE idlang = :id", $data, false);
+                    $res = $this->pst("UPDATE tbl_languages SET language = :language, lancode = :lancode, lanicon = :lanicon, updated_at = NOW(), deleted_at = NULL WHERE idlang = :id", $data, false);
+
+                    if ($res) { $this->savelog(4, "Se actualizó el registro de idioma con id: {$data['id']}", $_SESSION[USER_SESSION]['id']); }
+
+                    return $res;
                 }
                 else
                 {
                     $data['lanicon'] = "<i class='flag-icon flag-icon-{$data['lancode']}' mr-2></i>";
 
-                    $res = $this->pst("UPDATE tbl_languages SET language = :language, lancode = :lancode, lanicon = :lanicon, timestamp = NOW() WHERE idlang = :id", $data, false);
+                    $res = $this->pst("UPDATE tbl_languages SET language = :language, lancode = :lancode, lanicon = :lanicon, updated_at = NOW(), deleted_at = NULL WHERE idlang = :id", $data, false);
+
+                    if ($res) { $this->savelog(4, "Se actualizó el registro de idioma con id: {$data['id']}", $_SESSION[USER_SESSION]['id']); }
 
                     if (!file_exists($new_lang_file))
                     {
                         if (!copy($lang_file, $new_lang_file))
                         {
-                            $this->pst("UPDATE tbl_languages SET idstatus = 2 WHERE idlang = :id", [ 'id' => $data['id'] ], false);
+                            $this->pst("UPDATE tbl_languages SET idstatus = 2, updated_at = NOW(), deleted_at = NULL WHERE idlang = :id", [ 'id' => $data['id'] ], false);
                         }
                     }
 
@@ -563,9 +597,103 @@ class Model extends Connection
     // sudo
     public function delete_language($data)
     {
-        $res = $this->pst("UPDATE tbl_languages SET idstatus = 11, timestamp = NOW() WHERE idlang = :id", $data, false);
+        $res = $this->pst("UPDATE tbl_languages SET idstatus = 11, deleted_at = NOW() WHERE idlang = :id", $data, false);
+
+        if ($res) { $this->savelog(5, "Se eliminó el registro de idioma con id: {$data['id']}", $_SESSION[USER_SESSION]['id']); }
 
         return $res;
+    }
+
+    #--------------------------------------------------
+    // CRUD tbl_actions
+    #--------------------------------------------------
+
+    // all levels
+    public function action_list()
+    {
+        $res = $this->pst("SELECT * FROM v_actions");
+
+        if (!empty($res))
+        {
+            $data = [];
+
+            foreach ($res as $val)
+            {
+                $data['idaction'][] = $val->idaction;
+                $data['action'][] = $val->action;
+                $data['btbadge'][] = $val->btbadge;
+                $data['showfield'][] = $val->showfield;
+                $data['created_at'][] = $val->created_at;
+            }
+
+            return $data;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    // all levels
+    public function info_action($idaction)
+    {
+        $res = $this->pst("SELECT * FROM v_actions WHERE idaction = :id", ['id' => $idaction]);
+
+        if (!empty($res))
+        {
+            $data = [];
+
+            foreach ($res as $val)
+            {
+                $data['idaction'][] = $val->idaction;
+                $data['action'][] = $val->action;
+                $data['btbadge'][] = $val->btbadge;
+                $data['showfield'][] = $val->showfield;
+                $data['created_at'][] = $val->created_at;
+            }
+
+            return $data;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    // sudo
+    public function new_action($data)
+    {
+        $res = $this->pst("CALL sp_insertaction(:action, :btbadge)", $data);
+
+        if ($res) {
+            $this->savelog(3, "Se insertó un nuevo registro de action con id: {$res[0]->idaction}", $_SESSION[USER_SESSION]['id']);
+        }
+
+        return $res;
+    }
+
+    // sudo
+    public function edit_action($data)
+    {
+        $res = $this->pst("UPDATE tbl_actions SET action = :action, btbadge = :btbadge WHERE idaction = :id", $data, false);
+
+        if ($res) { $this->savelog(4, "Se actualizó el registro de acción con id: {$data['id']}", $_SESSION[USER_SESSION]['id']); }
+
+        return $res;
+    }
+
+    // sudo
+    public function show_action($data)
+    {
+        $res = $this->pst("SELECT showfield FROM tbl_actions WHERE idaction = :id", $data);
+
+        $data['showfield'] = ($res[0]->showfield == 2) ? 1 : 2;
+
+        $update = $this->pst("UPDATE tbl_actions SET showfield = :showfield WHERE idaction = :id", $data, false);
+
+        if ($update) { $this->savelog(4, "Se actualizó el showfield de la acción con id: {$data['id']}", $_SESSION[USER_SESSION]['id']); }
+
+        return $update;
     }
 
     #--------------------------------------------------
@@ -663,14 +791,14 @@ class Model extends Connection
 
             $res = $this->pst($query, $arr_data, false);
 
-            if ($_SESSION['gestion'] == 'confirm')
+            if ($_SESSION['gestion'] == 'confirm' || $_SESSION['gestion'] == 'firstIn')
             {
                 $this->savelog(1, 'Registro de usuario desde formulario', $arr_data['iduser']);
                 $this->session_log($arr_data['iduser'], 'in');
             }
             else
             {
-                $this->savelog(3, 'Restablecimiento de contraseña', $arr_data['iduser']);
+                $this->savelog(4, 'Restablecimiento de contraseña', $arr_data['iduser']);
             }
 
             return $res;
@@ -692,13 +820,30 @@ class Model extends Connection
     // principal
     public function update_password($arr_data)
     {
-        $res = $this->pst("UPDATE tbl_users SET pass = :pass WHERE iduser = :iduser", $arr_data, false);
+        if (!isset($_SESSION['val'])) {
+            $res = $this->pst("UPDATE tbl_users SET pass = :pass, updated_at = NOW() WHERE iduser = :iduser", $arr_data, false);
+        }else {
+            $centinel = true;
+
+            while ($centinel)
+            {
+                $token = password_hash($this->getKey(70), PASSWORD_DEFAULT, ['cost' => 10]);
+                if (!$this->token_validator($token)) {
+                    $centinel = false;
+                    break;
+                }
+            }
+
+            $arr_data['token'] = $token;
+
+            $res = $this->pst("UPDATE tbl_users SET pass = :pass, token = :token, tokendate = NOW(), idstatus = 12, updated_at = NOW(), forgetpass = 1 WHERE iduser = :iduser", $arr_data, false);
+        }
 
         if ($res) {
             if (!isset($_SESSION['val'])) {
-                $this->savelog(3, 'Se actualizó la contraseña de acceso', $arr_data['iduser']);
+                $this->savelog(4, 'Se actualizó la contraseña de acceso', $arr_data['iduser']);
             }else {
-                $this->savelog(3, "Se actualizó la contraseña de acceso del usuario con id: {$arr_data['iduser']}", $_SESSION[USER_SESSION]['id']);
+                $this->savelog(4, "Se actualizó la contraseña de acceso del usuario con id: {$arr_data['iduser']}", $_SESSION[USER_SESSION]['id']);
             }
         }
 
@@ -706,40 +851,19 @@ class Model extends Connection
     }
 
     #--------------------------------------------------
-    // Cookies & Tokens
+    // Tokens
     #--------------------------------------------------
-
-	// principal
-    public function set_cookie_token($email, $pass, $token)
-	{
-        $arr_data = [
-            'email' => $email,
-            'pass' => $pass,
-            'token' => $token
-        ];
-
-		return $this->pst("INSERT INTO tbl_cookies VALUES (:email, :pass, :token, NOW())", $arr_data, false);
-	}
-
-	// principal
-    public function get_cookie_token($token)
-	{
-		$res = $this->pst("SELECT email FROM tbl_cookies WHERE sessiontoken = :token", ['token' => $token]);
-
-        return (!empty($res)) ? $res[0]->email : false;
-	}
 
 	// principal
     public function set_reset_token($email, $token)
 	{
         $arr_data = [
             'token' => $token,
-            'now' => date('Y-m-d'),
             'email' => $email,
             'id' => 1
         ];
 
-		$res = $this->pst("UPDATE tbl_users SET token = :token, tokendate = :now WHERE email = :email AND idstatus = :id", $arr_data, false);
+		$res = $this->pst("UPDATE tbl_users SET token = :token, tokendate = NOW(), updated_at = NOW() WHERE email = :email AND idstatus = :id", $arr_data, false);
 
         return ($res) ? true : false;
 	}
@@ -920,7 +1044,7 @@ class Model extends Connection
         {
             $data = $this->is_correct_mail($email);
 
-            $this->savelog(3, "Solicitud de restablecimiento de contraseña", $data['iduser']);
+            $this->savelog(4, "Solicitud de restablecimiento de contraseña", $data['iduser']);
         }
 
         return $res;
@@ -948,7 +1072,7 @@ class Model extends Connection
     // all levels
     public function history_request($iduser)
     {
-        $query = "SELECT s.subject, s.mssg, s.response, s.idstatus, e.status FROM tbl_supports s INNER JOIN tbl_status e ON s.idstatus = e.idstatus WHERE iduser = :iduser";
+        $query = "SELECT s.subject, s.mssg, s.response, s.idstatus, e.btbadge FROM tbl_supports s INNER JOIN tbl_status e ON s.idstatus = e.idstatus WHERE iduser = :iduser";
 
         $res = $this->pst($query, ['iduser' => $iduser]);
 
@@ -958,18 +1082,19 @@ class Model extends Connection
 
             foreach ($res as $val)
             {
+                $list['user'][] = $_SESSION[USER_SESSION]['email'];
                 $list['subject'][] = $val->subject;
                 $list['mssg'][] = $val->mssg;
-                $list['response'][] = $val->response;
+                $list['response'][] = (is_null($val->response)) ? '' : $val->response;
                 $list['idstatus'][] = $val->idstatus;
-                $list['status'][] = $val->status;
+                $list['btbadge'][] = $val->btbadge;
             }
 
             return $list;
         }
         else
         {
-            return false;
+            return 'empty';
         }
     }
 }

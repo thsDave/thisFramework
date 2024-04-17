@@ -79,11 +79,15 @@ if (!empty($_SESSION))
 
 			case 'confirm': require_once 'views/starter/reset.php'; break;
 
+			case 'firstIn': require_once 'views/starter/reset.php'; break;
+
+			case 'reset': require_once 'views/starter/reset.php'; break;
+
+			case 'pwdRestore': require_once 'views/starter/reset.php'; break;
+
 			case 'cancel': require_once 'views/starter/cancel.php'; break;
 
 			case 'forget': require_once 'views/starter/forgot-password.php'; break;
-
-			case 'reset': require_once 'views/starter/reset.php'; break;
 		}
 	}
 	else

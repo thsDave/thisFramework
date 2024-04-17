@@ -15,6 +15,18 @@ const USER_SESSION = 'session_user';
 
 /*
 |--------------------------------------------------------------------------
+| APP DIR
+|--------------------------------------------------------------------------
+|
+| APP permite obtener una ruta de acceso absoluta sin depender
+| que el directorio de trabajo sea el directorio en el que reside.
+|
+*/
+
+define('APP', dirname(dirname(__FILE__)));
+
+/*
+|--------------------------------------------------------------------------
 | URL
 |--------------------------------------------------------------------------
 |
@@ -73,9 +85,41 @@ const DB_SOCKET		= '';
 const DB_HOST 		= 'localhost';
 const DB_USER		= 'root';
 const DB_PWD 		= '';
-const DB_NAME 		= 'skeleton2';
+const DB_NAME 		= 'skeleton';
 const DB_PORT 		= '';
 const DB_CHARSET 	= 'utf8';
+
+
+/*
+|--------------------------------------------------------------------------
+| Login params
+|--------------------------------------------------------------------------
+|
+| Se establecen las constantes para inicios de sesión.
+|
+*/
+
+const LC_LOGIN = true; //Local login
+const LC_SIGNU = true; //Registro local
+const FB_LOGIN = false; //Facebook login
+const GL_LOGIN = false; //Google login
+const MS_LOGIN = false; //Microsoft login
+const TW_LOGIN = false; //Twitter login
+const GH_LOGIN = false; //Github login
+
+
+/*
+|--------------------------------------------------------------------------
+| reCAPTCHA
+|--------------------------------------------------------------------------
+|
+| Establece la clave de seguridad de reCAPTCHA.
+|
+*/
+
+const WEBKEY = '6Ld7NrgpAAAAACIokUnERwXs4qmJcN3S3KRWxUfd';
+
+const SECRETKEY = '6Ld7NrgpAAAAAM96DxMUtNICLxdHC6hBQIhhwaDV';
 
 
 /*
@@ -98,23 +142,6 @@ const MAIL_FROM_NAME = 'no-reply@'.APP_NAME.'.com';
 
 /*
 |--------------------------------------------------------------------------
-| Login params
-|--------------------------------------------------------------------------
-|
-| Se establecen las constantes para inicios de sesión.
-|
-*/
-
-const LC_LOGIN = true; //Local login
-const LC_SIGNU = true; //Registro local
-const FB_LOGIN = false; //Facebook login
-const GL_LOGIN = false; //Google login
-const MS_LOGIN = false; //Microsoft login
-const TW_LOGIN = false; //Twitter login
-const GH_LOGIN = false; //Github login
-
-/*
-|--------------------------------------------------------------------------
 | Language params
 |--------------------------------------------------------------------------
 |
@@ -126,18 +153,6 @@ function select_lang($lang)
 {
 	return 'app/config/languages/'.$lang.'.php';
 }
-
-/*
-|--------------------------------------------------------------------------
-| APP DIR
-|--------------------------------------------------------------------------
-|
-| APP permite obtener una ruta de acceso absoluta sin depender
-| que el directorio de trabajo sea el directorio en el que reside.
-|
-*/
-
-define('APP', dirname(dirname(__FILE__)));
 
 /*
 |--------------------------------------------------------------------------
@@ -174,6 +189,8 @@ const VIEWS_LIST = [
 			'user_profile',
 			'tbl_countries',
 			'tbl_languages',
+			'tbl_actions',
+			'tbl_logs',
 			'support_request',
 			'reports'
 		],

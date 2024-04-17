@@ -19,6 +19,9 @@
   <link rel="stylesheet" href="dist/css/thistyle.css">
   <link rel="stylesheet" href="plugins/select2/css/select2.min.css">
   <link rel="stylesheet" href="plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+
+  <script src="https://www.google.com/recaptcha/api.js?render=<?= WEBKEY ?>"></script>
+
   <style>
     body {
       /*background: transparent url("dist/img/index_background.png") no-repeat fixed 0px 0px / cover !important;*/

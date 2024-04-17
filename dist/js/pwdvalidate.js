@@ -90,46 +90,55 @@ function validation(pass) {
   return x;
 }
 
-var form = document.getElementById('restorepass');
+grecaptcha.ready(function() {
+    grecaptcha.execute('6Ld7NrgpAAAAACIokUnERwXs4qmJcN3S3KRWxUfd', {
+        action: 'reset'
+    }).then(function(token) {
+      var form = document.getElementById('restorepass');
 
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-  let arr_data = new FormData(form);
-  arr_data.append('restorepwd', true);
+        let arr_data = new FormData(form);
 
-  try {
-    const response = await fetch('external_data', {
-      method: 'POST',
-      body: arr_data
-    });
+        arr_data.append('restorepwd', true);
 
-    const data = await response.json();
+        arr_data.append('token', token);
 
-    if (data) {
-      $('#restore-card').hide();
-      await Swal.fire({
-        icon: 'success',
-        title: 'Contraseña actualizada',
-        text: 'Su contraseña ha sido actualizada satisfactoriamente.',
-        confirmButtonText: `Aceptar`
+        try {
+          const response = await fetch('external_data', {
+            method: 'POST',
+            body: arr_data
+          });
+
+          const data = await response.json();
+
+          if (data) {
+            $('#restore-card').hide();
+            await Swal.fire({
+              icon: 'success',
+              title: 'Contraseña actualizada',
+              text: 'Su contraseña ha sido actualizada satisfactoriamente.',
+              confirmButtonText: `Aceptar`
+            });
+            let url = window.location;
+            window.open(url + '?action=login', '_self');
+          } else {
+            await Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'No se pudo actualizar su contraseña, inténtelo nuevamente.',
+              confirmButtonText: `Aceptar`
+            });
+          }
+        } catch (error) {
+          await Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo actualizar su contraseña, inténtelo nuevamente.',
+            confirmButtonText: `Aceptar`
+          });
+        }
       });
-      let url = window.location;
-      window.open(url + '?action=login', '_self');
-    } else {
-      await Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'No se pudo actualizar su contraseña, inténtelo nuevamente.',
-        confirmButtonText: `Aceptar`
-      });
-    }
-  } catch (error) {
-    await Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: 'No se pudo actualizar su contraseña, inténtelo nuevamente.',
-      confirmButtonText: `Aceptar`
     });
-  }
 });
