@@ -78,6 +78,61 @@ if (isset($_POST['welcome_cancel']))
 	echo json_encode(true);
 }
 
+if (isset($_POST['lockscreen_on']))
+{
+	$_SESSION['lockscreen'] = true;
+	$_SESSION['view'] = 'lockscreen';
+
+	echo json_encode(true);
+}
+
+if (isset($_POST['lockscreen_off']))
+{
+	$token = trim($_POST['token']);
+
+	$cu = curl_init();
+
+	curl_setopt($cu, CURLOPT_URL, "https://www.google.com/recaptcha/api/siteverify");
+	curl_setopt($cu, CURLOPT_POST, 1);
+	curl_setopt($cu, CURLOPT_POSTFIELDS, http_build_query(array('secret' => SECRETKEY, 'response' => $token)));
+	curl_setopt($cu, CURLOPT_RETURNTRANSFER, true);
+
+	$response = curl_exec($cu);
+
+	curl_close($cu);
+
+	$datos = json_decode($response, true);
+
+	if ( $datos['success'] == 1 && $datos['score'] >= 0.5 )
+	{
+		$password = (isset($_POST['password']) && !empty($_POST['password'])) ? trim($_POST['password']) : null;
+
+		if ($objController->password_validate($password))
+		{
+			if ($model->pass_validator($password, $_SESSION[USER_SESSION]['id']))
+			{
+				unset($_SESSION['lockscreen']);
+				unset($_SESSION['view']);
+
+				echo json_encode(true);
+			}
+			else
+			{
+				echo json_encode(false);
+			}
+		}
+		else
+		{
+			echo json_encode(false);
+		}
+	}
+	else
+	{
+		echo json_encode(false);
+	}
+
+}
+
 
 /*
 |--------------------------------------------------------------------------
@@ -211,11 +266,7 @@ if (isset($_POST['validate_pass']))
 
 if (isset($_POST['updtpwd']))
 {
-	if (isset($_SESSION['val'])) {
-		$res = $objHome->updatePass($_SESSION['val'], $_POST['pass1'], $_POST['pass2']);
-	}else {
-		$res = $objHome->updatePass($_SESSION[USER_SESSION]['id'], $_POST['pass1'], $_POST['pass2'], $_POST['curpass']);
-	}
+	$res = (isset($_SESSION['val'])) ? $objHome->updatePass($_SESSION['val'], $_POST['pass1'], $_POST['pass2']) : $objHome->updatePass($_SESSION[USER_SESSION]['id'], $_POST['pass1'], $_POST['pass2'], $_POST['curpass']);
 
 	echo json_encode($res);
 }

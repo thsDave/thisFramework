@@ -48,17 +48,18 @@ class Model extends Connection
     // all levels
     public function info_login($email, $pass)
     {
-        $res = $this->pst("SELECT * FROM tbl_users WHERE email = :email AND idstatus = 1 OR idstatus = 12", [ 'email' => $email ]);
+        $user = $this->pst("SELECT * FROM tbl_users WHERE email = :email AND idstatus = 1 OR idstatus = 3", [ 'email' => $email ]);
 
-        if (!empty($res))
+        if (!empty($user))
         {
-            $iduser = (password_verify($pass, $res[0]->pass)) ? $res[0]->iduser : false;
+            $iduser = (password_verify($pass, $user[0]->pass)) ? $user[0]->iduser : false;
 
-            if (!is_null($res[0]->token)) { $_SESSION['token'] = $res[0]->token; }
+            if (!is_null($user[0]->token)) { $_SESSION['token'] = $user[0]->token; }
 
             if ($iduser)
             {
-                $idstatus = $res[0]->idstatus;
+                $idstatus = $user[0]->idstatus;
+                $token = $user[0]->token;
 
                 $res = $this->pst("CALL sp_getlvl(:iduser, :idstatus)", ['iduser' => $iduser, 'idstatus' => $idstatus]);
 
@@ -72,8 +73,9 @@ class Model extends Connection
                     {
                         if ($res[0]->total > 0)
                         {
-                            if ($idstatus == 12)
+                            if ($idstatus == 3)
                             {
+                                $_SESSION['token'] = $token;
                                 return 'pwdRestore';
                             }
                             else
@@ -820,15 +822,20 @@ class Model extends Connection
     // principal
     public function update_password($arr_data)
     {
-        if (!isset($_SESSION['val'])) {
+        if (!isset($_SESSION['val']))
+        {
             $res = $this->pst("UPDATE tbl_users SET pass = :pass, updated_at = NOW() WHERE iduser = :iduser", $arr_data, false);
-        }else {
+        }
+        else
+        {
             $centinel = true;
 
             while ($centinel)
             {
                 $token = password_hash($this->getKey(70), PASSWORD_DEFAULT, ['cost' => 10]);
-                if (!$this->token_validator($token)) {
+
+                if (!$this->token_validator($token))
+                {
                     $centinel = false;
                     break;
                 }
@@ -836,10 +843,11 @@ class Model extends Connection
 
             $arr_data['token'] = $token;
 
-            $res = $this->pst("UPDATE tbl_users SET pass = :pass, token = :token, tokendate = NOW(), idstatus = 12, updated_at = NOW(), forgetpass = 1 WHERE iduser = :iduser", $arr_data, false);
+            $res = $this->pst("UPDATE tbl_users SET pass = :pass, token = :token, tokendate = NOW(), idstatus = 3, updated_at = NOW(), forgetpass = 1 WHERE iduser = :iduser", $arr_data, false);
         }
 
-        if ($res) {
+        if ($res)
+        {
             if (!isset($_SESSION['val'])) {
                 $this->savelog(4, 'Se actualizó la contraseña de acceso', $arr_data['iduser']);
             }else {

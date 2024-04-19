@@ -208,7 +208,7 @@ passform.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     let arr_data = new FormData(passform);
-    arr_data.append('updtpwd', 'true');
+    arr_data.append('updtpwd', true);
 
     if (arr_data.get('pass1') == '' || arr_data.get('pass2') == '') {
         Swal.fire({

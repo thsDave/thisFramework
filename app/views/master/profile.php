@@ -1,4 +1,4 @@
-<?php require_once APP . "/views/master/header.php"; ?>
+<?php require_once APP."/views/master/header.php"; ?>
 
 <?php require_once APP."/views/master/{$_SESSION[USER_SESSION]['level']}_nav.php"; ?>
 

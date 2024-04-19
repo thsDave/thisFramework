@@ -8,24 +8,164 @@ ErrorDocument 500 http://localhost/skeleton/500
 
 	RewriteEngine On
 
-#### start https redirect
+#### https redirect
 
 #	RewriteCond %{HTTPS} off
 #	RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-#### end https redirect
+#### users agents
 
+	# Bloquear Bot de rastreo web falso
 	RewriteCond %{HTTP_USER_AGENT} ^BlackWidow [OR]
+
+	# Bloquear Bot troyano de robo de información
 	RewriteCond %{HTTP_USER_AGENT} ^Zeus
 	RewriteRule .* - [F]
+
+	# Bloquear Googlebot falso
+	RewriteCond %{HTTP_USER_AGENT} ^Googlebot/2\.1\ \(\+http:\/\/www\.google\.com\/bot\.html\)$ [NC]
+	RewriteRule .* - [F,L]
+
+	# Bloquear Baiduspider falso
+	RewriteCond %{HTTP_USER_AGENT} ^Baiduspider\+\(\+http:\/\/www\.baidu\.com\/search\/spider\.htm\)$ [NC]
+	RewriteRule .* - [F,L]
+
+	# Bloquear MJ12bot
+	RewriteCond %{HTTP_USER_AGENT} ^MJ12bot\/v1\.4\.8\ \(http:\/\/majestic12\.co\.uk\/bot\.php\?\+\)$ [NC]
+	RewriteRule .* - [F,L]
+
+	# Bloquear AhrefsBot
+	RewriteCond %{HTTP_USER_AGENT} ^AhrefsBot\/5\.0\;\ \+http:\/\/ahrefs\.com\/robot\/$ [NC]
+	RewriteRule .* - [F,L]
+
+	# Bloquear SemrushBot
+	RewriteCond %{HTTP_USER_AGENT} ^SemrushBot\/7~bl\;\ \+http:\/\/www\.semrush\.com\/bot\.html$ [NC]
+	RewriteRule .* - [F,L]
+
+#### Redireccionamientos
 
 	RewriteRule ^404?$ app/http/404.php
 	RewriteRule ^403?$ app/http/403.php
 	RewriteRule ^500?$ app/http/500.php
 	RewriteRule ^db_err?$ app/http/db_err.php
 	RewriteRule ^err?$ app/config/errordocument.php
+
 	RewriteRule ^external_data?$ zombies/externalvals.php
 	RewriteRule ^internal_data?$ zombies/internalvals.php
+
+#### In config
+
+	RewriteRule ^app/?$ app/config/errordocument.php
+
+	RewriteRule ^app/pitcher.php?$ app/config/errordocument.php
+
+	RewriteRule ^app/config/?$ app/config/errordocument.php
+
+	RewriteRule ^app/config/config.php?$ app/config/errordocument.php
+	RewriteRule ^app/config/connection.php?$ app/config/errordocument.php
+
+	# data
+
+	RewriteRule ^app/config/data?$ app/config/errordocument.php
+
+	RewriteRule ^app/config/data/database.sql?$ app/config/errordocument.php
+	RewriteRule ^app/config/data/inserts.sql?$ app/config/errordocument.php
+	RewriteRule ^app/config/data/stored_procedures.sql?$ app/config/errordocument.php
+	RewriteRule ^app/config/data/views.sql?$ app/config/errordocument.php
+
+	# languages
+
+	RewriteRule ^app/config/languages?$ app/config/errordocument.php
+
+	RewriteRule ^app/config/languages/es.php?$ app/config/errordocument.php
+	RewriteRule ^app/config/languages/us.php?$ app/config/errordocument.php
+
+#### In controllers
+
+	RewriteRule ^app/controllers/?$ app/config/errordocument.php
+
+	RewriteRule ^app/controllers/AdminController.php?$ app/config/errordocument.php
+	RewriteRule ^app/controllers/Controller.php?$ app/config/errordocument.php
+	RewriteRule ^app/controllers/EmpController.php?$ app/config/errordocument.php
+	RewriteRule ^app/controllers/HomeController.php?$ app/config/errordocument.php
+	RewriteRule ^app/controllers/SuperController.php?$ app/config/errordocument.php
+
+#### In http
+
+	RewriteRule ^app/http/?$ app/config/errordocument.php
+
+	RewriteRule ^app/http/403.php?$ app/config/errordocument.php
+	RewriteRule ^app/http/404.php?$ app/config/errordocument.php
+	RewriteRule ^app/http/500.php?$ app/config/errordocument.php
+	RewriteRule ^app/http/db_err.php?$ app/config/errordocument.php
+
+#### In models
+
+	RewriteRule ^app/models/?$ app/config/errordocument.php
+
+	RewriteRule ^app/models/Admin.php?$ app/config/errordocument.php
+	RewriteRule ^app/models/Emp.php?$ app/config/errordocument.php
+	RewriteRule ^app/models/Model.php?$ app/config/errordocument.php
+	RewriteRule ^app/models/Super.php?$ app/config/errordocument.php
+
+#### In views
+
+	RewriteRule ^app/views/?$ app/config/errordocument.php
+
+	# Master
+
+	RewriteRule ^app/views/master/?$ app/config/errordocument.php
+
+	RewriteRule ^app/views/master/Admin_nav.php?$ app/config/errordocument.php
+	RewriteRule ^app/views/master/Emp_nav.php?$ app/config/errordocument.php
+	RewriteRule ^app/views/master/footer_end.php?$ app/config/errordocument.php
+	RewriteRule ^app/views/master/footre_js.php?$ app/config/errordocument.php
+	RewriteRule ^app/views/master/header.php?$ app/config/errordocument.php
+	RewriteRule ^app/views/master/header_lockscreen.php?$ app/config/errordocument.php
+	RewriteRule ^app/views/master/info.php?$ app/config/errordocument.php
+	RewriteRule ^app/views/master/lockscreen.php?$ app/config/errordocument.php
+	RewriteRule ^app/views/master/profile.php?$ app/config/errordocument.php
+	RewriteRule ^app/views/master/Super_nav.php?$ app/config/errordocument.php
+	RewriteRule ^app/views/master/support.php?$ app/config/errordocument.php
+	RewriteRule ^app/views/master/updateinfo.php?$ app/config/errordocument.php
+
+	# Pool
+
+	RewriteRule ^app/views/pool/?$ app/config/errordocument.php
+	RewriteRule ^app/views/pool/admin_starter.php?$ app/config/errordocument.php
+	RewriteRule ^app/views/pool/emp_starter.php?$ app/config/errordocument.php
+	RewriteRule ^app/views/pool/new_user.php?$ app/config/errordocument.php
+	RewriteRule ^app/views/pool/reports.php?$ app/config/errordocument.php
+	RewriteRule ^app/views/pool/super_starter.php?$ app/config/errordocument.php
+	RewriteRule ^app/views/pool/support_request.php?$ app/config/errordocument.php
+	RewriteRule ^app/views/pool/tbl_actions.php?$ app/config/errordocument.php
+	RewriteRule ^app/views/pool/tbl_countries.php?$ app/config/errordocument.php
+	RewriteRule ^app/views/pool/tbl_languages.php?$ app/config/errordocument.php
+	RewriteRule ^app/views/pool/tbl_logs.php?$ app/config/errordocument.php
+	RewriteRule ^app/views/pool/user_profile.php?$ app/config/errordocument.php
+	RewriteRule ^app/views/pool/users.php?$ app/config/errordocument.php
+
+	# Starter
+
+	RewriteRule ^app/views/starter/?$ app/config/errordocument.php
+
+	RewriteRule ^app/views/starter/cancel.php?$ app/config/errordocument.php
+	RewriteRule ^app/views/starter/forgot-password.php?$ app/config/errordocument.php
+	RewriteRule ^app/views/starter/login.php?$ app/config/errordocument.php
+	RewriteRule ^app/views/starter/register.php?$ app/config/errordocument.php
+	RewriteRule ^app/views/starter/reset.php?$ app/config/errordocument.php
+
+#### In dist
+
+	RewriteRule ^dist/?$ app/config/errordocument.php
+	RewriteRule ^dist/img/?$ app/config/errordocument.php
+	RewriteRule ^dist/css/?$ app/config/errordocument.php
+	RewriteRule ^dist/js/?$ app/config/errordocument.php
+	RewriteRule ^plugins/?$ app/config/errordocument.php
+
+#### In reports
+
+	RewriteRule ^reports/?$ app/config/errordocument.php
 
 #### For reports
 
@@ -38,62 +178,15 @@ ErrorDocument 500 http://localhost/skeleton/500
 
 #### Reports XLS
 
+	RewriteRule ^xls_report/?$ reports/xls/print_xls.php
 	RewriteRule ^xls_users/?$ reports/xls/users.php
 	RewriteRule ^xls_supports/?$ reports/xls/supports.php
 
-#### For AutoTasks
-
-	RewriteRule ^cronos?$ app/tools/cronos/tasks.php
-
-#### In config
-
-	RewriteRule ^app/?$ app/config/errordocument.php
-	RewriteRule ^app/config/?$ app/http/404.php
-	RewriteRule ^app/config/data?$ app/http/404.php
-	RewriteRule ^app/cronos/?$ app/config/errordocument.php
-	RewriteRule ^app/cronos/config/?$ app/config/errordocument.php
-	RewriteRule ^app/cronos/controllers/?$ app/config/errordocument.php
-	RewriteRule ^app/cronos/models/?$ app/config/errordocument.php
-	RewriteRule ^app/cronos/cron/?$ app/config/errordocument.php
-
-#### In controllers
-
-	RewriteRule ^app/controllers/?$ app/http/404.php
-
-#### In http
-
-	RewriteRule ^app/http/?$ app/config/errordocument.php
-
-#### In models
-
-	RewriteRule ^app/models/?$ app/http/404.php
-
-#### In views
-
-	RewriteRule ^app/views/?$ app/config/errordocument.php
-	RewriteRule ^app/views/sudo/?$ app/config/errordocument.php
-	RewriteRule ^app/views/administrator/?$ app/config/errordocument.php
-	RewriteRule ^app/views/employee/?$ app/config/errordocument.php
-	RewriteRule ^app/views/master/?$ app/config/errordocument.php
-	RewriteRule ^app/views/starter/?$ app/config/errordocument.php
-
-#### In reports
-
-	RewriteRule ^reports/?$ app/config/errordocument.php
-
-#### In zombies
+#### Zombies
 
 	RewriteRule ^zombies/?$ app/config/errordocument.php
 	RewriteRule ^zombies/pdfiles/?$ app/config/errordocument.php
 	RewriteRule ^zombies/files/?$ app/config/errordocument.php
 	RewriteRule ^zombies/files/undefined/?$ app/config/errordocument.php
-
-#### In dist
-
-	RewriteRule ^dist/?$ app/config/errordocument.php
-	RewriteRule ^dist/img/?$ app/config/errordocument.php
-	RewriteRule ^dist/css/?$ app/config/errordocument.php
-	RewriteRule ^dist/js/?$ app/config/errordocument.php
-	RewriteRule ^plugins/?$ app/config/errordocument.php
 
 </IfModule>

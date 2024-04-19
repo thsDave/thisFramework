@@ -9,6 +9,8 @@
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <!-- select2 -->
 <script src="plugins/select2/js/select2.full.min.js"></script>
+<!-- activity -->
+<script src="dist/js/inactivity.js"></script>
 
 <script>
 	$(document).ready(function () {

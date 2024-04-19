@@ -2,6 +2,12 @@
 
 const LANG = [
 
+	/*** LOCKSCREEN
+	************************************/
+
+	'lock_mssg' => 'Ingresa tu contraseña para recuperar tu sesión',
+	'lock_login' => 'O inicia sesión con un usuario diferente',
+
 	/*** HEADER PAGE
 	************************************/
 

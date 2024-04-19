@@ -38,35 +38,40 @@ class HomeController extends Controller
 	{
 		$validation = (!is_null($current_pass)) ? parent::pass_validator($current_pass, $iduser) : true;
 
-		if ($validation) {
-			if (strlen($pass1) >= 8 && strlen($pass2) >= 8) {
-				if ($pass1 == $pass2) {
-					$arr_pass = str_split($pass1);
-					$banco = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ0123456789abcdefghijklmnñopqrstuvwxyz_.@';
-					$arr_banco = str_split($banco);
+		if ($validation)
+		{
+			if (strlen($pass1) >= 8 && strlen($pass2) >= 8)
+			{
+				if ($pass1 == $pass2)
+				{
+					$x = parent::password_validate($pass1);
 
-					$x = true;
-
-					foreach ($arr_pass as $valor_pass) { if (!in_array($valor_pass, $arr_banco)) { $x = false; break; } }
-
-					if ($x) {
-
+					if ($x)
+					{
 						$arr_data = [
 				            'pass' => password_hash($pass1, PASSWORD_DEFAULT, ['cost' => 12]),
 				            'iduser' => $iduser
 				        ];
 
 						return (parent::update_password($arr_data)) ? true : false;
-					}else {
+					}
+					else
+					{
 						return false;
 					}
-				}else {
+				}
+				else
+				{
 					return false;
 				}
-			}else {
+			}
+			else
+			{
 				return false;
 			}
-		}else {
+		}
+		else
+		{
 			return false;
 		}
 	}

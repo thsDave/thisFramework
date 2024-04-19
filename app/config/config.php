@@ -172,12 +172,14 @@ const VIEWS_LIST = [
 		'views' =>[
 			'profile',
 			'info',
-			'support'
+			'support',
+			'lockscreen'
 		],
 		'titles' =>[
 			'profile' => 'perfil de usuario',
 			'info' => 'información del sistema',
-			'support' => 'soporte técnico'
+			'support' => 'soporte técnico',
+			'lockscreen' => 'lockscreen'
 		]
 	],
 

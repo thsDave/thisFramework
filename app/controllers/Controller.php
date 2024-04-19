@@ -334,7 +334,7 @@ class Controller extends Model
 		}
 	}
 
-	public function resetPassword($pass)
+	public function password_validate($pass)
 	{
 		$arr_pass = str_split($pass);
 		$banco = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ0123456789abcdefghijklmnñopqrstuvwxyzÁÉÍÓÚáéíóú_@-$!.';
@@ -342,12 +342,14 @@ class Controller extends Model
 		$x = true;
 
 		foreach ($arr_pass as $valor_pass)
-	        if (!in_array($valor_pass, $arr_banco)) { $x = false; }
+	        if (!in_array($valor_pass, $arr_banco)) { $x = false; break; }
 
-		if ($x) {
-			$password = password_hash($pass, PASSWORD_DEFAULT, ['cost' => 12]);
-			return parent::recover_password($password);
-		}
+		return $x;
+	}
+
+	public function resetPassword($pass)
+	{
+		return ($this->password_validate($pass)) ? parent::recover_password(password_hash($pass, PASSWORD_DEFAULT, ['cost' => 12])) : false;
 	}
 
 	protected function getKey($length)
