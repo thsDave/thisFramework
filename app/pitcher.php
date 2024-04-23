@@ -92,7 +92,7 @@ if (!empty($_SESSION))
 			{
 				case 'login': require_once 'views/starter/login.php'; break;
 
-				case 'register': require_once 'views/starter/register.php'; break;
+				case 'register': require_once (LC_SIGNU) ? 'views/starter/register.php' : 'views/starter/login.php'; break;
 
 				case 'confirm': require_once 'views/starter/reset.php'; break;
 
@@ -104,7 +104,7 @@ if (!empty($_SESSION))
 
 				case 'cancel': require_once 'views/starter/cancel.php'; break;
 
-				case 'forget': require_once 'views/starter/forgot-password.php'; break;
+				case 'forget': require_once (LC_LOGIN) ? 'views/starter/forgot-password.php' : 'views/starter/login.php'; break;
 
 				default: throw new Exception('404'); break;
 			}
