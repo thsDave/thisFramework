@@ -30,9 +30,10 @@ $(document).ready(function(){
                             icon: 'error',
                             text: 'Contraseña incorrecta',
                             confirmButtonText: `Aceptar`
+                        })
+                        .then(()=>{
+                            location.reload();
                         });
-
-                        $('#password').val('');
                     }
                 } catch (error) {
                     Swal.fire({
@@ -45,5 +46,28 @@ $(document).ready(function(){
             });
         });
     });
+
+    // Tiempo de inactividad en milisegundos (por ejemplo, 1 minuto)
+    var tiempoInactividad = 1 * 60 * 1000; // 1 minuto en milisegundos
+
+    // Variable para almacenar el temporizador de inactividad
+    var temporizadorInactividad;
+
+    // Función para reiniciar el temporizador de inactividad
+    function reiniciarTemporizador() {
+        clearTimeout(temporizadorInactividad);
+        temporizadorInactividad = setTimeout(function() {
+            location.reload();
+        }, tiempoInactividad);
+    }
+
+    // Eventos de interacción del usuario que reinician el temporizador de inactividad
+    window.addEventListener('mousemove', reiniciarTemporizador);
+    window.addEventListener('scroll', reiniciarTemporizador);
+    window.addEventListener('keypress', reiniciarTemporizador);
+    window.addEventListener('click', reiniciarTemporizador);
+
+    // Iniciar el temporizador de inactividad
+    reiniciarTemporizador();
 
 });
